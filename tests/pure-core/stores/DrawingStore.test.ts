@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "@jest/globals";
 import { DrawingStore } from "../../../src/pure-core/stores/DrawingStore";
 import { InMemoryFileSystemAdapter } from "../../../src/test-adapters/InMemoryFileSystemAdapter";
 import { ValidatedAlexandriaPath } from "../../../src/pure-core/types/repository";
+import type { ExcalidrawData } from "../../../src/pure-core/types/drawing";
 
 describe("DrawingStore", () => {
   let fs: InMemoryFileSystemAdapter;
@@ -167,6 +168,68 @@ describe("DrawingStore", () => {
       // Original files should remain unchanged
       expect(store.loadDrawing("file1")).toBe('{"file":1}');
       expect(store.loadDrawing("file2")).toBe('{"file":2}');
+    });
+  });
+
+  describe("Excalidraw Content Updates", () => {
+    it("should update drawing content when file exists", () => {
+      const originalData: ExcalidrawData = {
+        elements: [{ id: "1", type: "rectangle" }],
+        appState: { name: "Original" },
+      };
+
+      const drawingId = store.saveExcalidrawDrawing(originalData);
+
+      const updatedData: ExcalidrawData = {
+        elements: [{ id: "2", type: "ellipse" }],
+        appState: { name: "Updated" },
+        files: { asset: { id: "asset" } },
+      };
+
+      const success = store.updateExcalidrawDrawingContent(
+        drawingId,
+        updatedData,
+      );
+
+      expect(success).toBe(true);
+      const loaded = store.loadExcalidrawDrawing(drawingId);
+      expect(loaded?.appState.name).toBe("Updated");
+      expect(loaded?.elements).toEqual(updatedData.elements);
+      expect(loaded?.files).toEqual(updatedData.files);
+    });
+
+    it("should preserve existing name if update omits name", () => {
+      const originalData: ExcalidrawData = {
+        elements: [],
+        appState: { name: "Keep Name" },
+      };
+
+      const drawingId = store.saveExcalidrawDrawing(originalData);
+
+      const updatedData = {
+        elements: [{ id: "3", type: "diamond" }],
+        appState: {},
+      } as unknown as ExcalidrawData;
+
+      const success = store.updateExcalidrawDrawingContent(
+        drawingId,
+        updatedData,
+      );
+
+      expect(success).toBe(true);
+      const loaded = store.loadExcalidrawDrawing(drawingId);
+      expect(loaded?.appState.name).toBe("Keep Name");
+      expect(loaded?.elements).toEqual(updatedData.elements);
+    });
+
+    it("should return false when drawing file does not exist", () => {
+      const data: ExcalidrawData = {
+        elements: [],
+        appState: { name: "Missing" },
+      };
+
+      const success = store.updateExcalidrawDrawingContent("missing", data);
+      expect(success).toBe(false);
     });
   });
 

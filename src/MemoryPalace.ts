@@ -634,6 +634,32 @@ export class MemoryPalace {
   }
 
   /**
+   * Update the full content of a drawing associated with a room
+   */
+  updateRoomDrawingContent(
+    roomId: string,
+    drawingId: string,
+    drawingData: ExcalidrawData,
+  ): boolean {
+    const room = this.palaceRoomStore.getRoom(roomId);
+    if (!room || !room.drawingIds.includes(drawingId)) {
+      return false;
+    }
+
+    const preparedData: ExcalidrawData = {
+      ...drawingData,
+      appState: {
+        ...(drawingData.appState ?? {}),
+      },
+    };
+
+    return this.drawingStore.updateExcalidrawDrawingContent(
+      drawingId,
+      preparedData,
+    );
+  }
+
+  /**
    * Remove drawing from room (but keep the file)
    */
   unlinkDrawingFromRoom(roomId: string, drawingId: string): boolean {

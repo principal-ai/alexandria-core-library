@@ -333,6 +333,55 @@ export class DrawingStore {
   }
 
   /**
+   * Update the full content of an Excalidraw drawing
+   */
+  updateExcalidrawDrawingContent(
+    drawingId: string,
+    updatedData: ExcalidrawData,
+  ): boolean {
+    const fileName = `${drawingId}.excalidraw`;
+    const filePath = this.fs.join(this.drawingsDir, fileName);
+
+    if (!this.fs.exists(filePath)) {
+      return false;
+    }
+
+    try {
+      let existingData: ExcalidrawData | null = null;
+
+      try {
+        const existingContent = this.fs.readFile(filePath);
+        existingData = JSON.parse(existingContent) as ExcalidrawData;
+      } catch {
+        existingData = null;
+      }
+
+      const mergedAppState = {
+        ...(existingData?.appState ?? {}),
+        ...(updatedData.appState ?? {}),
+        name:
+          updatedData.appState?.name ??
+          existingData?.appState?.name ??
+          drawingId,
+      };
+
+      const contentToSave: ExcalidrawData = {
+        ...updatedData,
+        appState: mergedAppState,
+      };
+
+      this.fs.writeFile(filePath, JSON.stringify(contentToSave, null, 2));
+      return true;
+    } catch (error) {
+      console.error(
+        `Error updating drawing content for ${drawingId}:`,
+        error,
+      );
+      return false;
+    }
+  }
+
+  /**
    * List all drawings with their metadata (including extracted names)
    */
   listDrawingsWithExtractedNames(): RoomDrawingMetadata[] {

@@ -193,6 +193,12 @@ const drawings = palace.listRoomDrawings(roomId);
 // Update drawing name efficiently
 palace.updateDrawingName(drawingId, "Updated Architecture");
 
+// Replace drawing content in place while preserving room association
+palace.updateRoomDrawingContent(roomId, drawingId, {
+  elements: [...],
+  appState: { name: "Updated Architecture" },
+});
+
 // Copy/move drawings between rooms
 palace.copyDrawingsToRoom(sourceRoomId, targetRoomId, [drawingId]);
 palace.moveDrawingsToRoom(sourceRoomId, targetRoomId, [drawingId]);
@@ -280,4 +286,4 @@ For complete method signatures and advanced usage, see:
 
 ---
 
-_Last reviewed: 2025-09-25 - Added PalaceRooms and PalacePortals documentation._
+_Last reviewed: 2025-09-27 - Document now includes room drawing content updates API._

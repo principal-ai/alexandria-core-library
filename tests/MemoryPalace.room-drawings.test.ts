@@ -158,6 +158,82 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
     });
   });
 
+  describe("updateRoomDrawingContent", () => {
+    it("should update drawing content when drawing belongs to the room", () => {
+      const roomResult = memory.createPalaceRoom({
+        name: "Content Room"
+      });
+      const roomId = roomResult.palaceRoom!.id;
+
+      const originalData: ExcalidrawData = {
+        elements: [{ id: "1", type: "ellipse" }],
+        appState: { name: "Original Content" },
+      };
+
+      const drawingId = memory.saveRoomDrawing(
+        roomId,
+        "Original Content",
+        originalData
+      );
+
+      const updatedData: ExcalidrawData = {
+        elements: [{ id: "2", type: "diamond" }],
+        appState: { name: "Updated Content" },
+        files: { asset1: { id: "asset1" } },
+        libraryItems: [],
+      };
+
+      const success = memory.updateRoomDrawingContent(
+        roomId,
+        drawingId!,
+        updatedData
+      );
+
+      expect(success).toBe(true);
+
+      const loaded = memory.loadRoomDrawing(roomId, drawingId!);
+      expect(loaded?.appState.name).toBe("Updated Content");
+      expect(loaded?.elements).toEqual(updatedData.elements);
+      expect(loaded?.files).toEqual(updatedData.files);
+    });
+
+    it("should return false when drawing is not associated with the room", () => {
+      const roomAResult = memory.createPalaceRoom({
+        name: "Room A"
+      });
+      const roomBResult = memory.createPalaceRoom({
+        name: "Room B"
+      });
+      const roomAId = roomAResult.palaceRoom!.id;
+      const roomBId = roomBResult.palaceRoom!.id;
+
+      const drawingData: ExcalidrawData = {
+        elements: [],
+        appState: { name: "Shared" },
+      };
+
+      const drawingId = memory.saveRoomDrawing(
+        roomAId,
+        "Shared",
+        drawingData
+      );
+
+      const success = memory.updateRoomDrawingContent(
+        roomBId,
+        drawingId!,
+        {
+          elements: [{ id: "3", type: "rectangle" }],
+          appState: { name: "Updated" },
+        }
+      );
+
+      expect(success).toBe(false);
+
+      const loaded = memory.loadRoomDrawing(roomAId, drawingId!);
+      expect(loaded?.appState.name).toBe("Shared");
+    });
+  });
+
   describe("copyDrawingsToRoom", () => {
     it("should copy drawings between rooms", () => {
       // Create two rooms
