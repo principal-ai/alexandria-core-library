@@ -101,6 +101,7 @@ export { DrawingStore } from "./pure-core/stores/DrawingStore";
 export type { DrawingMetadata } from "./pure-core/stores/DrawingStore";
 export type { ExcalidrawData, RoomDrawingMetadata } from "./pure-core/types/drawing";
 export { PalaceRoomStore } from "./pure-core/stores/PalaceRoomStore";
+export { TaskStore } from "./pure-core/stores/TaskStore";
 
 // Utilities and rules
 export { LibraryRulesEngine } from "./rules/index";
@@ -191,3 +192,26 @@ export type {
   AlexandriaDocumentVersion,
   AlexandriaBookmarkedDocument,
 } from "./types/alexandria-state";
+
+// ============================================================================
+// Task System (Work Queue)
+// ============================================================================
+
+// Task types
+export type {
+  Task,
+  TaskStatus,
+  TaskPriority,
+  CreateTaskInput,
+  UpdateTaskOptions,
+  TaskQueryOptions,
+  GitReferences,
+  TaskMetadata,
+  TaskAssociations,
+  CompletedTask,
+  TaskEvent,
+  TaskEventType,
+  TaskStatistics,
+  TaskIndex,
+  TaskIndexEntry,
+} from "./pure-core/types/task";

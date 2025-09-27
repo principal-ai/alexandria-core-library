@@ -42,7 +42,9 @@
   "engines": {
     "node": ">=18"
   },
-  "dependencies": {},
+  "dependencies": {
+    "section-matter": "^1.0.0"
+  },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "@semantic-release/changelog": "^6.0.3",

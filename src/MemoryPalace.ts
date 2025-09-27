@@ -15,6 +15,14 @@ import { A24zConfigurationStore } from "./pure-core/stores/A24zConfigurationStor
 import { DrawingStore, DrawingMetadata } from "./pure-core/stores/DrawingStore";
 import { ExcalidrawData, RoomDrawingMetadata } from "./pure-core/types/drawing";
 import { PalaceRoomStore } from "./pure-core/stores/PalaceRoomStore";
+import { TaskStore } from "./pure-core/stores/TaskStore";
+import {
+  Task,
+  CreateTaskInput,
+  TaskQueryOptions,
+  GitReferences,
+  TaskStatus
+} from "./pure-core/types/task";
 import {
   generateFullGuidanceContent,
   GuidanceContent,
@@ -69,6 +77,7 @@ export class MemoryPalace {
   private configStore: A24zConfigurationStore;
   private drawingStore: DrawingStore;
   private palaceRoomStore: PalaceRoomStore;
+  private taskStore: TaskStore;
   private validator: CodebaseViewValidator;
   private repositoryRoot: ValidatedRepositoryPath;
   private fs: FileSystemAdapter;
@@ -90,6 +99,7 @@ export class MemoryPalace {
     this.configStore = new A24zConfigurationStore(fileSystem, alexandriaPath);
     this.drawingStore = new DrawingStore(fileSystem, alexandriaPath);
     this.palaceRoomStore = new PalaceRoomStore(fileSystem, alexandriaPath);
+    this.taskStore = new TaskStore(fileSystem, this.repositoryRoot);
     this.validator = new CodebaseViewValidator(fileSystem);
   }
 
@@ -999,5 +1009,111 @@ export class MemoryPalace {
     resourceId: string,
   ): string {
     return buildLocalPalaceUri(this.repositoryRoot, resourceType, resourceId);
+  }
+
+  // ============================================================================
+  // Task Management (Work Queue)
+  // ============================================================================
+
+  /**
+   * Receive a new task from a sender (MCP server, CLI, etc)
+   * Tasks are stored in .palace-work/ directory, separate from memory storage
+   */
+  receiveTask(input: CreateTaskInput, senderId: string): Task {
+    return this.taskStore.receiveTask(input, senderId);
+  }
+
+  /**
+   * Get a specific task by ID
+   */
+  getTask(taskId: string): Task | null {
+    return this.taskStore.getTask(taskId);
+  }
+
+  /**
+   * Get the next pending task for an ADE to work on
+   * Returns highest priority pending task
+   */
+  getNextPendingTask(): Task | null {
+    return this.taskStore.getNextPendingTask();
+  }
+
+  /**
+   * Query tasks with filters
+   */
+  getTasks(options?: TaskQueryOptions): Task[] {
+    return this.taskStore.queryTasks(options);
+  }
+
+  /**
+   * Get all active (non-completed, non-failed) tasks
+   */
+  getActiveTasks(): Task[] {
+    return this.taskStore.queryTasks({
+      status: ["pending", "acknowledged", "in_progress"]
+    });
+  }
+
+  /**
+   * ADE acknowledges receipt of a task
+   */
+  acknowledgeTask(taskId: string, adeId: string): Task | null {
+    return this.taskStore.acknowledgeTask(taskId, adeId);
+  }
+
+  /**
+   * ADE starts working on a task
+   */
+  startWorkingOnTask(taskId: string, adeId: string): Task | null {
+    return this.taskStore.startTask(taskId, adeId);
+  }
+
+  /**
+   * Complete a task with git references
+   * Moves task to lightweight history format
+   */
+  completeTask(taskId: string, gitRefs: GitReferences): Task | null {
+    return this.taskStore.completeTask(taskId, gitRefs);
+  }
+
+  /**
+   * Mark a task as failed with a reason
+   */
+  failTask(taskId: string, reason: string): Task | null {
+    return this.taskStore.failTask(taskId, reason);
+  }
+
+  /**
+   * Get tasks by sender ID
+   */
+  getTasksBySender(senderId: string): Task[] {
+    return this.taskStore.queryTasks({ senderId });
+  }
+
+  /**
+   * Get tasks for a specific directory
+   */
+  getTasksForDirectory(directoryPath: ValidatedRelativePath): Task[] {
+    return this.taskStore.queryTasks({ directoryPath });
+  }
+
+  /**
+   * Get task status (useful for senders to check on their requests)
+   */
+  getTaskStatus(taskId: string): TaskStatus | null {
+    const task = this.taskStore.getTask(taskId);
+    return task ? task.status : null;
+  }
+
+  /**
+   * Get tasks updated since a specific time (for polling)
+   */
+  getTaskUpdates(senderId: string, since: number): Task[] {
+    return this.taskStore.queryTasks({
+      senderId,
+      updatedAfter: since,
+      sortBy: "updatedAt",
+      sortDirection: "asc"
+    });
   }
 }
