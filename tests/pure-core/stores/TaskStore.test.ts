@@ -36,27 +36,34 @@ describe("TaskStore", () => {
   });
 
   describe("Initialization", () => {
-    it("should create .palace-work directory structure", () => {
-      expect(fs.exists("/test-repo/.palace-work")).toBe(true);
-      expect(fs.exists("/test-repo/.palace-work/tasks")).toBe(true);
-      expect(fs.exists("/test-repo/.palace-work/tasks/active")).toBe(true);
-      expect(fs.exists("/test-repo/.palace-work/tasks/history")).toBe(true);
+    it("should defer .palace-work directory creation", () => {
+      expect(fs.exists("/test-repo/.palace-work")).toBe(false);
+      expect(fs.exists("/test-repo/.palace-work/tasks")).toBe(false);
+      expect(fs.exists("/test-repo/.palace-work/tasks/active")).toBe(false);
+      expect(fs.exists("/test-repo/.palace-work/tasks/history")).toBe(false);
     });
 
-    it("should create empty index on initialization", () => {
+    it("should not create index file until needed", () => {
       const indexPath = "/test-repo/.palace-work/tasks/index.json";
-      expect(fs.exists(indexPath)).toBe(true);
+      expect(fs.exists(indexPath)).toBe(false);
+    });
 
-      const index = JSON.parse(fs.readFile(indexPath));
+    it("should set up workspace on first task", () => {
+      const input: CreateTaskInput = {
+        content: "Bootstrap work queue",
+        directoryPath: "" as ValidatedRelativePath
+      };
+
+      const task = store.receiveTask(input, "initializer");
+
+      expect(fs.exists("/test-repo/.palace-work")).toBe(true);
+      expect(fs.exists("/test-repo/.palace-work/tasks")).toBe(true);
+      expect(fs.exists(`/test-repo/.palace-work/tasks/active/${task.id}.task.md`)).toBe(true);
+      expect(fs.exists("/test-repo/.palace-work/tasks/index.json")).toBe(true);
+
+      const index = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
       expect(index.version).toBe("1.0.0");
-      expect(index.tasks).toEqual({});
-      expect(index.byStatus).toEqual({
-        pending: [],
-        acknowledged: [],
-        in_progress: [],
-        completed: [],
-        failed: []
-      });
+      expect(index.tasks).toHaveProperty(task.id);
     });
   });
 

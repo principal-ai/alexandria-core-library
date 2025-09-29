@@ -61,9 +61,6 @@ export class TaskStore {
     this.indexPath = this.fs.join(this.tasksPath, INDEX_FILE);
     this.eventsPath = this.fs.join(this.tasksPath, EVENTS_FILE);
 
-    // Initialize directories
-    this.initializeDirectories();
-
     // Load index
     this.loadIndex();
   }
@@ -72,17 +69,24 @@ export class TaskStore {
   // Initialization
   // ============================================================================
 
-  private initializeDirectories(): void {
-    // Create directory structure if it doesn't exist
+  private ensureWorkDir(): void {
     if (!this.fs.exists(this.workPath)) {
       this.fs.createDir(this.workPath);
     }
     if (!this.fs.exists(this.tasksPath)) {
       this.fs.createDir(this.tasksPath);
     }
+  }
+
+  private ensureActiveDir(): void {
+    this.ensureWorkDir();
     if (!this.fs.exists(this.activePath)) {
       this.fs.createDir(this.activePath);
     }
+  }
+
+  private ensureHistoryDir(): void {
+    this.ensureWorkDir();
     if (!this.fs.exists(this.historyPath)) {
       this.fs.createDir(this.historyPath);
     }
@@ -96,11 +100,9 @@ export class TaskStore {
       } catch (error) {
         console.error("Failed to load task index, creating new one:", error);
         this.index = this.createEmptyIndex();
-        this.saveIndex();
       }
     } else {
       this.index = this.createEmptyIndex();
-      this.saveIndex();
     }
   }
 
@@ -123,6 +125,8 @@ export class TaskStore {
 
   private saveIndex(): void {
     if (!this.index) return;
+
+    this.ensureWorkDir();
 
     this.index.lastUpdated = Date.now();
     this.fs.writeFile(this.indexPath, JSON.stringify(this.index, null, 2));
@@ -483,12 +487,14 @@ export class TaskStore {
   // ============================================================================
 
   private saveTaskFile(task: Task): void {
+    this.ensureActiveDir();
     const filePath = this.fs.join(this.activePath, `${task.id}.task.md`);
     const content = this.serializeTask(task);
     this.fs.writeFile(filePath, content);
   }
 
   private saveCompletedTask(task: CompletedTask): void {
+    this.ensureHistoryDir();
     const filePath = this.fs.join(this.historyPath, `${task.id}.hist.md`);
     const content = this.serializeCompletedTask(task);
     this.fs.writeFile(filePath, content);
@@ -832,6 +838,7 @@ export class TaskStore {
     const line = JSON.stringify(event) + "\n";
 
     // Append to events file
+    this.ensureWorkDir();
     if (this.fs.exists(this.eventsPath)) {
       const current = this.fs.readFile(this.eventsPath);
       this.fs.writeFile(this.eventsPath, current + line);
