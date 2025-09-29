@@ -445,22 +445,44 @@ if (pendingTasks) {
 
 ### Initialization
 
-The `.palace-work/` directory is created separately from `.alexandria/`:
+The `.palace-work/` directory structure uses lazy initialization - directories are created only when needed to avoid unnecessary filesystem operations:
 
 ```typescript
-class PalaceWorkManager {
-  static initializePalaceWork(repositoryPath: string): void {
-    const workPath = path.join(repositoryPath, '.palace-work');
-    if (!fs.existsSync(workPath)) {
-      fs.mkdirSync(workPath);
-      fs.mkdirSync(path.join(workPath, 'tasks'));
-      fs.mkdirSync(path.join(workPath, 'tasks', 'active'));
-      fs.mkdirSync(path.join(workPath, 'tasks', 'history'));
-      fs.mkdirSync(path.join(workPath, 'tasks', 'archive'));
+class TaskStore {
+  // Directories are created on-demand when operations require them
+  private ensureWorkDir(): void {
+    // Creates .palace-work/ and tasks/ directories when needed
+    if (!this.fs.exists(this.workPath)) {
+      this.fs.createDir(this.workPath);
+    }
+    if (!this.fs.exists(this.tasksPath)) {
+      this.fs.createDir(this.tasksPath);
+    }
+  }
+
+  private ensureActiveDir(): void {
+    // Creates active/ directory when saving active tasks
+    this.ensureWorkDir();
+    if (!this.fs.exists(this.activePath)) {
+      this.fs.createDir(this.activePath);
+    }
+  }
+
+  private ensureHistoryDir(): void {
+    // Creates history/ directory when completing tasks
+    this.ensureWorkDir();
+    if (!this.fs.exists(this.historyPath)) {
+      this.fs.createDir(this.historyPath);
     }
   }
 }
 ```
+
+This deferred initialization approach:
+- Reduces startup time by avoiding unnecessary filesystem operations
+- Only creates directories when actual task operations require them
+- Maintains clean repository state until tasks are actually used
+- Prevents empty directory creation in repositories that don't use tasks
 
 ### Cross-Reference with Memory Palace
 

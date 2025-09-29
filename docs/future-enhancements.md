@@ -2,6 +2,17 @@
 
 This document captures ideas for improving the Alexandria core library and documentation system.
 
+## Recently Completed (2025-09-29)
+
+### Task System Lazy Initialization
+
+✅ **Implemented**: Deferred directory creation for .palace-work/ structure
+
+- TaskStore now creates directories only when needed (lazy initialization)
+- Reduces startup overhead and filesystem operations
+- Keeps repositories clean until tasks are actually used
+- Maintains separation between knowledge storage (.alexandria/) and work queues (.palace-work/)
+
 ## Recently Completed (2025-09-25)
 
 ### PalaceRooms and PalacePortals
