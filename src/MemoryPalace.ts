@@ -1084,6 +1084,15 @@ export class MemoryPalace {
   }
 
   /**
+   * Delete a task permanently
+   * Removes the task file from filesystem and index
+   * Unlike completeTask, this does not move to history
+   */
+  deleteTask(taskId: string): boolean {
+    return this.taskStore.deleteTask(taskId);
+  }
+
+  /**
    * Get tasks by sender ID
    */
   getTasksBySender(senderId: string): Task[] {

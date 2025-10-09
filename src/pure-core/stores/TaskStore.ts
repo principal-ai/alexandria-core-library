@@ -315,6 +315,70 @@ export class TaskStore {
     return task;
   }
 
+  /**
+   * Delete a task permanently (removes from filesystem and index)
+   * Unlike completeTask or failTask, this does not move to history
+   */
+  deleteTask(taskId: string): boolean {
+    // Check if task exists in index
+    if (!this.index || !this.index.tasks[taskId]) {
+      return false;
+    }
+
+    const entry = this.index.tasks[taskId];
+
+    // Remove task file from active directory (don't delete completed tasks from history)
+    if (entry.status !== "completed") {
+      const activeFile = this.fs.join(this.activePath, `${taskId}.task.md`);
+      if (this.fs.exists(activeFile)) {
+        this.fs.deleteFile(activeFile);
+      }
+    }
+
+    // Remove from status lists
+    const statusList = this.index.byStatus[entry.status];
+    if (statusList) {
+      const idx = statusList.indexOf(taskId);
+      if (idx >= 0) {
+        statusList.splice(idx, 1);
+      }
+    }
+
+    // Remove from sender index
+    if (entry.senderId && this.index.bySender[entry.senderId]) {
+      const senderList = this.index.bySender[entry.senderId];
+      const idx = senderList.indexOf(taskId);
+      if (idx >= 0) {
+        senderList.splice(idx, 1);
+      }
+    }
+
+    // Remove from ADE index
+    if (entry.adeId && this.index.byADE[entry.adeId]) {
+      const adeList = this.index.byADE[entry.adeId];
+      const idx = adeList.indexOf(taskId);
+      if (idx >= 0) {
+        adeList.splice(idx, 1);
+      }
+    }
+
+    // Remove from main tasks index
+    delete this.index.tasks[taskId];
+
+    // Save updated index
+    this.saveIndex();
+
+    // Record event
+    this.recordEvent({
+      taskId,
+      timestamp: Date.now(),
+      eventType: "deleted",
+      actor: "system"
+    });
+
+    return true;
+  }
+
   // ============================================================================
   // Task Queries
   // ============================================================================

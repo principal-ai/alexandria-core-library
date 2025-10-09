@@ -113,6 +113,16 @@ repository/
 6. **Failed**: Task could not be completed
 7. **Archived**: Task moved to long-term storage
 
+### Task Deletion
+
+Tasks can be permanently deleted using `deleteTask(taskId)`:
+- Removes task file from `.palace-work/tasks/active/`
+- Removes task from all indices (byStatus, bySender, byADE)
+- Does NOT delete completed tasks from history (preserves `.palace-work/tasks/history/*.hist.md`)
+- Records a "deleted" event in the audit trail
+- Returns `true` on success, `false` if task doesn't exist (idempotent operation)
+- Useful for removing unwanted or obsolete tasks from the active queue
+
 ## Task Format (Markdown)
 
 ```markdown
@@ -206,6 +216,9 @@ class TaskManager {
   // ADE reports task failure
   failTask(taskId: string, reason: string): Task
 
+  // Delete a task permanently (does not move to history)
+  deleteTask(taskId: string): boolean
+
   // Query tasks (for ADE to find work)
   queryPendingTasks(adeId?: string): Task[]
   queryTasks(options: TaskQueryOptions): Task[]
@@ -255,6 +268,9 @@ class MemoryPalace {
   startWorkingOnTask(taskId: string): Task
   completeTask(taskId: string, gitRefs: GitReferences): Task
   failTask(taskId: string, error: string): Task
+
+  // Delete a task permanently (removes from filesystem and index)
+  deleteTask(taskId: string): boolean
 
   // ====== QUERY SIDE (Used by both) ======
 

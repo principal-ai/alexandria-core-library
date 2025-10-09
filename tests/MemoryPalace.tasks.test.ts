@@ -412,4 +412,149 @@ describe("MemoryPalace Task Management", () => {
       expect(result).toBeNull();
     });
   });
+
+  describe("Task Deletion", () => {
+    it("should delete a task permanently", () => {
+      const task = palace.receiveTask({
+        content: "Task to delete",
+        directoryPath: "" as ValidatedRelativePath,
+        priority: "normal",
+        tags: ["test"]
+      }, "test-sender");
+
+      const result = palace.deleteTask(task.id);
+
+      expect(result).toBe(true);
+
+      // Task should no longer be retrievable
+      const retrieved = palace.getTask(task.id);
+      expect(retrieved).toBeNull();
+
+      // Task status should be null
+      const status = palace.getTaskStatus(task.id);
+      expect(status).toBeNull();
+    });
+
+    it("should delete task regardless of status", () => {
+      const task1 = palace.receiveTask({
+        content: "Pending task",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "sender");
+
+      const task2 = palace.receiveTask({
+        content: "In progress task",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "sender");
+
+      const task3 = palace.receiveTask({
+        content: "Failed task",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "sender");
+
+      palace.startWorkingOnTask(task2.id, "ade-1");
+      palace.failTask(task3.id, "Test failure");
+
+      // All should be deletable
+      expect(palace.deleteTask(task1.id)).toBe(true);
+      expect(palace.deleteTask(task2.id)).toBe(true);
+      expect(palace.deleteTask(task3.id)).toBe(true);
+
+      // None should be retrievable
+      expect(palace.getTask(task1.id)).toBeNull();
+      expect(palace.getTask(task2.id)).toBeNull();
+      expect(palace.getTask(task3.id)).toBeNull();
+    });
+
+    it("should return false when deleting non-existent task", () => {
+      const result = palace.deleteTask("non-existent-task-id");
+
+      expect(result).toBe(false);
+    });
+
+    it("should be idempotent", () => {
+      const task = palace.receiveTask({
+        content: "Task to delete twice",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "sender");
+
+      const firstDelete = palace.deleteTask(task.id);
+      expect(firstDelete).toBe(true);
+
+      const secondDelete = palace.deleteTask(task.id);
+      expect(secondDelete).toBe(false);
+    });
+
+    it("should remove deleted task from active tasks", () => {
+      const task1 = palace.receiveTask({
+        content: "Task 1",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "sender");
+
+      const task2 = palace.receiveTask({
+        content: "Task 2",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "sender");
+
+      let activeTasks = palace.getActiveTasks();
+      expect(activeTasks.length).toBe(2);
+
+      palace.deleteTask(task1.id);
+
+      activeTasks = palace.getActiveTasks();
+      expect(activeTasks.length).toBe(1);
+      expect(activeTasks[0].id).toBe(task2.id);
+    });
+
+    it("should remove deleted task from sender queries", () => {
+      const task1 = palace.receiveTask({
+        content: "Task 1",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "sender-A");
+
+      const task2 = palace.receiveTask({
+        content: "Task 2",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "sender-A");
+
+      palace.receiveTask({
+        content: "Task 3",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "sender-B");
+
+      let senderATasks = palace.getTasksBySender("sender-A");
+      expect(senderATasks.length).toBe(2);
+
+      palace.deleteTask(task1.id);
+
+      senderATasks = palace.getTasksBySender("sender-A");
+      expect(senderATasks.length).toBe(1);
+      expect(senderATasks[0].id).toBe(task2.id);
+    });
+
+    it("should handle deleting completed tasks (removes from index but preserves history)", () => {
+      const task = palace.receiveTask({
+        content: "Completed task",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "sender");
+
+      palace.completeTask(task.id, {
+        commitSha: "abc123",
+        pullRequest: 42
+      });
+
+      // History file should exist
+      const historyPath = `/test-repo/.palace-work/tasks/history/${task.id}.hist.md`;
+      expect(fs.exists(historyPath)).toBe(true);
+
+      const result = palace.deleteTask(task.id);
+      expect(result).toBe(true);
+
+      // History file should still exist
+      expect(fs.exists(historyPath)).toBe(true);
+
+      // But task should not be retrievable via getTask
+      const retrieved = palace.getTask(task.id);
+      expect(retrieved).toBeNull();
+    });
+  });
 });

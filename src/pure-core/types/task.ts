@@ -303,6 +303,7 @@ export type TaskEventType =
   | "started"
   | "completed"
   | "failed"
+  | "deleted"
   | "association_added";
 
 // ============================================================================

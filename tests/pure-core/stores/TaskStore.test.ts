@@ -460,4 +460,143 @@ describe("TaskStore", () => {
       expect(index.bySender["sender-B"].length).toBe(1);
     });
   });
+
+  describe("Task Deletion", () => {
+    let task: Task;
+
+    beforeEach(() => {
+      const input: CreateTaskInput = {
+        content: "Task to be deleted",
+        directoryPath: "" as ValidatedRelativePath,
+        priority: "normal",
+        tags: ["test"],
+        anchors: ["test.ts"]
+      };
+      task = store.receiveTask(input, "test-sender");
+    });
+
+    it("should delete a pending task", () => {
+      const result = store.deleteTask(task.id);
+
+      expect(result).toBe(true);
+
+      // Task file should be removed
+      const taskFile = `/test-repo/.palace-work/tasks/active/${task.id}.task.md`;
+      expect(fs.exists(taskFile)).toBe(false);
+
+      // Should not be retrievable
+      const retrieved = store.getTask(task.id);
+      expect(retrieved).toBeNull();
+    });
+
+    it("should delete an in-progress task", () => {
+      store.startTask(task.id, "ade-1");
+
+      const result = store.deleteTask(task.id);
+
+      expect(result).toBe(true);
+
+      const taskFile = `/test-repo/.palace-work/tasks/active/${task.id}.task.md`;
+      expect(fs.exists(taskFile)).toBe(false);
+
+      const retrieved = store.getTask(task.id);
+      expect(retrieved).toBeNull();
+    });
+
+    it("should delete a failed task", () => {
+      store.failTask(task.id, "Test failure");
+
+      const result = store.deleteTask(task.id);
+
+      expect(result).toBe(true);
+
+      const taskFile = `/test-repo/.palace-work/tasks/active/${task.id}.task.md`;
+      expect(fs.exists(taskFile)).toBe(false);
+    });
+
+    it("should remove task from all indices", () => {
+      store.startTask(task.id, "ade-1");
+
+      const beforeIndex = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      expect(beforeIndex.tasks).toHaveProperty(task.id);
+      expect(beforeIndex.byStatus.in_progress).toContain(task.id);
+      expect(beforeIndex.bySender["test-sender"]).toContain(task.id);
+      expect(beforeIndex.byADE["ade-1"]).toContain(task.id);
+
+      store.deleteTask(task.id);
+
+      const afterIndex = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      expect(afterIndex.tasks).not.toHaveProperty(task.id);
+      expect(afterIndex.byStatus.in_progress).not.toContain(task.id);
+      expect(afterIndex.bySender["test-sender"]).not.toContain(task.id);
+      expect(afterIndex.byADE["ade-1"]).not.toContain(task.id);
+    });
+
+    it("should not delete completed tasks from history", () => {
+      const gitRefs: GitReferences = {
+        commitSha: "abc123",
+        pullRequest: 42
+      };
+
+      store.completeTask(task.id, gitRefs);
+
+      const historyFile = `/test-repo/.palace-work/tasks/history/${task.id}.hist.md`;
+      expect(fs.exists(historyFile)).toBe(true);
+
+      // Delete should still work but shouldn't delete the history file
+      const result = store.deleteTask(task.id);
+      expect(result).toBe(true);
+
+      // History file should remain
+      expect(fs.exists(historyFile)).toBe(true);
+
+      // But task should be removed from index
+      const afterIndex = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      expect(afterIndex.tasks).not.toHaveProperty(task.id);
+    });
+
+    it("should return false when deleting non-existent task", () => {
+      const result = store.deleteTask("non-existent-task-id");
+
+      expect(result).toBe(false);
+    });
+
+    it("should be idempotent - deleting twice returns false second time", () => {
+      const firstDelete = store.deleteTask(task.id);
+      expect(firstDelete).toBe(true);
+
+      const secondDelete = store.deleteTask(task.id);
+      expect(secondDelete).toBe(false);
+    });
+
+    it("should record deletion event", () => {
+      store.deleteTask(task.id);
+
+      const eventsPath = "/test-repo/.palace-work/tasks/events.jsonl";
+      const events = fs.readFile(eventsPath);
+
+      expect(events).toContain(task.id);
+      expect(events).toContain("deleted");
+      expect(events).toContain("system");
+    });
+
+    it("should not affect other tasks when deleting one", () => {
+      const task2 = store.receiveTask({
+        content: "Another task",
+        directoryPath: "" as ValidatedRelativePath,
+      }, "test-sender");
+
+      store.deleteTask(task.id);
+
+      // task2 should still exist
+      const retrieved = store.getTask(task2.id);
+      expect(retrieved).toBeDefined();
+      expect(retrieved!.id).toBe(task2.id);
+
+      // Index should still contain task2
+      const index = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      expect(index.tasks).toHaveProperty(task2.id);
+      expect(index.byStatus.pending).toContain(task2.id);
+    });
+  });
 });
