@@ -3,10 +3,7 @@ import {
   LibraryRuleViolation,
   LibraryRuleContext,
 } from "../types";
-import { execSync } from "child_process";
-import { join } from "path";
 import { getNotesDir } from "../../utils/alexandria-paths";
-import { statSync, existsSync } from "fs";
 
 export const staleReferences: LibraryRule = {
   id: "stale-references",
@@ -22,34 +19,25 @@ export const staleReferences: LibraryRule = {
 
   async check(context: LibraryRuleContext): Promise<LibraryRuleViolation[]> {
     const violations: LibraryRuleViolation[] = [];
-    const { views, notes, projectRoot } = context;
+    const { views, notes, projectRoot, files, fsAdapter } = context;
+
+    // Require fsAdapter for this rule
+    if (!fsAdapter) {
+      throw new Error("stale-references rule requires fsAdapter in context");
+    }
 
     try {
-      // Helper to get last modification date for a file (git or filesystem)
-      const getLastModified = (filePath: string): Date | null => {
-        // First try to get filesystem modification time
-        try {
-          if (existsSync(filePath)) {
-            const stats = statSync(filePath);
-            return stats.mtime;
-          }
-        } catch {
-          // File doesn't exist
+      // Build a map of file paths to their last modified dates
+      const fileModMap = new Map<string, Date>();
+      for (const fileInfo of files) {
+        if (fileInfo.lastModified) {
+          fileModMap.set(fileInfo.relativePath, fileInfo.lastModified);
         }
+      }
 
-        // Fallback to git modification time if file doesn't exist on filesystem
-        // (This can happen if we're checking git history)
-        try {
-          const relativePath = filePath.replace(projectRoot + "/", "");
-          const gitCommand = `cd "${projectRoot}" && git log -1 --format=%at -- "${relativePath}" 2>/dev/null`;
-          const timestamp = execSync(gitCommand, { encoding: "utf-8" }).trim();
-          if (timestamp) {
-            return new Date(parseInt(timestamp) * 1000);
-          }
-        } catch {
-          // File might not be in git yet
-        }
-        return null;
+      // Helper to get last modification date for a file
+      const getLastModified = (relativePath: string): Date | null => {
+        return fileModMap.get(relativePath) || null;
       };
 
       // Check views with overview files
@@ -57,8 +45,7 @@ export const staleReferences: LibraryRule = {
         // Only check views that have an overview file
         if (!view.overviewPath) continue;
 
-        const overviewPath = join(projectRoot, view.overviewPath);
-        const overviewLastModified = getLastModified(overviewPath);
+        const overviewLastModified = getLastModified(view.overviewPath);
 
         if (!overviewLastModified) continue;
 
@@ -75,8 +62,7 @@ export const staleReferences: LibraryRule = {
               Array.isArray(referenceGroup.files)
             ) {
               for (const file of referenceGroup.files) {
-                const filePath = join(projectRoot, file);
-                const fileModified = getLastModified(filePath);
+                const fileModified = getLastModified(file);
                 if (
                   fileModified &&
                   (!newestFileModification ||
@@ -151,11 +137,9 @@ export const staleReferences: LibraryRule = {
         )
           continue;
 
-        const notePath = join(
-          getNotesDir(projectRoot),
-          `${noteWithPath.note.id}.json`,
-        );
-        const noteLastModified = getLastModified(notePath);
+        // Get the note's modification time from the path
+        const noteRelativePath = noteWithPath.path;
+        const noteLastModified = getLastModified(noteRelativePath);
 
         if (!noteLastModified) continue;
 
@@ -163,8 +147,7 @@ export const staleReferences: LibraryRule = {
         let newestFile: string | null = null;
 
         for (const anchorPath of noteWithPath.note.anchors) {
-          const filePath = join(projectRoot, anchorPath);
-          const fileModified = getLastModified(filePath);
+          const fileModified = getLastModified(anchorPath);
           if (
             fileModified &&
             (!newestFileModification || fileModified > newestFileModification)

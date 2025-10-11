@@ -83,11 +83,25 @@ export interface FilenameConventionOptions {
   autoFix?: boolean;
 }
 
+export interface CodebaseCoverageOptions {
+  /** Minimum coverage percentage required (0-100) */
+  minimumCoverage?: number;
+  /** File patterns to include in coverage calculation */
+  includePatterns?: string[];
+  /** File patterns to exclude from coverage calculation */
+  excludePatterns?: string[];
+  /** Whether to report per-directory coverage */
+  reportByDirectory?: boolean;
+  /** Minimum coverage per directory (if reportByDirectory is true) */
+  minimumDirectoryCoverage?: number;
+}
+
 export type RuleOptions =
   | DocumentOrganizationOptions
   | StaleReferencesOptions
   | RequireReferencesOptions
   | FilenameConventionOptions
+  | CodebaseCoverageOptions
   | Record<string, string | number | boolean | string[]>;
 
 export interface ContextRule {

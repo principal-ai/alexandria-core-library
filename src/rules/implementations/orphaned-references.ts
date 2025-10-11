@@ -3,8 +3,6 @@ import {
   LibraryRuleViolation,
   LibraryRuleContext,
 } from "../types";
-import { existsSync } from "fs";
-import { join } from "path";
 import { findFileReferenceLineNumber } from "../utils/line-numbers";
 import { getViewsDir, getNotesDir } from "../../utils/alexandria-paths";
 
@@ -21,7 +19,12 @@ export const orphanedReferences: LibraryRule = {
 
   async check(context: LibraryRuleContext): Promise<LibraryRuleViolation[]> {
     const violations: LibraryRuleViolation[] = [];
-    const { views, notes, projectRoot } = context;
+    const { views, notes, projectRoot, fsAdapter } = context;
+
+    // Require fsAdapter for this rule
+    if (!fsAdapter) {
+      throw new Error("orphaned-references rule requires fsAdapter in context");
+    }
 
     // Check files referenced in view reference groups
     for (const view of views) {
@@ -34,9 +37,9 @@ export const orphanedReferences: LibraryRule = {
             Array.isArray(referenceGroup.files)
           ) {
             for (const file of referenceGroup.files) {
-              const fullPath = join(projectRoot, file);
-              if (!existsSync(fullPath)) {
-                const viewFilePath = join(
+              const fullPath = fsAdapter.join(projectRoot, file);
+              if (!fsAdapter.exists(fullPath)) {
+                const viewFilePath = fsAdapter.join(
                   getViewsDir(projectRoot),
                   `${view.name}.json`,
                 );
@@ -63,9 +66,9 @@ export const orphanedReferences: LibraryRule = {
     // Check files referenced in notes
     for (const noteWithPath of notes) {
       for (const anchorPath of noteWithPath.note.anchors) {
-        const fullPath = join(projectRoot, anchorPath);
-        if (!existsSync(fullPath)) {
-          const noteFilePath = join(
+        const fullPath = fsAdapter.join(projectRoot, anchorPath);
+        if (!fsAdapter.exists(fullPath)) {
+          const noteFilePath = fsAdapter.join(
             getNotesDir(projectRoot),
             `${noteWithPath.note.id}.json`,
           );

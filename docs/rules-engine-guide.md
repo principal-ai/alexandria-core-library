@@ -87,6 +87,7 @@ The library includes several built-in rules:
 - **filename-convention** - Enforces consistent file naming
 - **require-references** - Ensures docs have CodebaseView associations
 - **stale-references** - Detects outdated file references
+- **codebase-coverage** - Ensures minimum percentage of code files are documented
 
 See [Available Rules](available-rules.md) for detailed documentation of each rule.
 

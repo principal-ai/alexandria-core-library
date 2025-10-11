@@ -5,6 +5,7 @@ import {
 } from "../pure-core/types";
 import { AlexandriaConfig, RuleOptions } from "../config/types";
 import { GlobAdapter } from "../pure-core/abstractions/glob";
+import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
 
 export type LibraryRuleSeverity = "error" | "warning" | "info";
 export type LibraryRuleCategory =
@@ -48,6 +49,7 @@ export interface LibraryRuleContext {
   gitHistory?: Map<string, GitFileHistory>;
   config?: AlexandriaConfig;
   globAdapter?: GlobAdapter;
+  fsAdapter?: FileSystemAdapter;
 }
 
 export interface LibraryRule {

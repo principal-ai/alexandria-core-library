@@ -2,6 +2,18 @@
 
 This document captures ideas for improving the Alexandria core library and documentation system.
 
+## Recently Completed (2025-10-10)
+
+### Rules Engine Enhancements
+
+✅ **Implemented**: Adapter pattern for filesystem operations and new codebase-coverage rule
+
+- Added `FileSystemAdapter` to `LibraryRuleContext` for testable filesystem operations
+- Refactored `orphaned-references` and `stale-references` to use adapter pattern
+- Implemented `codebase-coverage` rule for tracking documentation coverage
+- Comprehensive test suites added for all rule implementations (73.50% overall coverage)
+- Improved maintainability and testability of rules engine
+
 ## Recently Completed (2025-09-29)
 
 ### Task System Lazy Initialization
@@ -91,21 +103,27 @@ docs/
   }
   ```
 
-**New Rule: `minimum-coverage`**
+**New Rule: `codebase-coverage`** ✅ **Implemented** (2025-10-10)
 
-- Validates that important directories have associated documentation
-- Ensures core source directories are covered by CodebaseViews
-- Configurable coverage requirements per directory type
+- ✅ Validates that important directories have associated documentation
+- ✅ Ensures core source directories are covered by CodebaseViews
+- ✅ Configurable coverage requirements per directory type
+- ✅ Supports include/exclude patterns for file filtering
+- ✅ Optional per-directory coverage reporting
 - Configuration example:
   ```json
   {
-    "minimum-coverage": {
+    "codebase-coverage": {
       "enabled": true,
-      "requiredDirectories": ["src/core/", "src/api/", "src/utils/"],
-      "coverageThreshold": 80
+      "minimumCoverage": 70,
+      "includePatterns": ["**/*.ts"],
+      "excludePatterns": ["**/*.test.ts"],
+      "reportByDirectory": true,
+      "minimumDirectoryCoverage": 60
     }
   }
   ```
+- See [available-rules.md](./available-rules.md#codebase-coverage) for full documentation
 
 ## Path Management Enhancements
 

@@ -17,3 +17,4 @@ export { LibraryRulesEngine } from "./engine";
 export { requireReferences } from "./implementations/require-references";
 export { orphanedReferences } from "./implementations/orphaned-references";
 export { staleReferences } from "./implementations/stale-references";
+export { codebaseCoverage } from "./implementations/codebase-coverage";

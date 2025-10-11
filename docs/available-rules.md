@@ -330,6 +330,132 @@ View "user-api" (user-api.json)
 
 ---
 
+## codebase-coverage
+
+### Purpose
+
+Ensures a minimum percentage of code files are covered by CodebaseView associations. This helps track documentation completeness across the codebase and ensures AI agents have sufficient context for understanding the project.
+
+### How It Works
+
+1. Scans all files in the repository based on include/exclude patterns
+2. Checks which files are referenced in CodebaseView reference groups
+3. Calculates overall coverage percentage
+4. Optionally checks coverage on a per-directory basis
+5. Reports violations when coverage falls below configured thresholds
+
+### Default Severity
+
+`warning`
+
+### Configuration Options
+
+| Option                     | Type       | Default                                                          | Description                                                  |
+| -------------------------- | ---------- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
+| `minimumCoverage`          | `number`   | `70`                                                             | Minimum coverage percentage required (0-100)                 |
+| `includePatterns`          | `string[]` | `['**/*.ts', '**/*.js', '**/*.tsx', '**/*.jsx']`                 | File patterns to include in coverage calculation             |
+| `excludePatterns`          | `string[]` | `['**/*.test.ts', '**/*.spec.ts', '**/node_modules/**']`         | File patterns to exclude from coverage calculation           |
+| `reportByDirectory`        | `boolean`  | `false`                                                          | Whether to report per-directory coverage                     |
+| `minimumDirectoryCoverage` | `number`   | `50`                                                             | Minimum coverage per directory (only used if reportByDirectory is true) |
+
+### Coverage Calculation
+
+A file is considered "covered" when it appears in the `files` array of any reference group within a CodebaseView. The coverage percentage is calculated as:
+
+```
+coverage = (covered files / total matching files) × 100
+```
+
+### Example Violations
+
+```
+Project-wide coverage
+    ⚠ Codebase coverage is 45% (120/267 files), below minimum of 70%
+      rule: codebase-coverage
+      impact: Low coverage means AI agents lack context for understanding large portions of the codebase
+
+src/components
+    ⚠ Directory "src/components" coverage is 30% (15/50 files), below minimum of 50%
+      rule: codebase-coverage
+      impact: Low coverage means AI agents lack context for understanding large portions of the codebase
+```
+
+### How to Fix
+
+1. Create CodebaseViews for undocumented areas using `alexandria add-doc`
+2. Add file references to existing views' reference groups
+3. Adjust `minimumCoverage` threshold if current expectations are unrealistic
+4. Use `includePatterns` to focus on specific file types
+5. Enable `reportByDirectory` to identify which areas need the most attention
+
+### Configuration Examples
+
+Basic coverage requirement:
+
+```json
+{
+  "id": "codebase-coverage",
+  "severity": "warning",
+  "enabled": true,
+  "options": {
+    "minimumCoverage": 70,
+    "includePatterns": ["src/**/*.ts", "lib/**/*.ts"],
+    "excludePatterns": ["**/*.test.ts", "**/*.spec.ts"]
+  }
+}
+```
+
+Per-directory coverage tracking:
+
+```json
+{
+  "id": "codebase-coverage",
+  "severity": "error",
+  "enabled": true,
+  "options": {
+    "minimumCoverage": 80,
+    "reportByDirectory": true,
+    "minimumDirectoryCoverage": 60,
+    "includePatterns": ["**/*.ts", "**/*.tsx"],
+    "excludePatterns": ["**/*.test.ts", "**/node_modules/**", "dist/**"]
+  }
+}
+```
+
+Focus on TypeScript files only:
+
+```json
+{
+  "id": "codebase-coverage",
+  "severity": "info",
+  "enabled": true,
+  "options": {
+    "minimumCoverage": 50,
+    "includePatterns": ["**/*.ts"],
+    "excludePatterns": ["**/*.d.ts", "**/*.test.ts"]
+  }
+}
+```
+
+### Best Practices
+
+- Start with a lower `minimumCoverage` and gradually increase it
+- Use `reportByDirectory` to identify which parts of your codebase need documentation
+- Exclude test files and generated code from coverage calculations
+- Set realistic thresholds based on your project's size and complexity
+- Track coverage over time to ensure documentation keeps pace with code growth
+
+### Impact
+
+Without sufficient codebase coverage:
+
+- AI agents lack context for large portions of the codebase
+- New team members struggle to understand undocumented areas
+- Code relationships and dependencies remain unclear
+- Knowledge is siloed rather than shared through documentation
+
+---
+
 ## Rule Priority and Execution
 
 ### Execution Order

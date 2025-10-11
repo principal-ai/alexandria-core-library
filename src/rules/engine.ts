@@ -11,6 +11,7 @@ import { orphanedReferences } from "./implementations/orphaned-references";
 import { staleReferences } from "./implementations/stale-references";
 import { documentOrganization } from "./implementations/document-organization";
 import { filenameConvention } from "./implementations/filename-convention";
+import { codebaseCoverage } from "./implementations/codebase-coverage";
 import { AlexandriaConfig, RuleSeverity } from "../config/types";
 import { ConfigLoader } from "../config/loader";
 import { ValidatedRepositoryPath } from "../pure-core/types";
@@ -36,6 +37,7 @@ export class LibraryRulesEngine {
     this.registerRule(staleReferences);
     this.registerRule(documentOrganization);
     this.registerRule(filenameConvention);
+    this.registerRule(codebaseCoverage);
   }
 
   registerRule(rule: LibraryRule): void {
@@ -152,6 +154,7 @@ export class LibraryRulesEngine {
       markdownFiles,
       config: config || undefined,
       globAdapter: this.globAdapter,
+      fsAdapter: this.fsAdapter,
     };
 
     // Build a map of rule configuration overrides from config

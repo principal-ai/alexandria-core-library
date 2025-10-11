@@ -2,6 +2,38 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "definitions": {
+    "CodebaseCoverageOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "excludePatterns": {
+          "description": "File patterns to exclude from coverage calculation",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "includePatterns": {
+          "description": "File patterns to include in coverage calculation",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "minimumCoverage": {
+          "description": "Minimum coverage percentage required (0-100)",
+          "type": "number"
+        },
+        "minimumDirectoryCoverage": {
+          "description": "Minimum coverage per directory (if reportByDirectory is true)",
+          "type": "number"
+        },
+        "reportByDirectory": {
+          "description": "Whether to report per-directory coverage",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
     "ContextRule": {
       "additionalProperties": false,
       "properties": {
@@ -48,6 +80,9 @@
             },
             {
               "$ref": "#/definitions/FilenameConventionOptions"
+            },
+            {
+              "$ref": "#/definitions/CodebaseCoverageOptions"
             },
             {
               "$ref": "#/definitions/Record<string,string|number|boolean|string[]>"
