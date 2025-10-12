@@ -80,7 +80,8 @@ export const staleReferences: LibraryRule = {
           newestFileModification &&
           newestFileModification > overviewLastModified
         ) {
-          const timeDifferenceMs = newestFileModification.getTime() - overviewLastModified.getTime();
+          const timeDifferenceMs =
+            newestFileModification.getTime() - overviewLastModified.getTime();
 
           // Ignore differences less than 5 seconds (formatting/build tool delays)
           if (timeDifferenceMs < 5000) {
@@ -161,7 +162,8 @@ export const staleReferences: LibraryRule = {
           newestFileModification &&
           newestFileModification > noteLastModified
         ) {
-          const timeDifferenceMs = newestFileModification.getTime() - noteLastModified.getTime();
+          const timeDifferenceMs =
+            newestFileModification.getTime() - noteLastModified.getTime();
 
           // Ignore differences less than 5 seconds (formatting/build tool delays)
           if (timeDifferenceMs < 5000) {

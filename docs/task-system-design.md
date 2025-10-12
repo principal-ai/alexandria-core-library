@@ -9,12 +9,15 @@ The Task System extends Memory Palace to handle work requests from MCP servers a
 ## Core Concepts
 
 ### 1. Task
+
 A **Task** represents a unit of work requested for a specific directory/repository. Tasks are stored as markdown files and tracked through their lifecycle from request to completion.
 
 ### 2. Principal ADE (Autonomous Development Entity)
+
 The system that processes tasks. When available, tasks are sent to the ADE for execution. The system tracks whether the ADE has acknowledged and is working on tasks.
 
 ### 3. Task Association
+
 Links between tasks and the Memory Palace elements (notes, rooms, views) that may be created or modified as part of task completion.
 
 ## Architecture
@@ -116,6 +119,7 @@ repository/
 ### Task Deletion
 
 Tasks can be permanently deleted using `deleteTask(taskId)`:
+
 - Removes task file from `.palace-work/tasks/active/`
 - Removes task from all indices (byStatus, bySender, byADE)
 - Does NOT delete completed tasks from history (preserves `.palace-work/tasks/history/*.hist.md`)
@@ -142,15 +146,19 @@ ade_id: principal-ade-1
 # Task: Implement User Authentication API
 
 ## Request
+
 Add JWT-based authentication to the REST API with the following requirements:
+
 - Support login/logout endpoints
 - Implement token refresh mechanism
 - Add middleware for protected routes
 
 ## Context
+
 This is part of the security enhancement initiative. The existing API has no authentication.
 
 ## Acceptance Criteria
+
 - [ ] Login endpoint validates credentials and returns JWT
 - [ ] Logout endpoint invalidates tokens
 - [ ] Refresh endpoint extends token validity
@@ -158,6 +166,7 @@ This is part of the security enhancement initiative. The existing API has no aut
 - [ ] Tests cover all auth flows
 
 ## Metadata
+
 requester: john.doe
 source: mcp_server
 estimated_minutes: 240
@@ -179,14 +188,17 @@ tags: [feature, api, authentication]
 # Task: Implement User Authentication API
 
 ## Git References
+
 - Commit: abc123def456
 - PR: #42
 - Branch: feature/auth-api
 
 ## Summary
+
 JWT authentication implemented with login/logout endpoints and token refresh.
 
 ## Details
+
 See PR #42 for full implementation details and discussion.
 ```
 
@@ -202,50 +214,54 @@ class TaskManager {
   // These methods are used by the system receiving and processing tasks
 
   // Receive a new task from a sender (MCP server, CLI, etc)
-  receiveTask(input: CreateTaskInput, senderId: string): Task
+  receiveTask(input: CreateTaskInput, senderId: string): Task;
 
   // ADE acknowledges receipt of task
-  acknowledgeTask(taskId: string, adeId: string): Task
+  acknowledgeTask(taskId: string, adeId: string): Task;
 
   // ADE starts working on task
-  startTask(taskId: string, adeId: string): Task
+  startTask(taskId: string, adeId: string): Task;
 
   // ADE completes task with git reference
-  completeTask(taskId: string, commitSha: string, prNumber?: number): Task
+  completeTask(taskId: string, commitSha: string, prNumber?: number): Task;
 
   // ADE reports task failure
-  failTask(taskId: string, reason: string): Task
+  failTask(taskId: string, reason: string): Task;
 
   // Delete a task permanently (does not move to history)
-  deleteTask(taskId: string): boolean
+  deleteTask(taskId: string): boolean;
 
   // Query tasks (for ADE to find work)
-  queryPendingTasks(adeId?: string): Task[]
-  queryTasks(options: TaskQueryOptions): Task[]
+  queryPendingTasks(adeId?: string): Task[];
+  queryTasks(options: TaskQueryOptions): Task[];
 
   // Associate task with created/modified Memory Palace elements
-  addTaskAssociation(taskId: string, elementType: string, elementId: string): void
+  addTaskAssociation(
+    taskId: string,
+    elementType: string,
+    elementId: string,
+  ): void;
 
   // ====== SENDER SIDE (MCP Server) ======
   // These methods are used by systems sending tasks
 
   // Check if task was received
-  getTaskStatus(taskId: string): TaskStatus | null
+  getTaskStatus(taskId: string): TaskStatus | null;
 
   // Get updates on sent tasks
-  getTaskUpdates(senderId: string, since?: number): Task[]
+  getTaskUpdates(senderId: string, since?: number): Task[];
 
   // ====== MAINTENANCE (System) ======
   // These methods are used for system maintenance
 
   // Archive old tasks based on policy
-  archiveTasks(policy: TaskArchivalPolicy): number
+  archiveTasks(policy: TaskArchivalPolicy): number;
 
   // Get task statistics
-  getStatistics(): TaskStatistics
+  getStatistics(): TaskStatistics;
 
   // Clean up orphaned tasks
-  cleanupOrphanedTasks(): number
+  cleanupOrphanedTasks(): number;
 }
 ```
 
@@ -258,39 +274,39 @@ class MemoryPalace {
   // ====== RECEIVER SIDE (Used by ADE) ======
 
   // Receive and queue a task
-  receiveTask(input: CreateTaskInput, senderId: string): Task
+  receiveTask(input: CreateTaskInput, senderId: string): Task;
 
   // Get next task to work on
-  getNextPendingTask(): Task | null
+  getNextPendingTask(): Task | null;
 
   // Update task progress
-  acknowledgeTask(taskId: string): Task
-  startWorkingOnTask(taskId: string): Task
-  completeTask(taskId: string, gitRefs: GitReferences): Task
-  failTask(taskId: string, error: string): Task
+  acknowledgeTask(taskId: string): Task;
+  startWorkingOnTask(taskId: string): Task;
+  completeTask(taskId: string, gitRefs: GitReferences): Task;
+  failTask(taskId: string, error: string): Task;
 
   // Delete a task permanently (removes from filesystem and index)
-  deleteTask(taskId: string): boolean
+  deleteTask(taskId: string): boolean;
 
   // ====== QUERY SIDE (Used by both) ======
 
   // Query tasks
-  getTask(taskId: string): Task | null
-  getTasks(options?: TaskQueryOptions): Task[]
-  getActiveTasks(): Task[]  // All non-archived tasks
+  getTask(taskId: string): Task | null;
+  getTasks(options?: TaskQueryOptions): Task[];
+  getActiveTasks(): Task[]; // All non-archived tasks
 
   // Task associations
-  getTasksForNote(noteId: string): Task[]
-  getTasksForRoom(roomId: string): Task[]
-  getTasksForView(viewId: string): Task[]
+  getTasksForNote(noteId: string): Task[];
+  getTasksForRoom(roomId: string): Task[];
+  getTasksForView(viewId: string): Task[];
 
   // ====== MAINTENANCE (System) ======
 
   // Archive completed/failed tasks
-  archiveTasks(): number
+  archiveTasks(): number;
 
   // Clean up old archives
-  cleanupArchives(olderThanDays: number): number
+  cleanupArchives(olderThanDays: number): number;
 }
 
 interface GitReferences {
@@ -331,16 +347,19 @@ git commit -m "[Task: abc-123] Implement auth API" \
 ## Archival Strategy
 
 ### Active Tasks
+
 - Stored in `.palace-work/tasks/active/`
 - Retained while status is pending, sent, acknowledged, or in_progress
 - Indexed for fast queries
 
 ### History
+
 - Moved to `.palace-work/tasks/history/` when completed or failed
 - Includes git references (commit SHA, PR number)
 - Retained for configurable period (default: 90 days)
 
 ### Archive
+
 - Long-term storage in `.palace-work/tasks/archive/{year}/`
 - Compressed and organized by year
 - Searchable through index
@@ -350,49 +369,53 @@ git commit -m "[Task: abc-123] Implement auth API" \
 
 ```typescript
 interface TaskArchivalPolicy {
-  archiveCompletedAfterDays: 90,    // Move to history
-  archiveFailedAfterDays: 30,       // Move failed tasks sooner
-  moveToArchiveAfterDays: 365,      // Move to long-term archive
-  deleteArchivedAfterDays: 0,       // Never delete (0 = keep forever)
-  maxActiveTasks: 1000,             // Limit active tasks
-  preserveTags: ["important", "milestone"]  // Never archive these
+  archiveCompletedAfterDays: 90; // Move to history
+  archiveFailedAfterDays: 30; // Move failed tasks sooner
+  moveToArchiveAfterDays: 365; // Move to long-term archive
+  deleteArchivedAfterDays: 0; // Never delete (0 = keep forever)
+  maxActiveTasks: 1000; // Limit active tasks
+  preserveTags: ["important", "milestone"]; // Never archive these
 }
 ```
 
 ## Query Capabilities
 
 ### By Status
+
 ```typescript
 // Get all pending tasks
-palace.getTasks({ status: "pending" })
+palace.getTasks({ status: "pending" });
 
 // Get active tasks (multiple statuses)
-palace.getTasks({ status: ["pending", "sent", "in_progress"] })
+palace.getTasks({ status: ["pending", "sent", "in_progress"] });
 ```
 
 ### By Time
+
 ```typescript
 // Tasks from last week
 palace.getTasks({
-  createdAfter: Date.now() - 7 * 24 * 60 * 60 * 1000
-})
+  createdAfter: Date.now() - 7 * 24 * 60 * 60 * 1000,
+});
 ```
 
 ### By Directory
+
 ```typescript
 // Tasks for specific directory
 palace.getTasks({
-  directoryPath: "src/api" as ValidatedRelativePath
-})
+  directoryPath: "src/api" as ValidatedRelativePath,
+});
 ```
 
 ### By Association
+
 ```typescript
 // Tasks that modified a specific note
-palace.getTasksForNote(noteId)
+palace.getTasksForNote(noteId);
 
 // Tasks in a palace room
-palace.getTasksForRoom(roomId)
+palace.getTasksForRoom(roomId);
 ```
 
 ## MCP Server Integration
@@ -401,16 +424,19 @@ palace.getTasksForRoom(roomId)
 
 ```typescript
 // MCP Server sends a task to Memory Palace
-const task = await palaceClient.receiveTask({
-  content: "Implement new feature as described...",
-  directoryPath: "/project/src",
-  priority: "high",
-  tags: ["feature", "urgent"],
-  metadata: {
-    requesterId: "user-123",
-    source: "mcp_server"
-  }
-}, "mcp-server-1");
+const task = await palaceClient.receiveTask(
+  {
+    content: "Implement new feature as described...",
+    directoryPath: "/project/src",
+    priority: "high",
+    tags: ["feature", "urgent"],
+    metadata: {
+      requesterId: "user-123",
+      source: "mcp_server",
+    },
+  },
+  "mcp-server-1",
+);
 
 console.log(`Task ${task.id} sent to Palace, status: ${task.status}`);
 
@@ -442,7 +468,7 @@ if (pendingTasks) {
     commitSha: "abc123",
     pullRequest: 42,
     branch: "feature/auth-api",
-    filesModified: ["src/auth.ts", "tests/auth.test.ts"]
+    filesModified: ["src/auth.ts", "tests/auth.test.ts"],
   });
 }
 ```
@@ -495,6 +521,7 @@ class TaskStore {
 ```
 
 This deferred initialization approach:
+
 - Reduces startup time by avoiding unnecessary filesystem operations
 - Only creates directories when actual task operations require them
 - Maintains clean repository state until tasks are actually used
@@ -507,10 +534,10 @@ While stored separately, tasks maintain references to Memory Palace elements:
 ```typescript
 interface TaskAssociations {
   // References to .alexandria/ elements
-  notes: string[];      // Note IDs created/modified
-  views: string[];      // View IDs created/modified
-  rooms: string[];      // Room IDs created/modified
-  drawings: string[];   // Drawing IDs created/modified
+  notes: string[]; // Note IDs created/modified
+  views: string[]; // View IDs created/modified
+  rooms: string[]; // Room IDs created/modified
+  drawings: string[]; // Drawing IDs created/modified
 
   // Stored in .palace-work/tasks/index.json
   // Allows querying tasks by their Memory Palace associations
@@ -520,30 +547,35 @@ interface TaskAssociations {
 ## Implementation Phases
 
 ### Phase 1: Core Task System
+
 - [ ] Task types and interfaces
 - [ ] TaskStore for persistence
 - [ ] Basic CRUD operations
 - [ ] Status management
 
 ### Phase 2: ADE Integration
+
 - [ ] Send/acknowledge protocol
 - [ ] Status synchronization
 - [ ] Error handling
 - [ ] Retry logic
 
 ### Phase 3: Git Integration
+
 - [ ] Commit message generation
 - [ ] Commit SHA tracking
 - [ ] PR association
 - [ ] File change tracking
 
 ### Phase 4: Archival & History
+
 - [ ] Move completed tasks to history
 - [ ] Archive old tasks
 - [ ] Cleanup policies
 - [ ] Search capabilities
 
 ### Phase 5: Advanced Features
+
 - [ ] Task dependencies
 - [ ] Subtasks
 - [ ] Task templates
@@ -578,3 +610,7 @@ interface TaskAssociations {
 4. **Compression**: Compress archived tasks
 5. **Batch Operations**: Efficient bulk updates
 6. **Lazy Loading**: Load task details on demand
+
+---
+
+_Last reviewed: 2025-10-12 - Verified task system design reflects current implementation including deleteTask functionality._

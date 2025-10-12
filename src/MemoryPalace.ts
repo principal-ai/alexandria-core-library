@@ -21,7 +21,7 @@ import {
   CreateTaskInput,
   TaskQueryOptions,
   GitReferences,
-  TaskStatus
+  TaskStatus,
 } from "./pure-core/types/task";
 import {
   generateFullGuidanceContent,
@@ -573,7 +573,7 @@ export class MemoryPalace {
   saveRoomDrawing(
     roomId: string,
     drawingName: string,
-    drawingData: ExcalidrawData
+    drawingData: ExcalidrawData,
   ): string | null {
     // Ensure the drawing has a name in appState
     if (!drawingData.appState) {
@@ -600,10 +600,7 @@ export class MemoryPalace {
   /**
    * Load a specific drawing for a room
    */
-  loadRoomDrawing(
-    roomId: string,
-    drawingId: string
-  ): ExcalidrawData | null {
+  loadRoomDrawing(roomId: string, drawingId: string): ExcalidrawData | null {
     // Verify the drawing belongs to the room
     const room = this.palaceRoomStore.getRoom(roomId);
     if (!room || !room.drawingIds.includes(drawingId)) {
@@ -700,7 +697,7 @@ export class MemoryPalace {
   copyDrawingsToRoom(
     sourceRoomId: string,
     targetRoomId: string,
-    drawingIds: string[]
+    drawingIds: string[],
   ): boolean {
     const sourceRoom = this.palaceRoomStore.getRoom(sourceRoomId);
     const targetRoom = this.palaceRoomStore.getRoom(targetRoomId);
@@ -719,7 +716,10 @@ export class MemoryPalace {
       }
 
       // Add to target room (drawing file remains the same)
-      const success = this.palaceRoomStore.addDrawingToRoom(targetRoomId, drawingId);
+      const success = this.palaceRoomStore.addDrawingToRoom(
+        targetRoomId,
+        drawingId,
+      );
       if (!success) {
         allSuccessful = false;
       }
@@ -734,7 +734,7 @@ export class MemoryPalace {
   moveDrawingsToRoom(
     sourceRoomId: string,
     targetRoomId: string,
-    drawingIds: string[]
+    drawingIds: string[],
   ): boolean {
     const sourceRoom = this.palaceRoomStore.getRoom(sourceRoomId);
     const targetRoom = this.palaceRoomStore.getRoom(targetRoomId);
@@ -753,11 +753,17 @@ export class MemoryPalace {
       }
 
       // Add to target room
-      const addSuccess = this.palaceRoomStore.addDrawingToRoom(targetRoomId, drawingId);
+      const addSuccess = this.palaceRoomStore.addDrawingToRoom(
+        targetRoomId,
+        drawingId,
+      );
 
       if (addSuccess) {
         // Remove from source room
-        const removeSuccess = this.palaceRoomStore.removeDrawingFromRoom(sourceRoomId, drawingId);
+        const removeSuccess = this.palaceRoomStore.removeDrawingFromRoom(
+          sourceRoomId,
+          drawingId,
+        );
         if (!removeSuccess) {
           allSuccessful = false;
         }
@@ -832,7 +838,6 @@ export class MemoryPalace {
   deletePalaceRoom(roomId: string): boolean {
     return this.palaceRoomStore.deleteRoom(roomId);
   }
-
 
   /**
    * Add a drawing to a palace room
@@ -1050,7 +1055,7 @@ export class MemoryPalace {
    */
   getActiveTasks(): Task[] {
     return this.taskStore.queryTasks({
-      status: ["pending", "acknowledged", "in_progress"]
+      status: ["pending", "acknowledged", "in_progress"],
     });
   }
 
@@ -1122,7 +1127,7 @@ export class MemoryPalace {
       senderId,
       updatedAfter: since,
       sortBy: "updatedAt",
-      sortDirection: "asc"
+      sortDirection: "asc",
     });
   }
 }

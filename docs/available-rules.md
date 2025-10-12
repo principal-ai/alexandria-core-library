@@ -350,13 +350,13 @@ Ensures a minimum percentage of code files are covered by CodebaseView associati
 
 ### Configuration Options
 
-| Option                     | Type       | Default                                                          | Description                                                  |
-| -------------------------- | ---------- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
-| `minimumCoverage`          | `number`   | `70`                                                             | Minimum coverage percentage required (0-100)                 |
-| `includePatterns`          | `string[]` | `['**/*.ts', '**/*.js', '**/*.tsx', '**/*.jsx']`                 | File patterns to include in coverage calculation             |
-| `excludePatterns`          | `string[]` | `['**/*.test.ts', '**/*.spec.ts', '**/node_modules/**']`         | File patterns to exclude from coverage calculation           |
-| `reportByDirectory`        | `boolean`  | `false`                                                          | Whether to report per-directory coverage                     |
-| `minimumDirectoryCoverage` | `number`   | `50`                                                             | Minimum coverage per directory (only used if reportByDirectory is true) |
+| Option                     | Type       | Default                                                  | Description                                                             |
+| -------------------------- | ---------- | -------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `minimumCoverage`          | `number`   | `70`                                                     | Minimum coverage percentage required (0-100)                            |
+| `includePatterns`          | `string[]` | `['**/*.ts', '**/*.js', '**/*.tsx', '**/*.jsx']`         | File patterns to include in coverage calculation                        |
+| `excludePatterns`          | `string[]` | `['**/*.test.ts', '**/*.spec.ts', '**/node_modules/**']` | File patterns to exclude from coverage calculation                      |
+| `reportByDirectory`        | `boolean`  | `false`                                                  | Whether to report per-directory coverage                                |
+| `minimumDirectoryCoverage` | `number`   | `50`                                                     | Minimum coverage per directory (only used if reportByDirectory is true) |
 
 ### Coverage Calculation
 

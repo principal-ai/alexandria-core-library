@@ -9,11 +9,11 @@ import { ValidatedRepositoryPath, ValidatedRelativePath } from "./index";
 // ============================================================================
 
 export type TaskStatus =
-  | "pending"           // Task received but not yet acknowledged by ADE
-  | "acknowledged"     // ADE confirmed receipt
-  | "in_progress"      // ADE is actively working on the task
-  | "completed"        // Task completed successfully with git references
-  | "failed";          // Task failed or was rejected
+  | "pending" // Task received but not yet acknowledged by ADE
+  | "acknowledged" // ADE confirmed receipt
+  | "in_progress" // ADE is actively working on the task
+  | "completed" // Task completed successfully with git references
+  | "failed"; // Task failed or was rejected
 
 export type TaskPriority = "low" | "normal" | "high" | "critical";
 

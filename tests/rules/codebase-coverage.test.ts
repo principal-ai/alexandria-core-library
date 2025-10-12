@@ -2,7 +2,10 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { codebaseCoverage } from "../../src/rules/implementations/codebase-coverage";
 import { LibraryRuleContext, FileInfo } from "../../src/rules/types";
 import { CodebaseCoverageOptions } from "../../src/config/types";
-import { ValidatedRepositoryPath, CodebaseView } from "../../src/pure-core/types";
+import {
+  ValidatedRepositoryPath,
+  CodebaseView,
+} from "../../src/pure-core/types";
 import {
   GlobAdapter,
   GlobOptions,
@@ -20,10 +23,7 @@ describe("codebase-coverage rule", () => {
     isMarkdown: false,
   });
 
-  const createView = (
-    id: string,
-    files: string[] = [],
-  ): CodebaseView => ({
+  const createView = (id: string, files: string[] = []): CodebaseView => ({
     id,
     title: `View ${id}`,
     description: "Test view",
@@ -289,7 +289,9 @@ describe("codebase-coverage rule", () => {
       const violations = await codebaseCoverage.check(mockContext);
       expect(violations.length).toBeGreaterThan(0);
 
-      const dirViolations = violations.filter((v) => v.message.includes("Directory"));
+      const dirViolations = violations.filter((v) =>
+        v.message.includes("Directory"),
+      );
       expect(dirViolations.length).toBeGreaterThan(0);
       expect(dirViolations.some((v) => v.message.includes('"src"'))).toBe(true);
       expect(dirViolations.some((v) => v.message.includes('"lib"'))).toBe(true);

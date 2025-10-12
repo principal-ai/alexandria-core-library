@@ -18,5 +18,5 @@ export const idGenerator = {
   generate(prefix?: string): string {
     const id = generateId();
     return prefix ? `${prefix}-${id}` : id;
-  }
+  },
 };

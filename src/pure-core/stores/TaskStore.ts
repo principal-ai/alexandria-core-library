@@ -15,7 +15,7 @@ import {
   TaskIndexEntry,
   TaskEvent,
   GitReferences,
-  CompletedTask
+  CompletedTask,
 } from "../types/task";
 import { ValidatedRepositoryPath, ValidatedRelativePath } from "../types";
 import { idGenerator } from "../utils/idGenerator";
@@ -48,7 +48,7 @@ export class TaskStore {
 
   constructor(
     fileSystemAdapter: FileSystemAdapter,
-    repositoryRoot: ValidatedRepositoryPath
+    repositoryRoot: ValidatedRepositoryPath,
   ) {
     this.fs = fileSystemAdapter;
     this.repositoryRoot = repositoryRoot;
@@ -116,10 +116,10 @@ export class TaskStore {
         acknowledged: [],
         in_progress: [],
         completed: [],
-        failed: []
+        failed: [],
       },
       bySender: {},
-      byADE: {}
+      byADE: {},
     };
   }
 
@@ -159,7 +159,7 @@ export class TaskStore {
       senderId,
       receivedAt: now,
       updatedAt: now,
-      metadata: input.metadata
+      metadata: input.metadata,
     };
 
     // Save task file
@@ -173,7 +173,7 @@ export class TaskStore {
       taskId: task.id,
       timestamp: now,
       eventType: "received",
-      actor: senderId
+      actor: senderId,
     });
 
     return task;
@@ -203,7 +203,7 @@ export class TaskStore {
       taskId,
       timestamp: task.updatedAt,
       eventType: "acknowledged",
-      actor: adeId
+      actor: adeId,
     });
 
     return task;
@@ -214,7 +214,10 @@ export class TaskStore {
    */
   startTask(taskId: string, adeId: string): Task | null {
     const task = this.getTask(taskId);
-    if (!task || (task.status !== "acknowledged" && task.status !== "pending")) {
+    if (
+      !task ||
+      (task.status !== "acknowledged" && task.status !== "pending")
+    ) {
       return null;
     }
 
@@ -229,7 +232,7 @@ export class TaskStore {
       taskId,
       timestamp: task.updatedAt,
       eventType: "started",
-      actor: adeId
+      actor: adeId,
     });
 
     return task;
@@ -256,10 +259,10 @@ export class TaskStore {
       completedAt: task.completedAt,
       tags: task.tags,
       gitRefs: gitRefs,
-      summary: `Completed in PR #${gitRefs.pullRequest || 'N/A'}`,
-      detailsUrl: gitRefs.pullRequest ?
-        `${this.repositoryRoot}/pull/${gitRefs.pullRequest}` :
-        undefined
+      summary: `Completed in PR #${gitRefs.pullRequest || "N/A"}`,
+      detailsUrl: gitRefs.pullRequest
+        ? `${this.repositoryRoot}/pull/${gitRefs.pullRequest}`
+        : undefined,
     };
 
     // Save lightweight completed task
@@ -278,7 +281,7 @@ export class TaskStore {
       timestamp: task.updatedAt,
       eventType: "completed",
       actor: task.adeId || "system",
-      details: { gitRefs }
+      details: { gitRefs },
     });
 
     return task;
@@ -309,7 +312,7 @@ export class TaskStore {
       timestamp: task.updatedAt,
       eventType: "failed",
       actor: task.adeId || "system",
-      details: { reason }
+      details: { reason },
     });
 
     return task;
@@ -373,7 +376,7 @@ export class TaskStore {
       taskId,
       timestamp: Date.now(),
       eventType: "deleted",
-      actor: "system"
+      actor: "system",
     });
 
     return true;
@@ -448,59 +451,63 @@ export class TaskStore {
     if (options) {
       // Filter by status
       if (options.status) {
-        const statuses = Array.isArray(options.status) ? options.status : [options.status];
-        taskIds = taskIds.filter(id =>
-          statuses.includes(this.index!.tasks[id].status)
+        const statuses = Array.isArray(options.status)
+          ? options.status
+          : [options.status];
+        taskIds = taskIds.filter((id) =>
+          statuses.includes(this.index!.tasks[id].status),
         );
       }
 
       // Filter by priority
       if (options.priority) {
-        const priorities = Array.isArray(options.priority) ? options.priority : [options.priority];
-        taskIds = taskIds.filter(id =>
-          priorities.includes(this.index!.tasks[id].priority)
+        const priorities = Array.isArray(options.priority)
+          ? options.priority
+          : [options.priority];
+        taskIds = taskIds.filter((id) =>
+          priorities.includes(this.index!.tasks[id].priority),
         );
       }
 
       // Filter by sender
       if (options.senderId) {
-        taskIds = taskIds.filter(id =>
-          this.index!.tasks[id].senderId === options.senderId
+        taskIds = taskIds.filter(
+          (id) => this.index!.tasks[id].senderId === options.senderId,
         );
       }
 
       // Filter by ADE
       if (options.adeId) {
-        taskIds = taskIds.filter(id =>
-          this.index!.tasks[id].adeId === options.adeId
+        taskIds = taskIds.filter(
+          (id) => this.index!.tasks[id].adeId === options.adeId,
         );
       }
 
       // Filter by directory
       if (options.directoryPath) {
-        taskIds = taskIds.filter(id =>
-          this.index!.tasks[id].directoryPath === options.directoryPath
+        taskIds = taskIds.filter(
+          (id) => this.index!.tasks[id].directoryPath === options.directoryPath,
         );
       }
 
       // Filter by tags
       if (options.tags && options.tags.length > 0) {
-        taskIds = taskIds.filter(id => {
+        taskIds = taskIds.filter((id) => {
           const taskTags = this.index!.tasks[id].tags;
-          return options.tags!.some(tag => taskTags.includes(tag));
+          return options.tags!.some((tag) => taskTags.includes(tag));
         });
       }
 
       // Filter by time
       if (options.receivedAfter) {
-        taskIds = taskIds.filter(id =>
-          this.index!.tasks[id].receivedAt > options.receivedAfter!
+        taskIds = taskIds.filter(
+          (id) => this.index!.tasks[id].receivedAt > options.receivedAfter!,
         );
       }
 
       if (options.receivedBefore) {
-        taskIds = taskIds.filter(id =>
-          this.index!.tasks[id].receivedAt < options.receivedBefore!
+        taskIds = taskIds.filter(
+          (id) => this.index!.tasks[id].receivedAt < options.receivedBefore!,
         );
       }
 
@@ -514,18 +521,24 @@ export class TaskStore {
             low: 0,
             normal: 1,
             high: 2,
-            critical: 3
+            critical: 3,
           };
 
           taskIds.sort((a, b) => {
-            const aPriority = priorityValues[this.index!.tasks[a].priority] || 0;
-            const bPriority = priorityValues[this.index!.tasks[b].priority] || 0;
+            const aPriority =
+              priorityValues[this.index!.tasks[a].priority] || 0;
+            const bPriority =
+              priorityValues[this.index!.tasks[b].priority] || 0;
             return (aPriority - bPriority) * direction;
           });
         } else {
           taskIds.sort((a, b) => {
-            const aVal = this.index!.tasks[a][options.sortBy!] as string | number;
-            const bVal = this.index!.tasks[b][options.sortBy!] as string | number;
+            const aVal = this.index!.tasks[a][options.sortBy!] as
+              | string
+              | number;
+            const bVal = this.index!.tasks[b][options.sortBy!] as
+              | string
+              | number;
             return aVal > bVal ? direction : -direction;
           });
         }
@@ -542,7 +555,7 @@ export class TaskStore {
 
     // Load tasks
     return taskIds
-      .map(id => this.getTask(id))
+      .map((id) => this.getTask(id))
       .filter((task): task is Task => task !== null);
   }
 
@@ -596,7 +609,7 @@ export class TaskStore {
       updatedAt: entry.updatedAt,
       completedAt: completed.completedAt,
       gitRefs: completed.gitRefs,
-      adeId: entry.adeId
+      adeId: entry.adeId,
     };
   }
 
@@ -607,7 +620,10 @@ export class TaskStore {
   /**
    * Simple frontmatter stringify function
    */
-  private stringifyFrontmatter(content: string, data: Record<string, unknown>): string {
+  private stringifyFrontmatter(
+    content: string,
+    data: Record<string, unknown>,
+  ): string {
     const yaml = this.objectToYaml(data);
     return `---\n${yaml}---\n\n${content}`;
   }
@@ -615,7 +631,10 @@ export class TaskStore {
   /**
    * Simple frontmatter parse function
    */
-  private parseFrontmatter(content: string): { data: Record<string, unknown>; content: string } {
+  private parseFrontmatter(content: string): {
+    data: Record<string, unknown>;
+    content: string;
+  } {
     const match = content.match(/^---\n([\s\S]+?)\n---\n([\s\S]*)$/);
     if (!match) {
       return { data: {}, content };
@@ -629,23 +648,26 @@ export class TaskStore {
    * Convert object to simple YAML format
    */
   private objectToYaml(obj: Record<string, unknown>): string {
-    let yaml = '';
+    let yaml = "";
     for (const [key, value] of Object.entries(obj)) {
       if (value === undefined || value === null) continue;
 
       if (Array.isArray(value)) {
         if (value.length === 0) continue;
         yaml += `${key}:\n`;
-        value.forEach(item => {
-          if (typeof item === 'object') {
+        value.forEach((item) => {
+          if (typeof item === "object") {
             yaml += `  - ${JSON.stringify(item)}\n`;
           } else {
             yaml += `  - ${item}\n`;
           }
         });
-      } else if (typeof value === 'object') {
+      } else if (typeof value === "object") {
         yaml += `${key}: ${JSON.stringify(value)}\n`;
-      } else if (typeof value === 'string' && (value.includes(':') || value.includes('\n'))) {
+      } else if (
+        typeof value === "string" &&
+        (value.includes(":") || value.includes("\n"))
+      ) {
         yaml += `${key}: "${value.replace(/"/g, '\\"')}"\n`;
       } else {
         yaml += `${key}: ${value}\n`;
@@ -659,14 +681,14 @@ export class TaskStore {
    */
   private yamlToObject(yaml: string): Record<string, unknown> {
     const obj: Record<string, unknown> = {};
-    const lines = yaml.split('\n');
+    const lines = yaml.split("\n");
     let currentKey: string | null = null;
     let currentArray: unknown[] | null = null;
 
     for (const line of lines) {
       if (!line.trim()) continue;
 
-      if (line.startsWith('  - ')) {
+      if (line.startsWith("  - ")) {
         // Array item
         if (currentKey && currentArray) {
           const value = line.substring(4).trim();
@@ -676,9 +698,9 @@ export class TaskStore {
             currentArray.push(value);
           }
         }
-      } else if (line.includes(':')) {
+      } else if (line.includes(":")) {
         // Key-value pair
-        const colonIndex = line.indexOf(':');
+        const colonIndex = line.indexOf(":");
         const key = line.substring(0, colonIndex).trim();
         const value = line.substring(colonIndex + 1).trim();
 
@@ -722,14 +744,18 @@ export class TaskStore {
       anchors: task.anchors,
       senderId: task.senderId,
       adeId: task.adeId,
-      acknowledgedAt: task.acknowledgedAt ? new Date(task.acknowledgedAt).toISOString() : undefined,
-      startedAt: task.startedAt ? new Date(task.startedAt).toISOString() : undefined,
-      metadata: task.metadata
+      acknowledgedAt: task.acknowledgedAt
+        ? new Date(task.acknowledgedAt).toISOString()
+        : undefined,
+      startedAt: task.startedAt
+        ? new Date(task.startedAt).toISOString()
+        : undefined,
+      metadata: task.metadata,
     };
 
     // Remove undefined values
     const cleanFrontmatter = Object.fromEntries(
-      Object.entries(frontmatter).filter(([_, v]) => v !== undefined)
+      Object.entries(frontmatter).filter(([_, v]) => v !== undefined),
     );
 
     const content = `# ${task.title}\n\n${task.content}`;
@@ -746,12 +772,12 @@ export class TaskStore {
       commitSha: task.gitRefs.commitSha,
       pullRequest: task.gitRefs.pullRequest,
       branch: task.gitRefs.branch,
-      filesModified: task.gitRefs.filesModified
+      filesModified: task.gitRefs.filesModified,
     };
 
     // Remove undefined values
     const cleanFrontmatter = Object.fromEntries(
-      Object.entries(frontmatter).filter(([_, v]) => v !== undefined)
+      Object.entries(frontmatter).filter(([_, v]) => v !== undefined),
     );
 
     let content = `# ${task.title}\n\n`;
@@ -763,7 +789,7 @@ export class TaskStore {
     if (task.gitRefs.branch) {
       content += `- Branch: ${task.gitRefs.branch}\n`;
     }
-    content += `\n## Summary\n${task.summary || 'Task completed successfully.'}\n`;
+    content += `\n## Summary\n${task.summary || "Task completed successfully."}\n`;
     if (task.detailsUrl) {
       content += `\n## Details\nSee ${task.detailsUrl} for full implementation details.\n`;
     }
@@ -784,7 +810,7 @@ export class TaskStore {
       return {
         id: String(data.id),
         title,
-        content: body.replace(/^#\s+.+\n\n/, ''), // Remove title line
+        content: body.replace(/^#\s+.+\n\n/, ""), // Remove title line
         status: data.status as TaskStatus,
         priority: data.priority as TaskPriority,
         directoryPath: String(data.directory) as ValidatedRelativePath,
@@ -795,9 +821,13 @@ export class TaskStore {
         adeId: data.adeId ? String(data.adeId) : undefined,
         receivedAt: new Date(String(data.receivedAt)).getTime(),
         updatedAt: new Date(String(data.updatedAt)).getTime(),
-        acknowledgedAt: data.acknowledgedAt ? new Date(String(data.acknowledgedAt)).getTime() : undefined,
-        startedAt: data.startedAt ? new Date(String(data.startedAt)).getTime() : undefined,
-        metadata: data.metadata as TaskMetadata | undefined
+        acknowledgedAt: data.acknowledgedAt
+          ? new Date(String(data.acknowledgedAt)).getTime()
+          : undefined,
+        startedAt: data.startedAt
+          ? new Date(String(data.startedAt)).getTime()
+          : undefined,
+        metadata: data.metadata as TaskMetadata | undefined,
       };
     } catch (error) {
       console.error("Failed to deserialize task:", error);
@@ -819,8 +849,10 @@ export class TaskStore {
           commitSha: String(data.commitSha),
           pullRequest: data.pullRequest ? Number(data.pullRequest) : undefined,
           branch: data.branch ? String(data.branch) : undefined,
-          filesModified: Array.isArray(data.filesModified) ? data.filesModified.map(String) : undefined
-        }
+          filesModified: Array.isArray(data.filesModified)
+            ? data.filesModified.map(String)
+            : undefined,
+        },
       };
     } catch (error) {
       console.error("Failed to deserialize completed task:", error);
@@ -846,9 +878,10 @@ export class TaskStore {
       receivedAt: task.receivedAt,
       updatedAt: task.updatedAt,
       completedAt: task.completedAt,
-      filePath: task.status === "completed" ?
-        `${HISTORY_DIR}/${task.id}.hist.md` :
-        `${ACTIVE_DIR}/${task.id}.task.md`
+      filePath:
+        task.status === "completed"
+          ? `${HISTORY_DIR}/${task.id}.hist.md`
+          : `${ACTIVE_DIR}/${task.id}.task.md`,
     };
 
     // Remove from old status lists
@@ -916,13 +949,13 @@ export class TaskStore {
   // ============================================================================
 
   private extractTitle(content: string): string {
-    const lines = content.split('\n');
+    const lines = content.split("\n");
     const firstLine = lines[0].trim();
 
-    if (firstLine.startsWith('#')) {
-      return firstLine.replace(/^#+\s*/, '');
+    if (firstLine.startsWith("#")) {
+      return firstLine.replace(/^#+\s*/, "");
     }
 
-    return firstLine.substring(0, 50) + (firstLine.length > 50 ? '...' : '');
+    return firstLine.substring(0, 50) + (firstLine.length > 50 ? "..." : "");
   }
 }

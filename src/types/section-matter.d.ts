@@ -2,7 +2,7 @@
  * Type declarations for section-matter package
  */
 
-declare module 'section-matter' {
+declare module "section-matter" {
   export interface Section {
     key: string;
     content: string;
@@ -19,6 +19,9 @@ declare module 'section-matter' {
     parse?: (section: Section, sections: Section[]) => void;
   }
 
-  function sectionMatter(input: string, options?: SectionMatterOptions): ParsedContent;
+  function sectionMatter(
+    input: string,
+    options?: SectionMatterOptions,
+  ): ParsedContent;
   export = sectionMatter;
 }

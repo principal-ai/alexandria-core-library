@@ -21,7 +21,6 @@ describe("PalaceRoomStore", () => {
       const palaceRoomsPath = fs.join(alexandriaPath, "palace-rooms");
       expect(fs.exists(palaceRoomsPath)).toBe(false);
     });
-
   });
 
   describe("createRoom", () => {

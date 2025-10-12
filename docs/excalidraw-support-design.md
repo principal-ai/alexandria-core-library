@@ -188,24 +188,26 @@ class ExcalidrawHandler {
 ### 3. Storage Organization
 
 ### 4. Room-Aware Content Updates
+
 .alexandria/
 .### 4. Room-Aware Content Updates
 
 The MemoryPalace API now includes `updateRoomDrawingContent`, allowing callers to replace an Excalidraw payload in place while preserving existing room associations. This method delegates to `DrawingStore.updateExcalidrawDrawingContent`, which merges `appState` names safely so Excalidraw metadata stays consistent when tools apply incremental updates.
 
-├── notes/              # Text notes (existing)
-├── attachments/        # Binary and large files (new)
-│   ├── excalidraw/    # Excalidraw drawings
-│   │   ├── 2024/
-│   │   │   ├── 01/
-│   │   │   │   ├── drawing-uuid1.excalidraw
-│   │   │   │   └── drawing-uuid2.excalidraw
-│   ├── images/        # Exported images
-│   │   ├── 2024/
-│   │   │   ├── 01/
-│   │   │   │   ├── export-uuid1.png
-│   │   │   │   └── export-uuid2.svg
-```
+├── notes/ # Text notes (existing)
+├── attachments/ # Binary and large files (new)
+│ ├── excalidraw/ # Excalidraw drawings
+│ │ ├── 2024/
+│ │ │ ├── 01/
+│ │ │ │ ├── drawing-uuid1.excalidraw
+│ │ │ │ └── drawing-uuid2.excalidraw
+│ ├── images/ # Exported images
+│ │ ├── 2024/
+│ │ │ ├── 01/
+│ │ │ │ ├── export-uuid1.png
+│ │ │ │ └── export-uuid2.svg
+
+````
 
 ### 4. Metadata Integration
 
@@ -233,7 +235,7 @@ interface StoredAnchoredNote {
     attachments?: AttachmentMetadata[];
   };
 }
-```
+````
 
 ## Implementation Summary (Completed)
 
@@ -383,4 +385,4 @@ Adding Excalidraw support requires extending the FileSystemAdapter to handle bin
 
 ---
 
-_Last reviewed: 2025-09-27 - Added coverage for room drawing content updates alongside existing room-aware API details._
+_Last reviewed: 2025-10-12 - Verified drawing store enhancements maintain compatibility with room-aware content updates._

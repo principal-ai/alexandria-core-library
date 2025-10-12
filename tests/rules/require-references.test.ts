@@ -2,7 +2,10 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { requireReferences } from "../../src/rules/implementations/require-references";
 import { LibraryRuleContext, FileInfo } from "../../src/rules/types";
 import { RequireReferencesOptions } from "../../src/config/types";
-import { ValidatedRepositoryPath, CodebaseView } from "../../src/pure-core/types";
+import {
+  ValidatedRepositoryPath,
+  CodebaseView,
+} from "../../src/pure-core/types";
 import {
   GlobAdapter,
   GlobOptions,

@@ -100,8 +100,7 @@ export const codebaseCoverage: LibraryRule = {
       const dirCoverage = new Map<string, { total: number; covered: number }>();
 
       for (const file of relevantFiles) {
-        const dir =
-          file.relativePath.split("/").slice(0, -1).join("/") || ".";
+        const dir = file.relativePath.split("/").slice(0, -1).join("/") || ".";
         const stats = dirCoverage.get(dir) || { total: 0, covered: 0 };
         stats.total++;
         if (coveredFiles.has(file.relativePath)) {

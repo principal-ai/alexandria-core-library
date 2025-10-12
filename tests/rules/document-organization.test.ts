@@ -86,7 +86,9 @@ describe("document-organization rule", () => {
       const violations = await documentOrganization.check(mockContext);
       expect(violations).toHaveLength(2);
       expect(violations[0].file).toBe("api-guide.md");
-      expect(violations[0].message).toContain("should be in a documentation folder");
+      expect(violations[0].message).toContain(
+        "should be in a documentation folder",
+      );
       expect(violations[1].file).toBe("tutorial.md");
     });
 
@@ -226,9 +228,7 @@ describe("document-organization rule", () => {
     });
 
     it("should report violation when immediate parent is not a doc folder and checkNested is false", async () => {
-      mockContext.markdownFiles = [
-        createFileInfo("docs/components/guide.md"),
-      ];
+      mockContext.markdownFiles = [createFileInfo("docs/components/guide.md")];
 
       mockContext.config = {
         version: "1.0.0",

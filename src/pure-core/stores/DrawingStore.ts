@@ -285,7 +285,7 @@ export class DrawingStore {
       const stats = {
         created: new Date().toISOString(),
         modified: new Date().toISOString(),
-        size: content.length
+        size: content.length,
       };
 
       return {
@@ -296,7 +296,7 @@ export class DrawingStore {
         roomIds: [], // Will be populated by room store
         created: stats.created,
         modified: stats.modified,
-        fileSize: stats.size
+        fileSize: stats.size,
       };
     } catch (error) {
       console.error(`Error getting metadata for drawing ${drawingId}:`, error);
@@ -373,10 +373,7 @@ export class DrawingStore {
       this.fs.writeFile(filePath, JSON.stringify(contentToSave, null, 2));
       return true;
     } catch (error) {
-      console.error(
-        `Error updating drawing content for ${drawingId}:`,
-        error,
-      );
+      console.error(`Error updating drawing content for ${drawingId}:`, error);
       return false;
     }
   }

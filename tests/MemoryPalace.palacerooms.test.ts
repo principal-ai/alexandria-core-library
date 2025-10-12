@@ -30,7 +30,6 @@ describe("MemoryPalace - PalaceRoom Integration", () => {
       expect(rooms[0].name).toBe("First Room");
     });
 
-
     test("should create a new palace room", () => {
       const result = palace.createPalaceRoom({
         name: "Feature Room",
@@ -78,7 +77,6 @@ describe("MemoryPalace - PalaceRoom Integration", () => {
       const room = palace.getPalaceRoom(roomId);
       expect(room).toBeNull();
     });
-
   });
 
   describe("content association with palace rooms", () => {

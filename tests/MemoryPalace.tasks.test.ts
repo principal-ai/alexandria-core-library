@@ -32,8 +32,8 @@ describe("MemoryPalace Task Management", () => {
         metadata: {
           requesterName: "Product Team",
           source: "mcp_server",
-          estimatedMinutes: 240
-        }
+          estimatedMinutes: 240,
+        },
       };
 
       const task = palace.receiveTask(input, "mcp-server-prod");
@@ -52,7 +52,7 @@ describe("MemoryPalace Task Management", () => {
         content: "Quick bug fix for login",
         directoryPath: "" as ValidatedRelativePath,
         priority: "critical",
-        tags: ["bug", "urgent"]
+        tags: ["bug", "urgent"],
       };
 
       const task = palace.receiveTask(input, "cli-user-123");
@@ -68,11 +68,14 @@ describe("MemoryPalace Task Management", () => {
     let taskId: string;
 
     beforeEach(() => {
-      const task = palace.receiveTask({
-        content: "Implement authentication",
-        directoryPath: "src/auth" as ValidatedRelativePath,
-        priority: "high"
-      }, "mcp-server");
+      const task = palace.receiveTask(
+        {
+          content: "Implement authentication",
+          directoryPath: "src/auth" as ValidatedRelativePath,
+          priority: "high",
+        },
+        "mcp-server",
+      );
       taskId = task.id;
     });
 
@@ -120,8 +123,8 @@ describe("MemoryPalace Task Management", () => {
         filesModified: [
           "src/auth/login.ts",
           "src/auth/logout.ts",
-          "tests/auth.test.ts"
-        ]
+          "tests/auth.test.ts",
+        ],
       };
 
       const completed = palace.completeTask(taskId, gitRefs);
@@ -146,20 +149,29 @@ describe("MemoryPalace Task Management", () => {
   describe("Sender Queries", () => {
     beforeEach(() => {
       // Create tasks from different senders
-      palace.receiveTask({
-        content: "Task 1",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender-A");
+      palace.receiveTask(
+        {
+          content: "Task 1",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender-A",
+      );
 
-      palace.receiveTask({
-        content: "Task 2",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender-B");
+      palace.receiveTask(
+        {
+          content: "Task 2",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender-B",
+      );
 
-      palace.receiveTask({
-        content: "Task 3",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender-A");
+      palace.receiveTask(
+        {
+          content: "Task 3",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender-A",
+      );
     });
 
     it("should get tasks by sender", () => {
@@ -171,10 +183,13 @@ describe("MemoryPalace Task Management", () => {
     });
 
     it("should check task status", () => {
-      const task = palace.receiveTask({
-        content: "Status check task",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "test-sender");
+      const task = palace.receiveTask(
+        {
+          content: "Status check task",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "test-sender",
+      );
 
       let status = palace.getTaskStatus(task.id);
       expect(status).toBe("pending");
@@ -186,25 +201,31 @@ describe("MemoryPalace Task Management", () => {
     });
 
     it("should get task updates since timestamp", () => {
-      palace.receiveTask({
-        content: "Old task",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "polling-sender");
+      palace.receiveTask(
+        {
+          content: "Old task",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "polling-sender",
+      );
 
       // Small delay to ensure different timestamps
       const after = Date.now() + 1;
 
-      const task2 = palace.receiveTask({
-        content: "New task",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "polling-sender");
+      const task2 = palace.receiveTask(
+        {
+          content: "New task",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "polling-sender",
+      );
 
       palace.startWorkingOnTask(task2.id, "ade-1");
 
       const updates = palace.getTaskUpdates("polling-sender", after);
 
       expect(updates.length).toBeGreaterThanOrEqual(1);
-      expect(updates.some(t => t.id === task2.id)).toBe(true);
+      expect(updates.some((t) => t.id === task2.id)).toBe(true);
     });
   });
 
@@ -216,29 +237,29 @@ describe("MemoryPalace Task Management", () => {
           content: "Frontend feature",
           directoryPath: "src/frontend" as ValidatedRelativePath,
           priority: "high" as const,
-          tags: ["feature", "ui"]
+          tags: ["feature", "ui"],
         },
         {
           content: "Backend API",
           directoryPath: "src/backend" as ValidatedRelativePath,
           priority: "normal" as const,
-          tags: ["feature", "api"]
+          tags: ["feature", "api"],
         },
         {
           content: "Documentation update",
           directoryPath: "docs" as ValidatedRelativePath,
           priority: "low" as const,
-          tags: ["documentation"]
+          tags: ["documentation"],
         },
         {
           content: "Security fix",
           directoryPath: "src/backend" as ValidatedRelativePath,
           priority: "critical" as const,
-          tags: ["security", "bug"]
-        }
+          tags: ["security", "bug"],
+        },
       ];
 
-      tasks.forEach(input => {
+      tasks.forEach((input) => {
         palace.receiveTask(input, "test-sender");
       });
     });
@@ -253,7 +274,7 @@ describe("MemoryPalace Task Management", () => {
 
       // Complete one task
       palace.completeTask(allTasks[0].id, {
-        commitSha: "abc123"
+        commitSha: "abc123",
       });
 
       // Fail another
@@ -261,18 +282,25 @@ describe("MemoryPalace Task Management", () => {
 
       const activeTasks = palace.getActiveTasks();
       expect(activeTasks.length).toBe(2);
-      expect(activeTasks.every(t =>
-        t.status === "pending" ||
-        t.status === "acknowledged" ||
-        t.status === "in_progress"
-      )).toBe(true);
+      expect(
+        activeTasks.every(
+          (t) =>
+            t.status === "pending" ||
+            t.status === "acknowledged" ||
+            t.status === "in_progress",
+        ),
+      ).toBe(true);
     });
 
     it("should get tasks for directory", () => {
-      const backendTasks = palace.getTasksForDirectory("src/backend" as ValidatedRelativePath);
+      const backendTasks = palace.getTasksForDirectory(
+        "src/backend" as ValidatedRelativePath,
+      );
       expect(backendTasks.length).toBe(2);
 
-      const docTasks = palace.getTasksForDirectory("docs" as ValidatedRelativePath);
+      const docTasks = palace.getTasksForDirectory(
+        "docs" as ValidatedRelativePath,
+      );
       expect(docTasks.length).toBe(1);
     });
 
@@ -280,7 +308,7 @@ describe("MemoryPalace Task Management", () => {
       const urgentBackendTasks = palace.getTasks({
         directoryPath: "src/backend" as ValidatedRelativePath,
         priority: ["high", "critical"],
-        tags: ["security"]
+        tags: ["security"],
       });
 
       expect(urgentBackendTasks.length).toBe(1);
@@ -292,16 +320,19 @@ describe("MemoryPalace Task Management", () => {
   describe("File Structure", () => {
     it("should keep tasks separate from memory palace", () => {
       // Create a task
-      palace.receiveTask({
-        content: "Test separation",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "test");
+      palace.receiveTask(
+        {
+          content: "Test separation",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "test",
+      );
 
       // Create a note (memory palace)
       palace.saveNote({
         note: "This is a memory note",
         tags: ["knowledge"],
-        anchors: ["src/index.ts"]
+        anchors: ["src/index.ts"],
       });
 
       // Tasks should be in .palace-work
@@ -321,12 +352,15 @@ describe("MemoryPalace Task Management", () => {
 
   describe("Integration with Git", () => {
     it("should store git references for completed tasks", () => {
-      const task = palace.receiveTask({
-        content: "# Feature: User Profile\n\nImplement user profile page",
-        directoryPath: "src/pages" as ValidatedRelativePath,
-        priority: "normal",
-        tags: ["feature", "user-profile"]
-      }, "pm-tool");
+      const task = palace.receiveTask(
+        {
+          content: "# Feature: User Profile\n\nImplement user profile page",
+          directoryPath: "src/pages" as ValidatedRelativePath,
+          priority: "normal",
+          tags: ["feature", "user-profile"],
+        },
+        "pm-tool",
+      );
 
       palace.startWorkingOnTask(task.id, "ade-1");
 
@@ -338,8 +372,8 @@ describe("MemoryPalace Task Management", () => {
           "src/pages/UserProfile.tsx",
           "src/pages/UserProfile.css",
           "src/api/userApi.ts",
-          "tests/UserProfile.test.tsx"
-        ]
+          "tests/UserProfile.test.tsx",
+        ],
       };
 
       const completed = palace.completeTask(task.id, gitRefs);
@@ -350,19 +384,25 @@ describe("MemoryPalace Task Management", () => {
       // Retrieve and verify it still has git refs
       const retrieved = palace.getTask(task.id);
       expect(retrieved).toBeDefined();
-      expect(retrieved!.gitRefs?.commitSha).toBe("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+      expect(retrieved!.gitRefs?.commitSha).toBe(
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      );
       expect(retrieved!.gitRefs?.pullRequest).toBe(123);
     });
 
     it("should create lightweight history entry", () => {
-      const task = palace.receiveTask({
-        content: "This is a very long task description with lots and lots of implementation details that we don't want to keep in the history file because we only want git references",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender");
+      const task = palace.receiveTask(
+        {
+          content:
+            "This is a very long task description with lots and lots of implementation details that we don't want to keep in the history file because we only want git references",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender",
+      );
 
       palace.completeTask(task.id, {
         commitSha: "short123",
-        pullRequest: 99
+        pullRequest: 99,
       });
 
       const historyPath = `/test-repo/.palace-work/tasks/history/${task.id}.hist.md`;
@@ -373,7 +413,9 @@ describe("MemoryPalace Task Management", () => {
       expect(historyContent).toContain("#99");
 
       // Should NOT have the full original content
-      expect(historyContent).not.toContain("lots and lots of implementation details");
+      expect(historyContent).not.toContain(
+        "lots and lots of implementation details",
+      );
     });
   });
 
@@ -387,10 +429,13 @@ describe("MemoryPalace Task Management", () => {
     });
 
     it("should handle invalid state transitions", () => {
-      const task = palace.receiveTask({
-        content: "Test task",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender");
+      const task = palace.receiveTask(
+        {
+          content: "Test task",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender",
+      );
 
       // Try to complete without starting
       palace.completeTask(task.id, { commitSha: "abc" });
@@ -401,10 +446,13 @@ describe("MemoryPalace Task Management", () => {
     });
 
     it("should not acknowledge already completed task", () => {
-      const task = palace.receiveTask({
-        content: "Test task",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender");
+      const task = palace.receiveTask(
+        {
+          content: "Test task",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender",
+      );
 
       palace.completeTask(task.id, { commitSha: "xyz" });
 
@@ -415,12 +463,15 @@ describe("MemoryPalace Task Management", () => {
 
   describe("Task Deletion", () => {
     it("should delete a task permanently", () => {
-      const task = palace.receiveTask({
-        content: "Task to delete",
-        directoryPath: "" as ValidatedRelativePath,
-        priority: "normal",
-        tags: ["test"]
-      }, "test-sender");
+      const task = palace.receiveTask(
+        {
+          content: "Task to delete",
+          directoryPath: "" as ValidatedRelativePath,
+          priority: "normal",
+          tags: ["test"],
+        },
+        "test-sender",
+      );
 
       const result = palace.deleteTask(task.id);
 
@@ -436,20 +487,29 @@ describe("MemoryPalace Task Management", () => {
     });
 
     it("should delete task regardless of status", () => {
-      const task1 = palace.receiveTask({
-        content: "Pending task",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender");
+      const task1 = palace.receiveTask(
+        {
+          content: "Pending task",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender",
+      );
 
-      const task2 = palace.receiveTask({
-        content: "In progress task",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender");
+      const task2 = palace.receiveTask(
+        {
+          content: "In progress task",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender",
+      );
 
-      const task3 = palace.receiveTask({
-        content: "Failed task",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender");
+      const task3 = palace.receiveTask(
+        {
+          content: "Failed task",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender",
+      );
 
       palace.startWorkingOnTask(task2.id, "ade-1");
       palace.failTask(task3.id, "Test failure");
@@ -472,10 +532,13 @@ describe("MemoryPalace Task Management", () => {
     });
 
     it("should be idempotent", () => {
-      const task = palace.receiveTask({
-        content: "Task to delete twice",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender");
+      const task = palace.receiveTask(
+        {
+          content: "Task to delete twice",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender",
+      );
 
       const firstDelete = palace.deleteTask(task.id);
       expect(firstDelete).toBe(true);
@@ -485,15 +548,21 @@ describe("MemoryPalace Task Management", () => {
     });
 
     it("should remove deleted task from active tasks", () => {
-      const task1 = palace.receiveTask({
-        content: "Task 1",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender");
+      const task1 = palace.receiveTask(
+        {
+          content: "Task 1",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender",
+      );
 
-      const task2 = palace.receiveTask({
-        content: "Task 2",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender");
+      const task2 = palace.receiveTask(
+        {
+          content: "Task 2",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender",
+      );
 
       let activeTasks = palace.getActiveTasks();
       expect(activeTasks.length).toBe(2);
@@ -506,20 +575,29 @@ describe("MemoryPalace Task Management", () => {
     });
 
     it("should remove deleted task from sender queries", () => {
-      const task1 = palace.receiveTask({
-        content: "Task 1",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender-A");
+      const task1 = palace.receiveTask(
+        {
+          content: "Task 1",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender-A",
+      );
 
-      const task2 = palace.receiveTask({
-        content: "Task 2",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender-A");
+      const task2 = palace.receiveTask(
+        {
+          content: "Task 2",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender-A",
+      );
 
-      palace.receiveTask({
-        content: "Task 3",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender-B");
+      palace.receiveTask(
+        {
+          content: "Task 3",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender-B",
+      );
 
       let senderATasks = palace.getTasksBySender("sender-A");
       expect(senderATasks.length).toBe(2);
@@ -532,14 +610,17 @@ describe("MemoryPalace Task Management", () => {
     });
 
     it("should handle deleting completed tasks (removes from index but preserves history)", () => {
-      const task = palace.receiveTask({
-        content: "Completed task",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender");
+      const task = palace.receiveTask(
+        {
+          content: "Completed task",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender",
+      );
 
       palace.completeTask(task.id, {
         commitSha: "abc123",
-        pullRequest: 42
+        pullRequest: 42,
       });
 
       // History file should exist

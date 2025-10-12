@@ -282,12 +282,12 @@ describe("orphaned-references rule", () => {
 
       const violations = await orphanedReferences.check(mockContext);
       expect(violations).toHaveLength(2);
-      expect(violations.some((v) => v.message.includes("view-missing.ts"))).toBe(
-        true,
-      );
-      expect(violations.some((v) => v.message.includes("note-missing.ts"))).toBe(
-        true,
-      );
+      expect(
+        violations.some((v) => v.message.includes("view-missing.ts")),
+      ).toBe(true);
+      expect(
+        violations.some((v) => v.message.includes("note-missing.ts")),
+      ).toBe(true);
     });
   });
 
@@ -325,9 +325,9 @@ describe("orphaned-references rule", () => {
         fsAdapter: undefined,
       };
 
-      await expect(
-        orphanedReferences.check(contextWithoutFs),
-      ).rejects.toThrow("orphaned-references rule requires fsAdapter in context");
+      await expect(orphanedReferences.check(contextWithoutFs)).rejects.toThrow(
+        "orphaned-references rule requires fsAdapter in context",
+      );
     });
   });
 });

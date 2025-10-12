@@ -22,7 +22,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
     it("should save a drawing and associate it with a room", () => {
       // Create a room first
       const roomResult = memory.createPalaceRoom({
-        name: "Architecture Diagrams"
+        name: "Architecture Diagrams",
       });
       expect(roomResult.success).toBe(true);
       const roomId = roomResult.palaceRoom!.id;
@@ -39,7 +39,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
       const drawingId = memory.saveRoomDrawing(
         roomId,
         "System Architecture",
-        drawingData
+        drawingData,
       );
 
       expect(drawingId).toBeTruthy();
@@ -53,7 +53,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
 
     it("should extract name from appState.name", () => {
       const roomResult = memory.createPalaceRoom({
-        name: "Test Room"
+        name: "Test Room",
       });
       const roomId = roomResult.palaceRoom!.id;
 
@@ -67,7 +67,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
       const drawingId = memory.saveRoomDrawing(
         roomId,
         "Different Name", // This should be overridden by appState.name
-        drawingData
+        drawingData,
       );
 
       const savedDrawing = memory.loadRoomDrawing(roomId, drawingId!);
@@ -83,7 +83,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
       const drawingId = memory.saveRoomDrawing(
         "non-existent-room",
         "Test",
-        drawingData
+        drawingData,
       );
 
       expect(drawingId).toBeNull();
@@ -93,7 +93,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
   describe("listRoomDrawings", () => {
     it("should list all drawings with extracted names", () => {
       const roomResult = memory.createPalaceRoom({
-        name: "Design Room"
+        name: "Design Room",
       });
       const roomId = roomResult.palaceRoom!.id;
 
@@ -114,9 +114,9 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
       const drawings = memory.listRoomDrawings(roomId);
 
       expect(drawings).toHaveLength(2);
-      expect(drawings.map(d => d.name)).toContain("UI Mockup");
-      expect(drawings.map(d => d.name)).toContain("Database Schema");
-      expect(drawings.every(d => d.roomIds.includes(roomId))).toBe(true);
+      expect(drawings.map((d) => d.name)).toContain("UI Mockup");
+      expect(drawings.map((d) => d.name)).toContain("Database Schema");
+      expect(drawings.every((d) => d.roomIds.includes(roomId))).toBe(true);
     });
 
     it("should return empty array for non-existent room", () => {
@@ -128,7 +128,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
   describe("updateDrawingName", () => {
     it("should update drawing name without loading full content", () => {
       const roomResult = memory.createPalaceRoom({
-        name: "Test Room"
+        name: "Test Room",
       });
       const roomId = roomResult.palaceRoom!.id;
 
@@ -140,7 +140,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
       const drawingId = memory.saveRoomDrawing(
         roomId,
         "Original Name",
-        drawingData
+        drawingData,
       );
 
       // Update the name
@@ -161,7 +161,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
   describe("updateRoomDrawingContent", () => {
     it("should update drawing content when drawing belongs to the room", () => {
       const roomResult = memory.createPalaceRoom({
-        name: "Content Room"
+        name: "Content Room",
       });
       const roomId = roomResult.palaceRoom!.id;
 
@@ -173,7 +173,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
       const drawingId = memory.saveRoomDrawing(
         roomId,
         "Original Content",
-        originalData
+        originalData,
       );
 
       const updatedData: ExcalidrawData = {
@@ -186,7 +186,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
       const success = memory.updateRoomDrawingContent(
         roomId,
         drawingId!,
-        updatedData
+        updatedData,
       );
 
       expect(success).toBe(true);
@@ -199,10 +199,10 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
 
     it("should return false when drawing is not associated with the room", () => {
       const roomAResult = memory.createPalaceRoom({
-        name: "Room A"
+        name: "Room A",
       });
       const roomBResult = memory.createPalaceRoom({
-        name: "Room B"
+        name: "Room B",
       });
       const roomAId = roomAResult.palaceRoom!.id;
       const roomBId = roomBResult.palaceRoom!.id;
@@ -212,20 +212,12 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
         appState: { name: "Shared" },
       };
 
-      const drawingId = memory.saveRoomDrawing(
-        roomAId,
-        "Shared",
-        drawingData
-      );
+      const drawingId = memory.saveRoomDrawing(roomAId, "Shared", drawingData);
 
-      const success = memory.updateRoomDrawingContent(
-        roomBId,
-        drawingId!,
-        {
-          elements: [{ id: "3", type: "rectangle" }],
-          appState: { name: "Updated" },
-        }
-      );
+      const success = memory.updateRoomDrawingContent(roomBId, drawingId!, {
+        elements: [{ id: "3", type: "rectangle" }],
+        appState: { name: "Updated" },
+      });
 
       expect(success).toBe(false);
 
@@ -238,10 +230,10 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
     it("should copy drawings between rooms", () => {
       // Create two rooms
       const room1Result = memory.createPalaceRoom({
-        name: "Room 1"
+        name: "Room 1",
       });
       const room2Result = memory.createPalaceRoom({
-        name: "Room 2"
+        name: "Room 2",
       });
       const room1Id = room1Result.palaceRoom!.id;
       const room2Id = room2Result.palaceRoom!.id;
@@ -255,15 +247,11 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
       const drawingId = memory.saveRoomDrawing(
         room1Id,
         "Shared Diagram",
-        drawing
+        drawing,
       );
 
       // Copy to room 2
-      const success = memory.copyDrawingsToRoom(
-        room1Id,
-        room2Id,
-        [drawingId!]
-      );
+      const success = memory.copyDrawingsToRoom(room1Id, room2Id, [drawingId!]);
 
       expect(success).toBe(true);
 
@@ -281,10 +269,10 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
     it("should move drawings between rooms", () => {
       // Create two rooms
       const room1Result = memory.createPalaceRoom({
-        name: "Source Room"
+        name: "Source Room",
       });
       const room2Result = memory.createPalaceRoom({
-        name: "Target Room"
+        name: "Target Room",
       });
       const room1Id = room1Result.palaceRoom!.id;
       const room2Id = room2Result.palaceRoom!.id;
@@ -298,15 +286,11 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
       const drawingId = memory.saveRoomDrawing(
         room1Id,
         "Moving Diagram",
-        drawing
+        drawing,
       );
 
       // Move to room 2
-      const success = memory.moveDrawingsToRoom(
-        room1Id,
-        room2Id,
-        [drawingId!]
-      );
+      const success = memory.moveDrawingsToRoom(room1Id, room2Id, [drawingId!]);
 
       expect(success).toBe(true);
 
@@ -324,10 +308,10 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
     it("should remove drawing from all rooms and delete file", () => {
       // Create two rooms
       const room1Result = memory.createPalaceRoom({
-        name: "Room 1"
+        name: "Room 1",
       });
       const room2Result = memory.createPalaceRoom({
-        name: "Room 2"
+        name: "Room 2",
       });
       const room1Id = room1Result.palaceRoom!.id;
       const room2Id = room2Result.palaceRoom!.id;
@@ -338,11 +322,7 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
         appState: { name: "To Delete" },
       };
 
-      const drawingId = memory.saveRoomDrawing(
-        room1Id,
-        "To Delete",
-        drawing
-      );
+      const drawingId = memory.saveRoomDrawing(room1Id, "To Delete", drawing);
 
       // Copy to room 2
       memory.copyDrawingsToRoom(room1Id, room2Id, [drawingId!]);
@@ -368,10 +348,10 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
     it("should list all drawings with room associations", () => {
       // Create rooms
       const room1Result = memory.createPalaceRoom({
-        name: "Room A"
+        name: "Room A",
       });
       const room2Result = memory.createPalaceRoom({
-        name: "Room B"
+        name: "Room B",
       });
       const room1Id = room1Result.palaceRoom!.id;
       const room2Id = room2Result.palaceRoom!.id;
@@ -397,8 +377,8 @@ describe("MemoryPalace - Room-Aware Drawing Management", () => {
 
       expect(allDrawings).toHaveLength(2);
 
-      const drawing1Meta = allDrawings.find(d => d.id === id1);
-      const drawing2Meta = allDrawings.find(d => d.id === id2);
+      const drawing1Meta = allDrawings.find((d) => d.id === id1);
+      const drawing2Meta = allDrawings.find((d) => d.id === id2);
 
       // Drawing 1 should be in both rooms
       expect(drawing1Meta?.roomIds).toHaveLength(2);

@@ -286,4 +286,4 @@ For complete method signatures and advanced usage, see:
 
 ---
 
-_Last reviewed: 2025-09-27 - Document now includes room drawing content updates API._
+_Last reviewed: 2025-10-12 - Verified guide accurately reflects current MemoryPalace API including task management._

@@ -39,7 +39,6 @@ export class PalaceRoomStore {
     }
   }
 
-
   /**
    * Get the path for a palace room file
    */
@@ -162,7 +161,6 @@ export class PalaceRoomStore {
         };
       }
 
-
       const updatedRoom: PalaceRoom = {
         ...room,
         name: options.name ?? room.name,
@@ -198,7 +196,6 @@ export class PalaceRoomStore {
       if (!room) {
         return false;
       }
-
 
       // Check if room has content
       if (
@@ -367,7 +364,6 @@ export class PalaceRoomStore {
     const rooms = this.listRooms();
     return rooms.find((room) => room.noteIds.includes(noteId)) || null;
   }
-
 
   /**
    * Add a portal to a palace room

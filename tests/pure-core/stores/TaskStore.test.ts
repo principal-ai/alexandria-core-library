@@ -51,17 +51,21 @@ describe("TaskStore", () => {
     it("should set up workspace on first task", () => {
       const input: CreateTaskInput = {
         content: "Bootstrap work queue",
-        directoryPath: "" as ValidatedRelativePath
+        directoryPath: "" as ValidatedRelativePath,
       };
 
       const task = store.receiveTask(input, "initializer");
 
       expect(fs.exists("/test-repo/.palace-work")).toBe(true);
       expect(fs.exists("/test-repo/.palace-work/tasks")).toBe(true);
-      expect(fs.exists(`/test-repo/.palace-work/tasks/active/${task.id}.task.md`)).toBe(true);
+      expect(
+        fs.exists(`/test-repo/.palace-work/tasks/active/${task.id}.task.md`),
+      ).toBe(true);
       expect(fs.exists("/test-repo/.palace-work/tasks/index.json")).toBe(true);
 
-      const index = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      const index = JSON.parse(
+        fs.readFile("/test-repo/.palace-work/tasks/index.json"),
+      );
       expect(index.version).toBe("1.0.0");
       expect(index.tasks).toHaveProperty(task.id);
     });
@@ -74,7 +78,7 @@ describe("TaskStore", () => {
         directoryPath: "src/api" as ValidatedRelativePath,
         priority: "high",
         tags: ["feature", "security"],
-        anchors: ["src/api/auth.ts"]
+        anchors: ["src/api/auth.ts"],
       };
 
       const task = store.receiveTask(input, "mcp-server-1");
@@ -151,7 +155,7 @@ describe("TaskStore", () => {
       const input: CreateTaskInput = {
         content: "Test task for lifecycle",
         directoryPath: "" as ValidatedRelativePath,
-        priority: "normal"
+        priority: "normal",
       };
       task = store.receiveTask(input, "test-sender");
     });
@@ -196,7 +200,7 @@ describe("TaskStore", () => {
         commitSha: "abc123def456",
         pullRequest: 42,
         branch: "feature/auth",
-        filesModified: ["src/auth.ts", "tests/auth.test.ts"]
+        filesModified: ["src/auth.ts", "tests/auth.test.ts"],
       };
 
       const completed = store.completeTask(task.id, gitRefs);
@@ -210,7 +214,7 @@ describe("TaskStore", () => {
     it("should move completed task to history", () => {
       const gitRefs: GitReferences = {
         commitSha: "abc123",
-        pullRequest: 1
+        pullRequest: 1,
       };
 
       store.completeTask(task.id, gitRefs);
@@ -228,12 +232,17 @@ describe("TaskStore", () => {
     });
 
     it("should fail a task with reason", () => {
-      const failed = store.failTask(task.id, "Could not find required dependencies");
+      const failed = store.failTask(
+        task.id,
+        "Could not find required dependencies",
+      );
 
       expect(failed).toBeDefined();
       expect(failed!.status).toBe("failed");
       expect(failed!.failedAt).toBeDefined();
-      expect(failed!.metadata?.errorMessage).toBe("Could not find required dependencies");
+      expect(failed!.metadata?.errorMessage).toBe(
+        "Could not find required dependencies",
+      );
     });
 
     it("should record all lifecycle events", () => {
@@ -242,7 +251,7 @@ describe("TaskStore", () => {
       store.completeTask(task.id, { commitSha: "abc123" });
 
       const events = fs.readFile("/test-repo/.palace-work/tasks/events.jsonl");
-      const lines = events.trim().split('\n');
+      const lines = events.trim().split("\n");
 
       expect(lines.length).toBe(4); // received, acknowledged, started, completed
       expect(events).toContain("acknowledged");
@@ -259,29 +268,29 @@ describe("TaskStore", () => {
           content: "High priority feature",
           directoryPath: "src" as ValidatedRelativePath,
           priority: "high" as const,
-          tags: ["feature"]
+          tags: ["feature"],
         },
         {
           content: "Normal bug fix",
           directoryPath: "src" as ValidatedRelativePath,
           priority: "normal" as const,
-          tags: ["bug"]
+          tags: ["bug"],
         },
         {
           content: "Low priority docs",
           directoryPath: "docs" as ValidatedRelativePath,
           priority: "low" as const,
-          tags: ["documentation"]
+          tags: ["documentation"],
         },
         {
           content: "Critical security fix",
           directoryPath: "src" as ValidatedRelativePath,
           priority: "critical" as const,
-          tags: ["security", "bug"]
-        }
+          tags: ["security", "bug"],
+        },
       ];
 
-      tasks.forEach(input => {
+      tasks.forEach((input) => {
         store.receiveTask(input, "test-sender");
       });
     });
@@ -327,12 +336,12 @@ describe("TaskStore", () => {
 
     it("should query tasks by directory", () => {
       const srcTasks = store.queryTasks({
-        directoryPath: "src" as ValidatedRelativePath
+        directoryPath: "src" as ValidatedRelativePath,
       });
       expect(srcTasks.length).toBe(3);
 
       const docsTasks = store.queryTasks({
-        directoryPath: "docs" as ValidatedRelativePath
+        directoryPath: "docs" as ValidatedRelativePath,
       });
       expect(docsTasks.length).toBe(1);
     });
@@ -348,7 +357,7 @@ describe("TaskStore", () => {
     it("should sort tasks", () => {
       const sorted = store.queryTasks({
         sortBy: "priority",
-        sortDirection: "desc"
+        sortDirection: "desc",
       });
 
       expect(sorted[0].priority).toBe("critical");
@@ -362,7 +371,7 @@ describe("TaskStore", () => {
       const page2 = store.queryTasks({ offset: 2, limit: 2 });
       expect(page2.length).toBe(2);
 
-      const allIds = new Set([...page1, ...page2].map(t => t.id));
+      const allIds = new Set([...page1, ...page2].map((t) => t.id));
       expect(allIds.size).toBe(4); // All unique
     });
   });
@@ -370,7 +379,8 @@ describe("TaskStore", () => {
   describe("Completed Task Handling", () => {
     it("should store lightweight completed task", () => {
       const input: CreateTaskInput = {
-        content: "# Feature Implementation\n\nDetailed implementation plan here",
+        content:
+          "# Feature Implementation\n\nDetailed implementation plan here",
         directoryPath: "" as ValidatedRelativePath,
       };
 
@@ -380,7 +390,7 @@ describe("TaskStore", () => {
         commitSha: "abc123",
         pullRequest: 99,
         branch: "feature/awesome",
-        filesModified: ["src/feature.ts"]
+        filesModified: ["src/feature.ts"],
       };
 
       store.completeTask(task.id, gitRefs);
@@ -406,7 +416,7 @@ describe("TaskStore", () => {
       const task = store.receiveTask(input, "test-sender");
       store.completeTask(task.id, {
         commitSha: "xyz789",
-        pullRequest: 123
+        pullRequest: 123,
       });
 
       const retrieved = store.getTask(task.id);
@@ -427,35 +437,50 @@ describe("TaskStore", () => {
 
       const task = store.receiveTask(input, "sender-1");
 
-      let index = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      let index = JSON.parse(
+        fs.readFile("/test-repo/.palace-work/tasks/index.json"),
+      );
       expect(index.byStatus.pending).toContain(task.id);
       expect(index.bySender["sender-1"]).toContain(task.id);
 
       store.startTask(task.id, "ade-1");
 
-      index = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      index = JSON.parse(
+        fs.readFile("/test-repo/.palace-work/tasks/index.json"),
+      );
       expect(index.byStatus.pending).not.toContain(task.id);
       expect(index.byStatus.in_progress).toContain(task.id);
       expect(index.byADE["ade-1"]).toContain(task.id);
     });
 
     it("should maintain sender index", () => {
-      store.receiveTask({
-        content: "Task 1",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender-A");
+      store.receiveTask(
+        {
+          content: "Task 1",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender-A",
+      );
 
-      store.receiveTask({
-        content: "Task 2",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender-B");
+      store.receiveTask(
+        {
+          content: "Task 2",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender-B",
+      );
 
-      store.receiveTask({
-        content: "Task 3",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "sender-A");
+      store.receiveTask(
+        {
+          content: "Task 3",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "sender-A",
+      );
 
-      const index = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      const index = JSON.parse(
+        fs.readFile("/test-repo/.palace-work/tasks/index.json"),
+      );
       expect(index.bySender["sender-A"].length).toBe(2);
       expect(index.bySender["sender-B"].length).toBe(1);
     });
@@ -470,7 +495,7 @@ describe("TaskStore", () => {
         directoryPath: "" as ValidatedRelativePath,
         priority: "normal",
         tags: ["test"],
-        anchors: ["test.ts"]
+        anchors: ["test.ts"],
       };
       task = store.receiveTask(input, "test-sender");
     });
@@ -517,7 +542,9 @@ describe("TaskStore", () => {
     it("should remove task from all indices", () => {
       store.startTask(task.id, "ade-1");
 
-      const beforeIndex = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      const beforeIndex = JSON.parse(
+        fs.readFile("/test-repo/.palace-work/tasks/index.json"),
+      );
       expect(beforeIndex.tasks).toHaveProperty(task.id);
       expect(beforeIndex.byStatus.in_progress).toContain(task.id);
       expect(beforeIndex.bySender["test-sender"]).toContain(task.id);
@@ -525,7 +552,9 @@ describe("TaskStore", () => {
 
       store.deleteTask(task.id);
 
-      const afterIndex = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      const afterIndex = JSON.parse(
+        fs.readFile("/test-repo/.palace-work/tasks/index.json"),
+      );
       expect(afterIndex.tasks).not.toHaveProperty(task.id);
       expect(afterIndex.byStatus.in_progress).not.toContain(task.id);
       expect(afterIndex.bySender["test-sender"]).not.toContain(task.id);
@@ -535,7 +564,7 @@ describe("TaskStore", () => {
     it("should not delete completed tasks from history", () => {
       const gitRefs: GitReferences = {
         commitSha: "abc123",
-        pullRequest: 42
+        pullRequest: 42,
       };
 
       store.completeTask(task.id, gitRefs);
@@ -551,7 +580,9 @@ describe("TaskStore", () => {
       expect(fs.exists(historyFile)).toBe(true);
 
       // But task should be removed from index
-      const afterIndex = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      const afterIndex = JSON.parse(
+        fs.readFile("/test-repo/.palace-work/tasks/index.json"),
+      );
       expect(afterIndex.tasks).not.toHaveProperty(task.id);
     });
 
@@ -581,10 +612,13 @@ describe("TaskStore", () => {
     });
 
     it("should not affect other tasks when deleting one", () => {
-      const task2 = store.receiveTask({
-        content: "Another task",
-        directoryPath: "" as ValidatedRelativePath,
-      }, "test-sender");
+      const task2 = store.receiveTask(
+        {
+          content: "Another task",
+          directoryPath: "" as ValidatedRelativePath,
+        },
+        "test-sender",
+      );
 
       store.deleteTask(task.id);
 
@@ -594,7 +628,9 @@ describe("TaskStore", () => {
       expect(retrieved!.id).toBe(task2.id);
 
       // Index should still contain task2
-      const index = JSON.parse(fs.readFile("/test-repo/.palace-work/tasks/index.json"));
+      const index = JSON.parse(
+        fs.readFile("/test-repo/.palace-work/tasks/index.json"),
+      );
       expect(index.tasks).toHaveProperty(task2.id);
       expect(index.byStatus.pending).toContain(task2.id);
     });
