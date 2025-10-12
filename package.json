@@ -1,11 +1,65 @@
 {
   "name": "@a24z/core-library",
   "version": "0.1.30",
-  "private": false,
-  "description": "Core library for a24z ecosystem",
+  "author": "a24z Team",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/a24z-ai/core-library.git"
+  },
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "type": "module",
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@types/bun": "^1.1.20",
+    "@types/node": "^22.15.26",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globby": "^14.1.0",
+    "husky": "^9.1.7",
+    "knip": "^5.64.3",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "semantic-release": "^24.2.7",
+    "typescript": "^5.6.3",
+    "typescript-json-schema": "^0.65.1"
+  },
+  "bugs": {
+    "url": "https://github.com/a24z-ai/core-library/issues"
+  },
+  "description": "Core library for a24z ecosystem",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md",
+    "USAGE_GUIDE.md",
+    "LIBRARY_USAGE.md",
+    "LICENSE"
+  ],
+  "homepage": "https://a24z.ai",
+  "keywords": [
+    "a24z",
+    "core",
+    "library",
+    "utilities"
+  ],
+  "license": "MIT",
+  "lint-staged": {
+    "src/**/*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "tests/**/*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "private": false,
   "scripts": {
     "build": "bun run clean && bun run build:lib && bun run fix:imports && bun run schema:generate",
     "clean": "rm -rf dist",
@@ -21,66 +75,9 @@
     "lint:fix": "bunx eslint . --ext .ts,.js --fix",
     "format": "bunx prettier --write .",
     "format:check": "bunx prettier --check .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "knip": "knip"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/a24z-ai/core-library.git"
-  },
-  "keywords": [
-    "a24z",
-    "core",
-    "library",
-    "utilities"
-  ],
-  "author": "a24z Team",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/a24z-ai/core-library/issues"
-  },
-  "homepage": "https://a24z.ai",
-  "engines": {
-    "node": ">=18"
-  },
-  "dependencies": {
-    "section-matter": "^1.0.0"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.15.0",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "@types/bun": "^1.1.20",
-    "@types/node": "^22.15.26",
-    "@typescript-eslint/eslint-plugin": "^8.41.0",
-    "@typescript-eslint/parser": "^8.41.0",
-    "esbuild": "^0.25.9",
-    "eslint": "^9.34.0",
-    "eslint-config-prettier": "^10.1.8",
-    "fast-glob": "^3.3.3",
-    "globby": "^14.1.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.1.5",
-    "prettier": "^3.6.2",
-    "semantic-release": "^24.2.7",
-    "typescript": "^5.6.3",
-    "typescript-json-schema": "^0.65.1"
-  },
-  "lint-staged": {
-    "src/**/*.{ts,js}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "tests/**/*.{ts,js}": [
-      "eslint --fix",
-      "prettier --write"
-    ]
-  },
-  "files": [
-    "dist",
-    "templates",
-    "README.md",
-    "USAGE_GUIDE.md",
-    "LIBRARY_USAGE.md",
-    "LICENSE"
-  ]
+  "type": "module",
+  "types": "dist/index.d.ts"
 }

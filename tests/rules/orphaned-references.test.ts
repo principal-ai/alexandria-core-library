@@ -1,10 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { orphanedReferences } from "../../src/rules/implementations/orphaned-references";
 import { LibraryRuleContext } from "../../src/rules/types";
-import {
-  ValidatedRepositoryPath,
-  CodebaseView,
-} from "../../src/pure-core/types";
+import { ValidatedRepositoryPath } from "../../src/pure-core/types";
 import { InMemoryFileSystemAdapter } from "../test-adapters/InMemoryFileSystemAdapter";
 
 describe("orphaned-references rule", () => {
@@ -162,7 +159,7 @@ describe("orphaned-references rule", () => {
               label: "Links",
               description: "External links",
               links: ["https://example.com"],
-            } as any,
+            },
           },
         },
       ];

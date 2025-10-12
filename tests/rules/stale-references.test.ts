@@ -1,10 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { staleReferences } from "../../src/rules/implementations/stale-references";
 import { LibraryRuleContext, FileInfo } from "../../src/rules/types";
-import {
-  ValidatedRepositoryPath,
-  CodebaseView,
-} from "../../src/pure-core/types";
+import { ValidatedRepositoryPath } from "../../src/pure-core/types";
 import { InMemoryFileSystemAdapter } from "../test-adapters/InMemoryFileSystemAdapter";
 
 describe("stale-references rule", () => {

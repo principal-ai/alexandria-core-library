@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/index.ts"],
+  "project": ["src/**/*.ts"],
+  "ignore": [
+    "dist/**",
+    "coverage/**",
+    "**/*.test.ts",
+    "tests/**",
+    "src/future-work/**"
+  ],
+  "ignoreDependencies": [
+    "@semantic-release/changelog",
+    "@semantic-release/git",
+    "lint-staged",
+    "typescript-json-schema"
+  ],
+  "ignoreExportsUsedInFile": true
+}

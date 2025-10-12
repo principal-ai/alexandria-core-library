@@ -3,7 +3,6 @@ import {
   LibraryRuleViolation,
   LibraryRuleContext,
 } from "../types";
-import { getNotesDir } from "../../utils/alexandria-paths";
 
 export const staleReferences: LibraryRule = {
   id: "stale-references",
@@ -19,7 +18,7 @@ export const staleReferences: LibraryRule = {
 
   async check(context: LibraryRuleContext): Promise<LibraryRuleViolation[]> {
     const violations: LibraryRuleViolation[] = [];
-    const { views, notes, projectRoot, files, fsAdapter } = context;
+    const { views, notes, files, fsAdapter } = context;
 
     // Require fsAdapter for this rule
     if (!fsAdapter) {

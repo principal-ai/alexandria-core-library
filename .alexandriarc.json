@@ -14,7 +14,7 @@
     "maxDepth": 10,
     "followSymlinks": false,
     "patterns": {
-      "exclude": [".alexandria/**"],
+      "exclude": [".alexandria/**", "src/future-work/**"],
       "priority": [
         {
           "pattern": "**/src/**/*.ts",
@@ -40,7 +40,7 @@
         "severity": "error",
         "enabled": true,
         "options": {
-          "excludeFiles": ["CHANGELOG.md", "README.md"]
+          "excludeFiles": ["CHANGELOG.md", "README.md", "src/future-work/README.md"]
         }
       },
       {
