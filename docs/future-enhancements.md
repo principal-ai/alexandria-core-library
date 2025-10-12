@@ -165,9 +165,30 @@ docs/
 
 ### Enhanced Validation Rules
 
-- `code-documentation-ratio`: Ensure adequate docs per code volume
-- `stale-reference-detection`: Flag outdated code references
-- `documentation-completeness`: Check for missing essential docs
+**New Rule: `documentation-completeness`**
+
+Validates that documentation has all essential components for effective AI agent usage:
+
+- **Required metadata fields**: Ensures CodebaseViews have description, purpose, audience
+- **Content structure**: Checks for key sections (overview, usage examples, related concepts)
+- **Cross-references**: Validates that related views/concepts are properly linked
+- **Public API coverage**: Ensures exported functions/classes have documentation
+- **Essential repository docs**: Checks for README, CONTRIBUTING, LICENSE, etc.
+- Configuration example:
+  ```json
+  {
+    "documentation-completeness": {
+      "enabled": true,
+      "requiredViewFields": ["description", "purpose"],
+      "requiredSections": ["## Overview", "## Usage"],
+      "requireExamples": true,
+      "requiredRepoFiles": ["README.md", "LICENSE"],
+      "checkPublicAPIs": true
+    }
+  }
+  ```
+
+Note: `stale-reference-detection` already exists as the `stale-references` rule.
 
 ### Integration Improvements
 
