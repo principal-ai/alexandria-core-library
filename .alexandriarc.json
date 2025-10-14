@@ -40,7 +40,11 @@
         "severity": "error",
         "enabled": true,
         "options": {
-          "excludeFiles": ["CHANGELOG.md", "README.md", "src/future-work/README.md"]
+          "excludeFiles": [
+            "CHANGELOG.md",
+            "README.md",
+            "src/future-work/README.md"
+          ]
         }
       },
       {

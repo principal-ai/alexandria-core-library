@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": 1760060413698,
+  "lastUpdated": 1760398118973,
   "tasks": {
     "task-1760059373049-zx7exl8kz": {
       "id": "task-1760059373049-zx7exl8kz",
@@ -8,21 +8,50 @@
       "priority": "normal",
       "directoryPath": "",
       "senderId": "alexandria-cli",
-      "tags": ["enhancement", "core-library", "api", "codebase-views"],
+      "tags": [
+        "enhancement",
+        "core-library",
+        "api",
+        "codebase-views"
+      ],
       "receivedAt": 1760059373049,
       "updatedAt": 1760059373049,
       "filePath": "active/task-1760059373049-zx7exl8kz.task.md"
+    },
+    "task-1760398118972-6z882t8hu": {
+      "id": "task-1760398118972-6z882t8hu",
+      "status": "pending",
+      "priority": "high",
+      "directoryPath": "",
+      "senderId": "electron-app",
+      "tags": [
+        "enhancement",
+        "api",
+        "task-management",
+        "ui-integration"
+      ],
+      "receivedAt": 1760398118972,
+      "updatedAt": 1760398118972,
+      "filePath": "active/task-1760398118972-6z882t8hu.task.md"
     }
   },
   "byStatus": {
-    "pending": ["task-1760059373049-zx7exl8kz"],
+    "pending": [
+      "task-1760059373049-zx7exl8kz",
+      "task-1760398118972-6z882t8hu"
+    ],
     "acknowledged": [],
     "in_progress": [],
     "completed": [],
     "failed": []
   },
   "bySender": {
-    "alexandria-cli": ["task-1760059373049-zx7exl8kz"]
+    "alexandria-cli": [
+      "task-1760059373049-zx7exl8kz"
+    ],
+    "electron-app": [
+      "task-1760398118972-6z882t8hu"
+    ]
   },
   "byADE": {}
 }
