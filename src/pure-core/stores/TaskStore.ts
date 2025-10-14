@@ -154,6 +154,7 @@ export class TaskStore {
       priority: input.priority || "normal",
       directoryPath: input.directoryPath,
       repositoryPath: this.repositoryRoot,
+      filePath: `${PALACE_WORK_DIR}/${TASKS_DIR}/${ACTIVE_DIR}/${taskId}.task.md`,
       tags: input.tags || [],
       anchors: input.anchors || [],
       senderId,
@@ -602,6 +603,7 @@ export class TaskStore {
       priority: entry.priority,
       directoryPath: entry.directoryPath as ValidatedRelativePath,
       repositoryPath: this.repositoryRoot,
+      filePath: `${PALACE_WORK_DIR}/${TASKS_DIR}/${HISTORY_DIR}/${taskId}.hist.md`,
       tags: completed.tags,
       anchors: [],
       senderId: entry.senderId,
@@ -807,14 +809,20 @@ export class TaskStore {
       const titleMatch = body.match(/^#\s+(.+)$/m);
       const title = titleMatch ? titleMatch[1] : String(data.id);
 
+      const taskId = String(data.id);
+      const status = data.status as TaskStatus;
+
       return {
-        id: String(data.id),
+        id: taskId,
         title,
         content: body.replace(/^#\s+.+\n\n/, ""), // Remove title line
-        status: data.status as TaskStatus,
+        status,
         priority: data.priority as TaskPriority,
         directoryPath: String(data.directory) as ValidatedRelativePath,
         repositoryPath: String(data.repository) as ValidatedRepositoryPath,
+        filePath: status === "completed"
+          ? `${PALACE_WORK_DIR}/${TASKS_DIR}/${HISTORY_DIR}/${taskId}.hist.md`
+          : `${PALACE_WORK_DIR}/${TASKS_DIR}/${ACTIVE_DIR}/${taskId}.task.md`,
         tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
         anchors: Array.isArray(data.anchors) ? data.anchors.map(String) : [],
         senderId: String(data.senderId),

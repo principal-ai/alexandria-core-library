@@ -91,6 +91,9 @@ describe("TaskStore", () => {
       expect(task.senderId).toBe("mcp-server-1");
       expect(task.tags).toEqual(["feature", "security"]);
       expect(task.anchors).toEqual(["src/api/auth.ts"]);
+      expect(task.filePath).toBe(
+        `.palace-work/tasks/active/${task.id}.task.md`,
+      );
     });
 
     it("should save task to active directory", () => {
@@ -302,6 +305,9 @@ describe("TaskStore", () => {
       const retrieved = store.getTask(firstTask.id);
       expect(retrieved).toBeDefined();
       expect(retrieved!.id).toBe(firstTask.id);
+      expect(retrieved!.filePath).toBe(
+        `.palace-work/tasks/active/${firstTask.id}.task.md`,
+      );
     });
 
     it("should get next pending task by priority", () => {
@@ -425,6 +431,9 @@ describe("TaskStore", () => {
       expect(retrieved!.status).toBe("completed");
       expect(retrieved!.content).toContain("See PR #123 for details");
       expect(retrieved!.gitRefs?.commitSha).toBe("xyz789");
+      expect(retrieved!.filePath).toBe(
+        `.palace-work/tasks/history/${task.id}.hist.md`,
+      );
     });
   });
 

@@ -46,6 +46,9 @@ export interface Task {
   /** Repository this task belongs to */
   repositoryPath: ValidatedRepositoryPath;
 
+  /** Relative path to the task file from repository root */
+  filePath: string;
+
   /** Tags for categorizing the task */
   tags: string[];
 

@@ -613,4 +613,4 @@ interface TaskAssociations {
 
 ---
 
-_Last reviewed: 2025-10-12 - Verified task system design reflects current implementation including deleteTask functionality._
+_Last reviewed: 2025-10-14 - Added filePath field to Task interface, aligning with TaskIndexEntry and simplifying UI integration._
