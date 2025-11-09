@@ -820,9 +820,10 @@ export class TaskStore {
         priority: data.priority as TaskPriority,
         directoryPath: String(data.directory) as ValidatedRelativePath,
         repositoryPath: String(data.repository) as ValidatedRepositoryPath,
-        filePath: status === "completed"
-          ? `${PALACE_WORK_DIR}/${TASKS_DIR}/${HISTORY_DIR}/${taskId}.hist.md`
-          : `${PALACE_WORK_DIR}/${TASKS_DIR}/${ACTIVE_DIR}/${taskId}.task.md`,
+        filePath:
+          status === "completed"
+            ? `${PALACE_WORK_DIR}/${TASKS_DIR}/${HISTORY_DIR}/${taskId}.hist.md`
+            : `${PALACE_WORK_DIR}/${TASKS_DIR}/${ACTIVE_DIR}/${taskId}.task.md`,
         tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
         anchors: Array.isArray(data.anchors) ? data.anchors.map(String) : [],
         senderId: String(data.senderId),

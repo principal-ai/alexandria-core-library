@@ -92,6 +92,15 @@ export { MemoryPalace } from "./MemoryPalace";
 export { ProjectRegistryStore } from "./projects-core/ProjectRegistryStore";
 export { AlexandriaOutpostManager } from "./projects-core/AlexandriaOutpostManager";
 
+// Workspace management
+export { WorkspaceManager } from "./projects-core/WorkspaceManager";
+export type {
+  Workspace,
+  WorkspaceMembership,
+  WorkspacesData,
+  WorkspaceMembershipsData,
+} from "./projects-core/types";
+
 // Store exports for direct access if needed
 export {
   CodebaseViewsStore,

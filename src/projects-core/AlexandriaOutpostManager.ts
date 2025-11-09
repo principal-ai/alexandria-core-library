@@ -1,4 +1,5 @@
 import { ProjectRegistryStore } from "./ProjectRegistryStore.js";
+import { WorkspaceManager } from "./WorkspaceManager.js";
 import { MemoryPalace } from "../MemoryPalace.js";
 import type {
   AlexandriaRepository,
@@ -17,12 +18,23 @@ import { GlobAdapter } from "../pure-core/abstractions/glob.js";
 export class AlexandriaOutpostManager {
   private readonly projectRegistry: ProjectRegistryStore;
 
+  /**
+   * Workspace management for organizing repositories
+   */
+  public readonly workspaces: WorkspaceManager;
+
   constructor(
     private readonly fsAdapter: FileSystemAdapter,
     private readonly globAdapter: GlobAdapter,
   ) {
     // Create the ProjectRegistryStore internally with the user's home directory
-    this.projectRegistry = new ProjectRegistryStore(fsAdapter, homedir());
+    const homeDirectory = homedir();
+    const alexandriaPath = fsAdapter.join(homeDirectory, ".alexandria");
+
+    this.projectRegistry = new ProjectRegistryStore(fsAdapter, homeDirectory);
+
+    // Initialize workspace manager with same registry path
+    this.workspaces = new WorkspaceManager(alexandriaPath, fsAdapter);
   }
 
   async getAllRepositories(): Promise<AlexandriaRepository[]> {
@@ -83,6 +95,14 @@ export class AlexandriaOutpostManager {
 
   getAllEntries(): AlexandriaEntry[] {
     return this.projectRegistry.listProjects();
+  }
+
+  /**
+   * Get the project registry store for workspace operations
+   * @internal Used by WorkspaceManager for querying repository entries
+   */
+  getProjectRegistry(): ProjectRegistryStore {
+    return this.projectRegistry;
   }
 
   /**
