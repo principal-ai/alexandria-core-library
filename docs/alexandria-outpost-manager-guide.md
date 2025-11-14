@@ -11,7 +11,7 @@ import {
   AlexandriaOutpostManager,
   NodeFileSystemAdapter,
   BasicGlobAdapter,
-} from "@a24z/core-library";
+} from "@principal-ai/alexandria-core-library";
 
 // Create adapters
 const fsAdapter = new NodeFileSystemAdapter();
@@ -22,7 +22,7 @@ const manager = new AlexandriaOutpostManager(fsAdapter, globAdapter);
 
 // Note: For advanced glob patterns, you can use NodeGlobAdapter if you have globby installed:
 // import { globby } from 'globby';
-// import { NodeGlobAdapter } from '@a24z/core-library/src/node-adapters/NodeGlobAdapter';
+// import { NodeGlobAdapter } from '@principal-ai/alexandria-core-library/src/node-adapters/NodeGlobAdapter';
 // const globAdapter = new NodeGlobAdapter();
 ```
 

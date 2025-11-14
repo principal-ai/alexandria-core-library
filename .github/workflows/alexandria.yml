@@ -157,12 +157,12 @@ jobs:
               message += `✅ Repository successfully registered with Alexandria!\n\n`;
               message += `- **Branch**: \`${branch}\`\n`;
               message += `- **Codebase Views**: ${viewCount}\n\n`;
-              message += `Your codebase views will be available at [Alexandria](https://a24z-ai.github.io/alexandria) once this PR is merged.`;
+              message += `Your codebase views will be available at [Alexandria](https://principal-ai.github.io/alexandria) once this PR is merged.`;
             } else if (status === 'updated') {
               message += `🔄 Repository updated in Alexandria\n\n`;
               message += `- **Branch**: \`${branch}\`\n`;
               message += `- **Codebase Views**: ${viewCount}\n\n`;
-              message += `View your codebase at [Alexandria](https://a24z-ai.github.io/alexandria).`;
+              message += `View your codebase at [Alexandria](https://principal-ai.github.io/alexandria).`;
             }
 
             // Check if we already commented

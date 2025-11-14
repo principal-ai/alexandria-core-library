@@ -28,7 +28,7 @@ try {
 
   // Add metadata
   schema.$id =
-    "https://raw.githubusercontent.com/a24z-ai/alexandria/main/schema/alexandriarc.json";
+    "https://raw.githubusercontent.com/principal-ai/alexandria-core-library/main/schema/alexandriarc.json";
   schema.title = "Alexandria Configuration Schema";
   schema.description = "Schema for Alexandria library configuration files";
 

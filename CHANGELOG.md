@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Guidance Token Validation**: Secure token system to ensure agents read guidance before creating notes
   - HMAC-based token generation with 24-hour expiration
   - Validates guidance content hasn't changed since token generation
-  - Enable with environment variable: `A24Z_REQUIRE_GUIDANCE_TOKEN=true`
+  - Enable with environment variable: `ALEXANDRIA_REQUIRE_GUIDANCE_TOKEN=true`
   - Stateless validation - no database required
 
 - **Enhanced MCP Tools**

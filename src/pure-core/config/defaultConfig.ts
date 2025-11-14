@@ -1,5 +1,5 @@
 /**
- * Centralized default configuration for a24z-Memory
+ * Centralized default configuration for Alexandria Memory
  * All default values should be defined here for easier maintenance
  */
 
@@ -83,9 +83,9 @@ export const DEFAULT_RESPONSE_STYLE_CONFIG = {
 };
 
 /**
- * Combined A24z Memory configuration for AI tools
+ * Combined Alexandria Memory configuration for AI tools
  */
-export const DEFAULT_A24Z_MEMORY_CONFIG: A24zMemoryConfig = {
+export const DEFAULT_ALEXANDRIA_MEMORY_CONFIG: A24zMemoryConfig = {
   noteFetching: DEFAULT_NOTE_FETCHING_CONFIG,
   responseStyle: DEFAULT_RESPONSE_STYLE_CONFIG,
 };
@@ -114,7 +114,7 @@ export function getAllDefaultConfigs() {
     repository: DEFAULT_REPOSITORY_CONFIG,
     noteFetching: DEFAULT_NOTE_FETCHING_CONFIG,
     responseStyle: DEFAULT_RESPONSE_STYLE_CONFIG,
-    a24zMemory: DEFAULT_A24Z_MEMORY_CONFIG,
+    alexandriaMemory: DEFAULT_ALEXANDRIA_MEMORY_CONFIG,
     tagCategories: DEFAULT_TAG_CATEGORIES,
   };
 }

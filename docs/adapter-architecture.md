@@ -83,7 +83,7 @@ Production adapter for Node.js environments using native `fs` and `path` modules
 **Usage:**
 
 ```typescript
-import { NodeFileSystemAdapter, MemoryPalace } from "@a24z/core-library";
+import { NodeFileSystemAdapter, MemoryPalace } from "@principal-ai/alexandria-core-library";
 
 const fsAdapter = new NodeFileSystemAdapter();
 const palace = new MemoryPalace(fsAdapter, "/path/to/repo");
@@ -104,7 +104,7 @@ Testing adapter that simulates a filesystem in memory. Now located in `src/test-
 **Usage:**
 
 ```typescript
-import { InMemoryFileSystemAdapter, MemoryPalace } from "@a24z/core-library";
+import { InMemoryFileSystemAdapter, MemoryPalace } from "@principal-ai/alexandria-core-library";
 
 const fsAdapter = new InMemoryFileSystemAdapter();
 // Pre-populate with test data
@@ -124,7 +124,7 @@ import {
   MemoryPalace,
   NodeFileSystemAdapter,
   ProjectRegistryStore,
-} from "@a24z/core-library";
+} from "@principal-ai/alexandria-core-library";
 import * as os from "os";
 
 // Create adapter instance
@@ -142,7 +142,7 @@ const registry = new ProjectRegistryStore(fsAdapter, os.homedir());
 Use the in-memory adapter for fast, isolated tests:
 
 ```typescript
-import { InMemoryFileSystemAdapter } from "@a24z/core-library";
+import { InMemoryFileSystemAdapter } from "@principal-ai/alexandria-core-library";
 
 describe("MyComponent", () => {
   let fsAdapter: InMemoryFileSystemAdapter;
@@ -166,7 +166,7 @@ To support new environments, implement the `FileSystemAdapter` interface:
 ### Example: Browser Adapter
 
 ```typescript
-import { FileSystemAdapter } from "@a24z/core-library";
+import { FileSystemAdapter } from "@principal-ai/alexandria-core-library";
 
 export class BrowserFileSystemAdapter implements FileSystemAdapter {
   private storage = new Map<string, string>();

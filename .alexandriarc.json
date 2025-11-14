@@ -2,8 +2,8 @@
   "$schema": "./schema/alexandriarc.json",
   "version": "1.0.0",
   "project": {
-    "name": "@a24z/core-library",
-    "description": "Core library for a24z ecosystem - Alexandria library implementation",
+    "name": "@principal-ai/alexandria-core-library",
+    "description": "Core library for Principal AI Alexandria ecosystem - Alexandria library implementation",
     "version": "0.1.0",
     "type": "library",
     "language": ["typescript", "javascript"],

@@ -1,7 +1,7 @@
 /**
- * @a24z/core-library
+ * @principal-ai/alexandria-core-library
  *
- * Core library exports for the a24z ecosystem.
+ * Core library exports for the Principal AI Alexandria ecosystem.
  * Provides essential functionality for managing notes, views, and configurations.
  */
 

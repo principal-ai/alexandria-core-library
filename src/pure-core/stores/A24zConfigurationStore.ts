@@ -1,7 +1,7 @@
 /**
  * Pure A24zConfigurationStore - Platform-agnostic configuration management
  *
- * Manages repository-level configuration for a24z-Memory including limits,
+ * Manages repository-level configuration for Alexandria Memory including limits,
  * storage settings, and tag restrictions.
  */
 

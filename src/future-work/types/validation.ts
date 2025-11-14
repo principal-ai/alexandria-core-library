@@ -1,5 +1,5 @@
 /**
- * Validation types for a24z-memory
+ * Validation types for alexandria-memory
  * These types are used for note validation and custom error messages
  */
 

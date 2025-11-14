@@ -2,7 +2,7 @@
  * Example: Using the askMemory method with enhanced metadata
  */
 
-const { A24zMemory } = require("a24z-memory");
+const { A24zMemory } = require("@principal-ai/alexandria-core-library");
 const path = require("path");
 
 async function main() {

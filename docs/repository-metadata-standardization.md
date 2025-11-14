@@ -2,7 +2,7 @@
 
 ## Overview
 
-The a24z ecosystem manages repository information across multiple projects - from local project registries to GitHub metadata to Alexandria's codebase view collections. This document describes the standardized type system introduced to unify repository metadata across all a24z projects.
+The Principal AI Alexandria ecosystem manages repository information across multiple projects - from local project registries to GitHub metadata to Alexandria's codebase view collections. This document describes the standardized type system introduced to unify repository metadata across all Principal AI Alexandria projects.
 
 ## The Problem
 
@@ -101,7 +101,7 @@ To adopt the new types:
 1. Import types from the core library:
 
 ```typescript
-import { GithubRepository, AlexandriaRepository } from "@a24z/core-library";
+import { GithubRepository, AlexandriaRepository } from "@principal-ai/alexandria-core-library";
 ```
 
 2. Update `/src/lib/s3-alexandria-store.ts`:
@@ -257,4 +257,4 @@ If breaking changes are needed:
 
 ## Conclusion
 
-The standardized repository metadata types provide a solid foundation for the a24z ecosystem's growth. By unifying how we represent repositories across projects, we enable better interoperability, maintain type safety, and reduce complexity in our codebase.
+The standardized repository metadata types provide a solid foundation for the Principal AI Alexandria ecosystem's growth. By unifying how we represent repositories across projects, we enable better interoperability, maintain type safety, and reduce complexity in our codebase.

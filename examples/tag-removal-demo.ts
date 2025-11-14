@@ -21,7 +21,7 @@ import {
 } from "../src/core-mcp/store/notesStore";
 
 // Create a temporary directory for the demo
-const demoDir = fs.mkdtempSync(path.join(os.tmpdir(), "a24z-demo-"));
+const demoDir = fs.mkdtempSync(path.join(os.tmpdir(), "alexandria-demo-"));
 fs.mkdirSync(path.join(demoDir, ".git")); // Make it a git repo
 
 console.log("🚀 Tag Removal Demo\n");

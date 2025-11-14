@@ -1,17 +1,17 @@
-# @a24z/core-library
+# @principal-ai/alexandria-core-library
 
-Core library for the a24z ecosystem, providing essential functionality for managing notes, views, and configurations.
+Core library for the Principal AI Alexandria ecosystem, providing essential functionality for managing notes, views, and configurations.
 
 ## Installation
 
 ```bash
-npm install @a24z/core-library
+npm install @principal-ai/alexandria-core-library
 # or
-yarn add @a24z/core-library
+yarn add @principal-ai/alexandria-core-library
 # or
-pnpm add @a24z/core-library
+pnpm add @principal-ai/alexandria-core-library
 # or
-bun add @a24z/core-library
+bun add @principal-ai/alexandria-core-library
 ```
 
 ## Features
@@ -27,7 +27,7 @@ bun add @a24z/core-library
 ### Using MemoryPalace
 
 ```typescript
-import { MemoryPalace, NodeFileSystemAdapter } from "@a24z/core-library";
+import { MemoryPalace, NodeFileSystemAdapter } from "@principal-ai/alexandria-core-library";
 
 // Initialize with filesystem adapter
 const fsAdapter = new NodeFileSystemAdapter();
@@ -61,7 +61,7 @@ import {
   ProjectRegistryStore,
   AlexandriaOutpostManager,
   NodeFileSystemAdapter,
-} from "@a24z/core-library";
+} from "@principal-ai/alexandria-core-library";
 
 const fsAdapter = new NodeFileSystemAdapter();
 
@@ -71,7 +71,7 @@ registry.registerProject("my-project", "/path/to/project");
 const projects = registry.listProjects();
 
 // Manage Alexandria repositories
-import { BasicGlobAdapter } from "@a24z/core-library";
+import { BasicGlobAdapter } from "@principal-ai/alexandria-core-library";
 
 const globAdapter = new BasicGlobAdapter();
 const outpost = new AlexandriaOutpostManager(fsAdapter, globAdapter);
@@ -86,7 +86,7 @@ const untrackedDocs = await outpost.getUntrackedDocs(entry);
 ### Testing with InMemoryFileSystemAdapter
 
 ```typescript
-import { MemoryPalace, InMemoryFileSystemAdapter } from "@a24z/core-library";
+import { MemoryPalace, InMemoryFileSystemAdapter } from "@principal-ai/alexandria-core-library";
 
 // Use in-memory adapter for testing
 const fsAdapter = new InMemoryFileSystemAdapter();
@@ -135,4 +135,4 @@ MIT
 
 ## Contributing
 
-This is a core library for the a24z ecosystem. For issues and contributions, please visit the main repository.
+This is a core library for the Principal AI Alexandria ecosystem. For issues and contributions, please visit the main repository.

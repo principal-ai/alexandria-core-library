@@ -7,7 +7,7 @@ MemoryPalace is the core class for managing documentation, notes, and CodebaseVi
 ## Basic Usage
 
 ```typescript
-import { MemoryPalace, NodeFileSystemAdapter } from "@a24z/core-library";
+import { MemoryPalace, NodeFileSystemAdapter } from "@principal-ai/alexandria-core-library";
 
 // Create filesystem adapter
 const fsAdapter = new NodeFileSystemAdapter();

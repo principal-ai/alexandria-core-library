@@ -1,6 +1,6 @@
 /**
  * Repository types for standardizing GitHub repository metadata
- * between code-city-landing, alexandria, and a24z-Memory project registry
+ * between code-city-landing, alexandria, and Alexandria Memory project registry
  */
 
 import type { CodebaseViewSummary } from "./summary";

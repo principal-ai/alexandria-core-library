@@ -26,7 +26,7 @@ The library provides two functions for creating summaries:
 ### Single View Extraction
 
 ```typescript
-import { extractCodebaseViewSummary } from "@a24z/core-library";
+import { extractCodebaseViewSummary } from "@principal-ai/alexandria-core-library";
 
 const view: CodebaseView = loadView();
 const summary = extractCodebaseViewSummary(view);
@@ -35,7 +35,7 @@ const summary = extractCodebaseViewSummary(view);
 ### Batch Extraction
 
 ```typescript
-import { extractCodebaseViewSummaries } from "@a24z/core-library";
+import { extractCodebaseViewSummaries } from "@principal-ai/alexandria-core-library";
 
 const views: CodebaseView[] = loadAllViews();
 const summaries = extractCodebaseViewSummaries(views);

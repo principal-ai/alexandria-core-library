@@ -76,4 +76,4 @@ For detailed information about hooks, rules, and configuration options, see [doc
 ### Repository Views
 
 For projects with GitHub integration, codebase views are automatically published to:
-`https://a24z-ai.github.io/Alexandria/repo/?owner=<owner>&name=<repo>`
+`https://principal-ai.github.io/Alexandria/repo/?owner=<owner>&name=<repo>`

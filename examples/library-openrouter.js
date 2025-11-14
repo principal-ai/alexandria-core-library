@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 /**
- * Example: Using OpenRouter with a24z-memory library
+ * Example: Using OpenRouter with @principal-ai/alexandria-core-library library
  *
  * This example shows how to configure and use OpenRouter for AI-enhanced
  * knowledge synthesis with secure API key storage.
@@ -15,7 +15,7 @@ import {
   LLMService,
   AskA24zMemoryTool,
   saveNote,
-} from "a24z-memory";
+} from "@principal-ai/alexandria-core-library";
 import readline from "readline";
 
 // Helper to get user input
@@ -34,7 +34,7 @@ function prompt(question) {
 }
 
 async function main() {
-  console.log("🚀 a24z-Memory OpenRouter Configuration Example\n");
+  console.log("🚀 @principal-ai/alexandria-core-library OpenRouter Configuration Example\n");
 
   // Check for Bun runtime
   if (!ApiKeyManager.isBunSecretsAvailable()) {
@@ -125,7 +125,7 @@ async function demonstrateUsage() {
   await saveNote({
     note: `OpenRouter Integration Pattern:
     
-When using OpenRouter with a24z-memory:
+When using OpenRouter with @principal-ai/alexandria-core-library:
 1. API keys are stored securely using OS keychain (Bun) or encrypted files (Node)
 2. The system automatically loads the key when needed
 3. Models can be changed without updating code

@@ -1,7 +1,7 @@
 import { AlexandriaConfig } from "./types";
 
 export const ALEXANDRIA_SCHEMA_URL =
-  "https://raw.githubusercontent.com/a24z-ai/alexandria/main/schema/alexandriarc.json";
+  "https://raw.githubusercontent.com/principal-ai/alexandria-core-library/main/schema/alexandriarc.json";
 
 export const DEFAULT_CONFIG: Partial<AlexandriaConfig> = {
   version: "1.0.0",

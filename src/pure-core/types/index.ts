@@ -1,5 +1,5 @@
 /**
- * Pure TypeScript types for a24z-memory
+ * Pure TypeScript types for alexandria-memory
  * These types have no dependencies and can be used in any JavaScript environment
  */
 
@@ -267,7 +267,7 @@ export interface FileListValidationResult {
 // ============================================================================
 
 /**
- * A note stored in the a24z-memory system with anchors to specific files/directories
+ * A note stored in the alexandria-memory system with anchors to specific files/directories
  */
 export interface StoredAnchoredNote {
   id: string;

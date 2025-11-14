@@ -399,7 +399,7 @@
     "version"
   ],
   "type": "object",
-  "$id": "https://raw.githubusercontent.com/a24z-ai/alexandria/main/schema/alexandriarc.json",
+  "$id": "https://raw.githubusercontent.com/principal-ai/alexandria-core-library/main/schema/alexandriarc.json",
   "title": "Alexandria Configuration Schema",
   "description": "Schema for Alexandria library configuration files"
 }

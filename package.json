@@ -1,10 +1,10 @@
 {
-  "name": "@a24z/core-library",
-  "version": "0.1.32",
-  "author": "a24z Team",
+  "name": "@principal-ai/alexandria-core-library",
+  "version": "0.1.33",
+  "author": "Principal AI Team",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/a24z-ai/core-library.git"
+    "url": "git+https://github.com/principal-ai/alexandria-core-library.git"
   },
   "main": "dist/index.js",
   "devDependencies": {
@@ -27,9 +27,9 @@
     "typescript-json-schema": "^0.65.1"
   },
   "bugs": {
-    "url": "https://github.com/a24z-ai/core-library/issues"
+    "url": "https://github.com/principal-ai/alexandria-core-library/issues"
   },
-  "description": "Core library for a24z ecosystem",
+  "description": "Core library for Principal AI Alexandria ecosystem",
   "engines": {
     "node": ">=18"
   },
@@ -41,9 +41,10 @@
     "LIBRARY_USAGE.md",
     "LICENSE"
   ],
-  "homepage": "https://a24z.ai",
+  "homepage": "https://principal.ai",
   "keywords": [
-    "a24z",
+    "principal-ai",
+    "alexandria",
     "core",
     "library",
     "utilities"

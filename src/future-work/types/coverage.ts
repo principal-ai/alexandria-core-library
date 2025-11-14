@@ -1,5 +1,5 @@
 /**
- * Coverage analysis types for a24z-memory
+ * Coverage analysis types for alexandria-memory
  * These types are used for analyzing note coverage across a codebase
  */
 

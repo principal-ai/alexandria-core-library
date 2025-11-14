@@ -1,5 +1,5 @@
 /**
- * MemoryPalace - Central API for all a24z-Memory operations
+ * MemoryPalace - Central API for all Alexandria Memory operations
  *
  * This class provides a unified interface for managing notes, views, and configurations.
  * Tools should use this class instead of directly accessing stores.

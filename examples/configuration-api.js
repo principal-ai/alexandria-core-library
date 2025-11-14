@@ -1,5 +1,5 @@
 /**
- * Example: Using the a24z-memory configuration API for UI development
+ * Example: Using the @principal-ai/alexandria-core-library configuration API for UI development
  */
 
 import {
@@ -8,7 +8,7 @@ import {
   updateRepositoryConfiguration,
   getAllowedTags,
   validateNoteAgainstConfig,
-} from "a24z-memory";
+} from "@principal-ai/alexandria-core-library";
 
 // Example 1: Direct function usage
 async function directApiExample() {

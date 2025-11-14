@@ -1,5 +1,5 @@
 /**
- * Auto-fix types for the a24z-memory system
+ * Auto-fix types for the alexandria-memory system
  * These types define the structure of auto-fix operations
  */
 
