@@ -8,19 +8,12 @@ The Alexandria core library includes a `LibraryRulesEngine` that validates docum
 
 ```typescript
 import { LibraryRulesEngine } from "@principal-ai/alexandria-core-library";
-import { NodeFileSystemAdapter } from "@principal-ai/alexandria-core-library";
-import { BasicGlobAdapter } from "@principal-ai/alexandria-core-library";
+import { NodeFileSystemAdapter, NodeGlobAdapter } from "@principal-ai/alexandria-core-library/node";
 
 // Initialize the rules engine - both adapters are required
 const fsAdapter = new NodeFileSystemAdapter();
-const globAdapter = new BasicGlobAdapter();
+const globAdapter = new NodeGlobAdapter();
 const rulesEngine = new LibraryRulesEngine(fsAdapter, globAdapter);
-
-// Or with a custom glob adapter (e.g., NodeGlobAdapter for full glob support)
-// Note: NodeGlobAdapter requires 'globby' to be installed
-// import { NodeGlobAdapter } from '@principal-ai/alexandria-core-library';
-// const globAdapter = new NodeGlobAdapter();
-// const rulesEngine = new LibraryRulesEngine(fsAdapter, globAdapter);
 
 // Run lint with all enabled rules
 const results = await rulesEngine.lint("/path/to/repo");

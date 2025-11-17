@@ -27,7 +27,8 @@ bun add @principal-ai/alexandria-core-library
 ### Using MemoryPalace
 
 ```typescript
-import { MemoryPalace, NodeFileSystemAdapter } from "@principal-ai/alexandria-core-library";
+import { MemoryPalace } from "@principal-ai/alexandria-core-library";
+import { NodeFileSystemAdapter } from "@principal-ai/alexandria-core-library/node";
 
 // Initialize with filesystem adapter
 const fsAdapter = new NodeFileSystemAdapter();
@@ -60,8 +61,8 @@ const guidance = memory.getGuidance();
 import {
   ProjectRegistryStore,
   AlexandriaOutpostManager,
-  NodeFileSystemAdapter,
 } from "@principal-ai/alexandria-core-library";
+import { NodeFileSystemAdapter, NodeGlobAdapter } from "@principal-ai/alexandria-core-library/node";
 
 const fsAdapter = new NodeFileSystemAdapter();
 
@@ -71,9 +72,7 @@ registry.registerProject("my-project", "/path/to/project");
 const projects = registry.listProjects();
 
 // Manage Alexandria repositories
-import { BasicGlobAdapter } from "@principal-ai/alexandria-core-library";
-
-const globAdapter = new BasicGlobAdapter();
+const globAdapter = new NodeGlobAdapter();
 const outpost = new AlexandriaOutpostManager(fsAdapter, globAdapter);
 const repos = await outpost.getAllRepositories();
 

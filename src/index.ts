@@ -78,12 +78,13 @@ export type { ValidationResult as ConfigValidationResult } from "./config/types"
 
 // Filesystem adapter for dependency injection
 export type { FileSystemAdapter } from "./pure-core/abstractions/filesystem";
-export { NodeFileSystemAdapter } from "./node-adapters/NodeFileSystemAdapter";
 export { InMemoryFileSystemAdapter } from "./test-adapters/InMemoryFileSystemAdapter";
 
 // Glob adapter for pattern matching
 export type { GlobAdapter, GlobOptions } from "./pure-core/abstractions/glob";
-export { NodeGlobAdapter } from "./node-adapters/NodeGlobAdapter";
+
+// Note: NodeFileSystemAdapter and NodeGlobAdapter are available via the /node entry point
+// Import from '@principal-ai/alexandria-core-library/node' to use Node.js-specific adapters
 
 // Primary API classes
 export { MemoryPalace } from "./MemoryPalace";

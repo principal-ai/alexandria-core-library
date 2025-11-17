@@ -7,23 +7,15 @@ AlexandriaOutpostManager is the high-level class for managing multiple repositor
 ## Basic Usage
 
 ```typescript
-import {
-  AlexandriaOutpostManager,
-  NodeFileSystemAdapter,
-  BasicGlobAdapter,
-} from "@principal-ai/alexandria-core-library";
+import { AlexandriaOutpostManager } from "@principal-ai/alexandria-core-library";
+import { NodeFileSystemAdapter, NodeGlobAdapter } from "@principal-ai/alexandria-core-library/node";
 
 // Create adapters
 const fsAdapter = new NodeFileSystemAdapter();
-const globAdapter = new BasicGlobAdapter();
+const globAdapter = new NodeGlobAdapter();
 
 // Initialize the manager (automatically uses user's home directory)
 const manager = new AlexandriaOutpostManager(fsAdapter, globAdapter);
-
-// Note: For advanced glob patterns, you can use NodeGlobAdapter if you have globby installed:
-// import { globby } from 'globby';
-// import { NodeGlobAdapter } from '@principal-ai/alexandria-core-library/src/node-adapters/NodeGlobAdapter';
-// const globAdapter = new NodeGlobAdapter();
 ```
 
 ## Core Functionality

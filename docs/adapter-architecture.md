@@ -83,7 +83,8 @@ Production adapter for Node.js environments using native `fs` and `path` modules
 **Usage:**
 
 ```typescript
-import { NodeFileSystemAdapter, MemoryPalace } from "@principal-ai/alexandria-core-library";
+import { MemoryPalace } from "@principal-ai/alexandria-core-library";
+import { NodeFileSystemAdapter } from "@principal-ai/alexandria-core-library/node";
 
 const fsAdapter = new NodeFileSystemAdapter();
 const palace = new MemoryPalace(fsAdapter, "/path/to/repo");
