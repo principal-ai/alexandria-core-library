@@ -87,18 +87,20 @@ docs/
 - Auto-fixes by updating category to match folder structure
 - Warns when documents are in unexpected locations
 
-**New Rule: `minimum-references`**
+**New Rule: `minimum-references`** ✅ **Implemented** (2025-11-16)
 
-- Ensures CodebaseViews have a minimum number of file references
-- Configurable threshold (e.g., at least 3 files per view)
-- Prevents "orphaned" documentation that doesn't connect to code
+- ✅ Ensures CodebaseViews have a minimum number of file references
+- ✅ Configurable threshold (e.g., at least 3 files per view)
+- ✅ Prevents "orphaned" documentation that doesn't connect to code
+- ✅ Supports exclusions by category and view name
 - Configuration example:
   ```json
   {
     "minimum-references": {
       "enabled": true,
       "minFiles": 3,
-      "exceptions": ["planning", "meta"]
+      "excludeCategories": ["planning", "meta"],
+      "excludeViews": []
     }
   }
   ```

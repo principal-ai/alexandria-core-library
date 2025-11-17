@@ -96,12 +96,22 @@ export interface CodebaseCoverageOptions {
   minimumDirectoryCoverage?: number;
 }
 
+export interface MinimumReferencesOptions {
+  /** Minimum number of files required in a CodebaseView's reference groups */
+  minFiles?: number;
+  /** View categories to exclude from the requirement (e.g., "planning", "meta") */
+  excludeCategories?: string[];
+  /** Specific view names to exclude from the requirement */
+  excludeViews?: string[];
+}
+
 export type RuleOptions =
   | DocumentOrganizationOptions
   | StaleReferencesOptions
   | RequireReferencesOptions
   | FilenameConventionOptions
   | CodebaseCoverageOptions
+  | MinimumReferencesOptions
   | Record<string, string | number | boolean | string[]>;
 
 export interface ContextRule {

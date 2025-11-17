@@ -85,6 +85,9 @@
               "$ref": "#/definitions/CodebaseCoverageOptions"
             },
             {
+              "$ref": "#/definitions/MinimumReferencesOptions"
+            },
+            {
               "$ref": "#/definitions/Record<string,string|number|boolean|string[]>"
             }
           ]
@@ -197,6 +200,30 @@
         "replace"
       ],
       "type": "string"
+    },
+    "MinimumReferencesOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "excludeCategories": {
+          "description": "View categories to exclude from the requirement (e.g., \"planning\", \"meta\")",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "excludeViews": {
+          "description": "Specific view names to exclude from the requirement",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "minFiles": {
+          "description": "Minimum number of files required in a CodebaseView's reference groups",
+          "type": "number"
+        }
+      },
+      "type": "object"
     },
     "PriorityLevel": {
       "enum": [

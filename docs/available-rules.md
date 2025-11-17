@@ -456,6 +456,124 @@ Without sufficient codebase coverage:
 
 ---
 
+## minimum-references
+
+### Purpose
+
+Ensures that CodebaseViews have a minimum number of file references to prevent "orphaned" documentation that doesn't connect meaningfully to code. This helps maintain the quality and usefulness of documentation by ensuring views provide sufficient context.
+
+### How It Works
+
+1. Scans all CodebaseView files from `.alexandria/views/`
+2. Counts the total number of files referenced across all reference groups in each view
+3. Compares the count against the configured minimum threshold
+4. Reports views that fall below the minimum file count
+5. Allows exclusions based on view category or specific view names
+
+### Default Severity
+
+`warning`
+
+### Configuration Options
+
+| Option              | Type       | Default             | Description                                                      |
+| ------------------- | ---------- | ------------------- | ---------------------------------------------------------------- |
+| `minFiles`          | `number`   | `3`                 | Minimum number of files required in a CodebaseView               |
+| `excludeCategories` | `string[]` | `['planning', 'meta']` | View categories to exclude from the requirement                  |
+| `excludeViews`      | `string[]` | `[]`                | Specific view names to exclude from the requirement              |
+
+### File Counting
+
+A file is counted when it appears in the `files` array of any reference group within a CodebaseView. Files are counted once even if they appear in multiple reference groups within the same view.
+
+### Example Violations
+
+```
+View "button-component" (button-component.json)
+    ⚠ View "button-component" has only 1 file reference, below minimum of 3
+      rule: minimum-references
+      impact: Views with too few file references may not provide enough context for AI agents to understand the codebase
+
+View "user-api" (user-api.json)
+    ⚠ View "user-api" has only 2 file references, below minimum of 3
+      rule: minimum-references
+      impact: Views with too few file references may not provide enough context for AI agents to understand the codebase
+```
+
+### How to Fix
+
+1. Add more file references to the view's reference groups
+2. Ensure the view comprehensively covers related files (implementation, tests, types, etc.)
+3. Add the view to `excludeViews` if it legitimately needs fewer references
+4. Add the view's category to `excludeCategories` if it's a special type (e.g., planning docs)
+5. Lower the `minFiles` threshold if your codebase has many small, focused views
+6. Consider merging related views if they're too granular
+
+### Configuration Examples
+
+Basic minimum references requirement:
+
+```json
+{
+  "id": "minimum-references",
+  "severity": "warning",
+  "enabled": true,
+  "options": {
+    "minFiles": 3,
+    "excludeCategories": ["planning", "meta"]
+  }
+}
+```
+
+Stricter requirements with specific exclusions:
+
+```json
+{
+  "id": "minimum-references",
+  "severity": "error",
+  "enabled": true,
+  "options": {
+    "minFiles": 5,
+    "excludeCategories": ["planning", "meta", "architecture"],
+    "excludeViews": ["README-overview", "getting-started"]
+  }
+}
+```
+
+Relaxed for small projects:
+
+```json
+{
+  "id": "minimum-references",
+  "severity": "info",
+  "enabled": true,
+  "options": {
+    "minFiles": 2,
+    "excludeCategories": []
+  }
+}
+```
+
+### Best Practices
+
+- Set `minFiles` based on the typical size and scope of your codebase's modules
+- Use `excludeCategories` for documentation-only or planning views
+- Review violations to identify views that need expansion or consolidation
+- Consider that views with very few files may be too narrowly scoped
+- Balance between granular views and comprehensive context
+
+### Impact
+
+Without sufficient file references per view:
+
+- AI agents may lack enough context to understand the full scope of a feature
+- Documentation becomes fragmented and harder to navigate
+- Views may not capture important related files (tests, types, utilities)
+- The relationship between files remains unclear
+- Code reviews and onboarding become more challenging
+
+---
+
 ## Rule Priority and Execution
 
 ### Execution Order
@@ -466,6 +584,8 @@ Rules are executed in the following order:
 2. `filename-convention` - Naming standards
 3. `require-references` - Documentation completeness
 4. `stale-references` - Reference validity
+5. `minimum-references` - View quality
+6. `codebase-coverage` - Coverage tracking
 
 ### Severity Levels
 

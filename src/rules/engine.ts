@@ -12,6 +12,7 @@ import { staleReferences } from "./implementations/stale-references";
 import { documentOrganization } from "./implementations/document-organization";
 import { filenameConvention } from "./implementations/filename-convention";
 import { codebaseCoverage } from "./implementations/codebase-coverage";
+import { minimumReferences } from "./implementations/minimum-references";
 import { AlexandriaConfig, RuleSeverity } from "../config/types";
 import { ConfigLoader } from "../config/loader";
 import { ValidatedRepositoryPath } from "../pure-core/types";
@@ -38,6 +39,7 @@ export class LibraryRulesEngine {
     this.registerRule(documentOrganization);
     this.registerRule(filenameConvention);
     this.registerRule(codebaseCoverage);
+    this.registerRule(minimumReferences);
   }
 
   registerRule(rule: LibraryRule): void {
