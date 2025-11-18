@@ -115,6 +115,7 @@ export default [
       "test-*.js",
       "**/*.disabled",
       "src/future-work/**",
+      "**/*.d.ts",
     ],
   },
   prettierConfig,
