@@ -24,8 +24,8 @@ export interface Workspace {
   name: string;
   /** Optional description */
   description?: string;
-  /** Optional UI color (hex or theme token) */
-  color?: string;
+  /** Optional theme identifier */
+  theme?: string;
   /** Optional icon identifier */
   icon?: string;
   /** Default workspace for new clones */

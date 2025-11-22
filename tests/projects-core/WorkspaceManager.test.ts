@@ -24,7 +24,7 @@ describe("WorkspaceManager", () => {
         const workspace = await manager.createWorkspace({
           name: "Active Projects",
           description: "Projects I'm working on",
-          color: "#4CAF50",
+          theme: "green",
           icon: "folder",
           isDefault: true,
           suggestedClonePath: "/home/user/active",
@@ -34,7 +34,7 @@ describe("WorkspaceManager", () => {
         expect(workspace.id).toMatch(/^ws-\d+-[a-z0-9]+$/);
         expect(workspace.name).toBe("Active Projects");
         expect(workspace.description).toBe("Projects I'm working on");
-        expect(workspace.color).toBe("#4CAF50");
+        expect(workspace.theme).toBe("green");
         expect(workspace.icon).toBe("folder");
         expect(workspace.isDefault).toBe(true);
         expect(workspace.suggestedClonePath).toBe("/home/user/active");
@@ -122,12 +122,12 @@ describe("WorkspaceManager", () => {
         const updated = await manager.updateWorkspace(workspace.id, {
           name: "Updated Name",
           description: "Updated Description",
-          color: "#FF0000",
+          theme: "red",
         });
 
         expect(updated.name).toBe("Updated Name");
         expect(updated.description).toBe("Updated Description");
-        expect(updated.color).toBe("#FF0000");
+        expect(updated.theme).toBe("red");
         expect(updated.updatedAt).toBeGreaterThanOrEqual(workspace.updatedAt);
       });
 
