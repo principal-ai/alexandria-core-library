@@ -85,6 +85,9 @@ export interface AlexandriaRepository {
 
   /** Optional color for visual representation (e.g., "#FF5733", "blue", "rgb(255,87,51)") */
   bookColor?: string;
+
+  /** Optional theme identifier */
+  theme?: string;
 }
 
 /**
