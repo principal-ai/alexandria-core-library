@@ -88,6 +88,10 @@ export type { GlobAdapter, GlobOptions } from "./pure-core/abstractions/glob";
 
 // Primary API classes
 export { MemoryPalace } from "./MemoryPalace";
+export type {
+  DocumentOverview,
+  GetDocumentsOverviewOptions,
+} from "./MemoryPalace";
 
 // Project management
 export { ProjectRegistryStore } from "./projects-core/ProjectRegistryStore";

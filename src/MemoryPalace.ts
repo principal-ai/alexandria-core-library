@@ -6,6 +6,7 @@
  */
 
 import { FileSystemAdapter } from "./pure-core/abstractions/filesystem";
+import { GlobAdapter } from "./pure-core/abstractions/glob";
 import {
   AnchoredNotesStore,
   StaleAnchoredNote,
@@ -66,6 +67,36 @@ export interface CoverageReport {
   totalNotes: number;
   staleNotesCount: number;
   message: string;
+}
+
+/**
+ * Overview information about a markdown document in the repository
+ */
+export interface DocumentOverview {
+  /** Absolute path to the markdown file */
+  path: string;
+  /** Path relative to repository root */
+  relativePath: string;
+  /** Document title (derived from filename) */
+  title: string;
+  /** Whether this document is tracked by a CodebaseView */
+  isTracked: boolean;
+  /** The CodebaseView ID if tracked */
+  viewId?: string;
+  /** The CodebaseView name if tracked */
+  viewName?: string;
+  /** Associated source files from the CodebaseView's referenceGroups */
+  associatedFiles?: string[];
+}
+
+/**
+ * Options for getDocumentsOverview
+ */
+export interface GetDocumentsOverviewOptions {
+  /** Include documents not tracked by any view (default: true) */
+  includeUntracked?: boolean;
+  /** Glob patterns to exclude (default: ['.palace-work/**', '.backlog/**']) */
+  excludePatterns?: string[];
 }
 
 /**
@@ -420,6 +451,122 @@ export class MemoryPalace {
       ...validationResult,
       validatedView: viewToSave,
     };
+  }
+
+  /**
+   * Get an overview of all markdown documents in the repository
+   * with their Alexandria tracking status and associated files.
+   *
+   * @param globAdapter - Glob adapter for finding markdown files
+   * @param options - Options for filtering documents
+   * @returns Array of document overviews
+   */
+  async getDocumentsOverview(
+    globAdapter: GlobAdapter,
+    options: GetDocumentsOverviewOptions = {},
+  ): Promise<DocumentOverview[]> {
+    const { includeUntracked = true, excludePatterns = [] } = options;
+
+    // Default exclude patterns for Alexandria internal directories
+    const defaultExcludes = [
+      "**/.palace-work/**",
+      "**/.backlog/**",
+      "**/.alexandria/**",
+      "**/node_modules/**",
+    ];
+    const allExcludes = [...defaultExcludes, ...excludePatterns];
+
+    // Find all markdown files using the glob adapter
+    const markdownFiles = await globAdapter.findFiles(["**/*.md", "**/*.mdx"], {
+      cwd: this.repositoryRoot,
+      ignore: allExcludes,
+      onlyFiles: true,
+    });
+
+    // Load all views and build a map of overviewPath -> view
+    const views = this.listViews();
+    const overviewPathToView = new Map<string, CodebaseView>();
+
+    for (const view of views) {
+      if (view.overviewPath) {
+        // Normalize the path for comparison
+        const normalizedPath = view.overviewPath.startsWith("./")
+          ? view.overviewPath.slice(2)
+          : view.overviewPath;
+        overviewPathToView.set(normalizedPath, view);
+      }
+    }
+
+    // Build document overviews
+    const results: DocumentOverview[] = [];
+
+    for (const relativePath of markdownFiles) {
+      const normalizedPath = relativePath.startsWith("./")
+        ? relativePath.slice(2)
+        : relativePath;
+
+      const view = overviewPathToView.get(normalizedPath);
+      const isTracked = !!view;
+
+      // Skip untracked documents if not requested
+      if (!isTracked && !includeUntracked) {
+        continue;
+      }
+
+      // Extract title from filename
+      const filename = this.fs.basename(relativePath);
+      const title = this.extractTitleFromFilename(filename);
+
+      // Get associated files from the view's reference groups
+      let associatedFiles: string[] | undefined;
+      if (view?.referenceGroups) {
+        const files: string[] = [];
+        for (const groupName in view.referenceGroups) {
+          const group = view.referenceGroups[groupName];
+          if ("files" in group && Array.isArray(group.files)) {
+            files.push(...group.files);
+          }
+        }
+        if (files.length > 0) {
+          associatedFiles = [...new Set(files)]; // Deduplicate
+        }
+      }
+
+      const overview: DocumentOverview = {
+        path: this.fs.join(this.repositoryRoot, relativePath),
+        relativePath,
+        title,
+        isTracked,
+      };
+
+      if (view) {
+        overview.viewId = view.id;
+        overview.viewName = view.name;
+        if (associatedFiles) {
+          overview.associatedFiles = associatedFiles;
+        }
+      }
+
+      results.push(overview);
+    }
+
+    // Sort by relativePath for consistent ordering
+    results.sort((a, b) => a.relativePath.localeCompare(b.relativePath));
+
+    return results;
+  }
+
+  /**
+   * Extract a human-readable title from a filename
+   */
+  private extractTitleFromFilename(filename: string): string {
+    // Remove extension
+    const withoutExt = filename.replace(/\.(md|mdx)$/i, "");
+
+    // Convert kebab-case or snake_case to Title Case
+    return withoutExt
+      .replace(/[-_]/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
   /**
