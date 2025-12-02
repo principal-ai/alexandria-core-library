@@ -40,7 +40,7 @@ export const orphanedReferences: LibraryRule = {
               const fullPath = fsAdapter.join(projectRoot, file);
               if (!fsAdapter.exists(fullPath)) {
                 const viewFilePath = fsAdapter.join(
-                  getViewsDir(projectRoot),
+                  getViewsDir(fsAdapter, projectRoot),
                   `${view.name}.json`,
                 );
                 const lineNumber = findFileReferenceLineNumber(
@@ -70,7 +70,7 @@ export const orphanedReferences: LibraryRule = {
         const fullPath = fsAdapter.join(projectRoot, anchorPath);
         if (!fsAdapter.exists(fullPath)) {
           const noteFilePath = fsAdapter.join(
-            getNotesDir(projectRoot),
+            getNotesDir(fsAdapter, projectRoot),
             `${noteWithPath.note.id}.json`,
           );
           const lineNumber = findFileReferenceLineNumber(
