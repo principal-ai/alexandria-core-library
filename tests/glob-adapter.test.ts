@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { NodeGlobAdapter } from "../src/node-adapters/NodeGlobAdapter";
-import { InMemoryGlobAdapter } from "./test-adapters/InMemoryGlobAdapter";
-import { InMemoryFileSystemAdapter } from "./test-adapters/InMemoryFileSystemAdapter";
+import { InMemoryGlobAdapter } from "../src/test-adapters/InMemoryGlobAdapter";
+import { InMemoryFileSystemAdapter } from "../src/test-adapters/InMemoryFileSystemAdapter";
 import * as fs from "fs";
 import * as path from "path";
 import { tmpdir } from "os";

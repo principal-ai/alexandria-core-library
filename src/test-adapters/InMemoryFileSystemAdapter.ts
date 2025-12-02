@@ -149,6 +149,22 @@ export class InMemoryFileSystemAdapter implements FileSystemAdapter {
     return lastSlash <= 0 ? "/" : path.slice(0, lastSlash);
   }
 
+  basename(filePath: string, ext?: string): string {
+    const lastSlash = filePath.lastIndexOf("/");
+    let name = lastSlash === -1 ? filePath : filePath.slice(lastSlash + 1);
+    if (ext && name.endsWith(ext)) {
+      name = name.slice(0, -ext.length);
+    }
+    return name;
+  }
+
+  extname(filePath: string): string {
+    const name = this.basename(filePath);
+    const lastDot = name.lastIndexOf(".");
+    if (lastDot <= 0) return "";
+    return name.slice(lastDot);
+  }
+
   isAbsolute(path: string): boolean {
     return path.startsWith("/");
   }

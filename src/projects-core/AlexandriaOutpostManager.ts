@@ -9,7 +9,6 @@ import type {
 import type { CodebaseViewSummary } from "../pure-core/types/summary.js";
 import { extractCodebaseViewSummary } from "../pure-core/types/summary.js";
 import type { ValidatedRepositoryPath } from "../pure-core/types/index.js";
-import { homedir } from "os";
 import { ConfigLoader } from "../config/loader.js";
 
 import { FileSystemAdapter } from "../pure-core/abstractions/filesystem.js";
@@ -23,15 +22,21 @@ export class AlexandriaOutpostManager {
    */
   public readonly workspaces: WorkspaceManager;
 
+  /**
+   * Creates an AlexandriaOutpostManager instance.
+   *
+   * @param fsAdapter - File system adapter for platform-agnostic file operations
+   * @param globAdapter - Glob adapter for pattern matching
+   * @param homeDir - User's home directory path (e.g., from `os.homedir()` in Node.js)
+   */
   constructor(
     private readonly fsAdapter: FileSystemAdapter,
     private readonly globAdapter: GlobAdapter,
+    homeDir: string,
   ) {
-    // Create the ProjectRegistryStore internally with the user's home directory
-    const homeDirectory = homedir();
-    const alexandriaPath = fsAdapter.join(homeDirectory, ".alexandria");
+    const alexandriaPath = fsAdapter.join(homeDir, ".alexandria");
 
-    this.projectRegistry = new ProjectRegistryStore(fsAdapter, homeDirectory);
+    this.projectRegistry = new ProjectRegistryStore(fsAdapter, homeDir);
 
     // Initialize workspace manager with same registry path
     this.workspaces = new WorkspaceManager(alexandriaPath, fsAdapter);

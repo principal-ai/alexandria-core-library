@@ -4,11 +4,8 @@
  * This adapter provides pattern matching without external dependencies,
  * using the FileSystemAdapter to traverse the file system.
  */
-import {
-  GlobAdapter,
-  GlobOptions,
-} from "../../src/pure-core/abstractions/glob";
-import { FileSystemAdapter } from "../../src/pure-core/abstractions/filesystem";
+import { GlobAdapter, GlobOptions } from "../pure-core/abstractions/glob";
+import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
 
 export class InMemoryGlobAdapter implements GlobAdapter {
   constructor(private fs: FileSystemAdapter) {}

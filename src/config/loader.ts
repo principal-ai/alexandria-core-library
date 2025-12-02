@@ -1,4 +1,3 @@
-import { join, resolve } from "path";
 import { AlexandriaConfig } from "./types";
 import { CONFIG_FILENAMES, DEFAULT_CONFIG } from "./schema";
 import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
@@ -11,19 +10,20 @@ export class ConfigLoader {
     this.fsAdapter = fsAdapter;
   }
 
-  findConfigFile(startDir: string = process.cwd()): string | null {
-    let currentDir = resolve(startDir);
-    const root = resolve("/");
+  findConfigFile(startDir: string): string | null {
+    let currentDir = startDir;
 
-    while (currentDir !== root) {
+    // Walk up the directory tree looking for config files
+    while (currentDir) {
       for (const filename of CONFIG_FILENAMES) {
-        const configPath = join(currentDir, filename);
+        const configPath = this.fsAdapter.join(currentDir, filename);
         if (this.fsAdapter.exists(configPath)) {
           return configPath;
         }
       }
 
-      const parentDir = resolve(currentDir, "..");
+      const parentDir = this.fsAdapter.dirname(currentDir);
+      // Stop if we've reached the root (dirname returns the same path)
       if (parentDir === currentDir) break;
       currentDir = parentDir;
     }
@@ -31,8 +31,22 @@ export class ConfigLoader {
     return null;
   }
 
-  loadConfig(configPath?: string): AlexandriaConfig | null {
-    const path = configPath || this.findConfigFile();
+  /**
+   * Load configuration from a specific path or search from a starting directory.
+   *
+   * @param configPathOrStartDir - Either a direct path to a config file, or a directory to start searching from
+   * @returns The loaded configuration, or null if not found
+   */
+  loadConfig(configPathOrStartDir?: string): AlexandriaConfig | null {
+    if (!configPathOrStartDir) {
+      return null;
+    }
+
+    // Check if this is a direct config file path or a directory to search from
+    const path = this.fsAdapter.exists(configPathOrStartDir) &&
+      !this.fsAdapter.isDirectory(configPathOrStartDir)
+      ? configPathOrStartDir
+      : this.findConfigFile(configPathOrStartDir);
 
     if (!path) {
       return null;

@@ -7,6 +7,7 @@ import {
   GlobAdapter,
   GlobOptions,
 } from "../../src/pure-core/abstractions/glob";
+import { FileSystemAdapter } from "../../src/pure-core/abstractions/filesystem";
 
 describe("document-organization rule", () => {
   let mockContext: LibraryRuleContext;
@@ -32,6 +33,47 @@ describe("document-organization rule", () => {
 
         return patterns.some((pattern) => globToRegex(pattern).test(candidate));
       },
+    };
+  };
+
+  // Stub FileSystemAdapter for tests (only path operations needed)
+  const createStubFsAdapter = (): FileSystemAdapter => {
+    return {
+      exists: () => false,
+      readFile: () => "",
+      writeFile: () => {},
+      deleteFile: () => {},
+      readBinaryFile: () => new Uint8Array(),
+      writeBinaryFile: () => {},
+      createDir: () => {},
+      readDir: () => [],
+      deleteDir: () => {},
+      isDirectory: () => false,
+      join: (...paths: string[]) => paths.join("/").replace(/\/+/g, "/"),
+      relative: (from: string, to: string) =>
+        to.startsWith(from) ? to.slice(from.length + 1) : to,
+      dirname: (path: string) => {
+        const lastSlash = path.lastIndexOf("/");
+        return lastSlash <= 0 ? "/" : path.slice(0, lastSlash);
+      },
+      basename: (filePath: string, ext?: string) => {
+        const lastSlash = filePath.lastIndexOf("/");
+        let name = lastSlash === -1 ? filePath : filePath.slice(lastSlash + 1);
+        if (ext && name.endsWith(ext)) {
+          name = name.slice(0, -ext.length);
+        }
+        return name;
+      },
+      extname: (filePath: string) => {
+        const name = filePath.split("/").pop() || "";
+        const lastDot = name.lastIndexOf(".");
+        if (lastDot <= 0) return "";
+        return name.slice(lastDot);
+      },
+      isAbsolute: (path: string) => path.startsWith("/"),
+      normalizeRepositoryPath: (path: string) => path,
+      findProjectRoot: (path: string) => path,
+      getRepositoryName: (path: string) => path.split("/").pop() || "root",
     };
   };
 
@@ -61,6 +103,7 @@ describe("document-organization rule", () => {
       files: [],
       markdownFiles: [],
       globAdapter: createStubGlobAdapter(),
+      fsAdapter: createStubFsAdapter(),
     };
   });
 

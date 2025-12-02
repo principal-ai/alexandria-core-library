@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { staleReferences } from "../../src/rules/implementations/stale-references";
 import { LibraryRuleContext, FileInfo } from "../../src/rules/types";
 import { ValidatedRepositoryPath } from "../../src/pure-core/types";
-import { InMemoryFileSystemAdapter } from "../test-adapters/InMemoryFileSystemAdapter";
+import { InMemoryFileSystemAdapter } from "../../src/test-adapters/InMemoryFileSystemAdapter";
 
 describe("stale-references rule", () => {
   let mockContext: LibraryRuleContext;

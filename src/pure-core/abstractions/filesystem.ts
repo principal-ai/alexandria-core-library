@@ -27,6 +27,8 @@ export interface FileSystemAdapter {
   join(...paths: string[]): string;
   relative(from: string, to: string): string;
   dirname(path: string): string;
+  basename(path: string, ext?: string): string;
+  extname(path: string): string;
   isAbsolute(path: string): boolean;
 
   // Repository operations

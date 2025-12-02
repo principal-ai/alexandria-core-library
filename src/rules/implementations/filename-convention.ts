@@ -4,8 +4,6 @@ import {
   LibraryRuleContext,
 } from "../types";
 import { FilenameConventionOptions, FilenameStyle } from "../../config/types";
-import * as path from "path";
-import * as fs from "fs/promises";
 import { matchesPatterns } from "../utils/patterns";
 
 // Default exceptions for common files
@@ -47,7 +45,12 @@ export const filenameConvention: LibraryRule = {
 
   async check(context: LibraryRuleContext): Promise<LibraryRuleViolation[]> {
     const violations: LibraryRuleViolation[] = [];
-    const { files, markdownFiles, config, globAdapter } = context;
+    const { files, markdownFiles, config, globAdapter, fsAdapter } = context;
+
+    // Require fsAdapter for this rule
+    if (!fsAdapter) {
+      throw new Error("filename-convention rule requires fsAdapter in context");
+    }
 
     // Get options from config or use defaults
     const ruleConfig = config?.context?.rules?.find(
@@ -93,12 +96,12 @@ export const filenameConvention: LibraryRule = {
     const globalExcludePatterns = config?.context?.patterns?.exclude ?? [];
 
     for (const fileInfo of filesToCheck) {
-      const fileName = path.basename(fileInfo.relativePath);
-      const fileNameWithoutExt = path.basename(
+      const fileName = fsAdapter.basename(fileInfo.relativePath);
+      const fileNameWithoutExt = fsAdapter.basename(
         fileInfo.relativePath,
-        path.extname(fileInfo.relativePath),
+        fsAdapter.extname(fileInfo.relativePath),
       );
-      const dirName = path.dirname(fileInfo.relativePath);
+      const dirName = fsAdapter.dirname(fileInfo.relativePath);
 
       if (
         matchesPatterns(
@@ -124,7 +127,8 @@ export const filenameConvention: LibraryRule = {
 
       // If documentFoldersOnly is true, only check files in documentation folders
       if (options.documentFoldersOnly) {
-        const pathParts = dirName.split(path.sep).filter(Boolean);
+        // Split path using "/" since relative paths use forward slashes
+        const pathParts = dirName.split("/").filter(Boolean);
         const isInDocFolder = pathParts.some((part) =>
           DEFAULT_DOC_FOLDERS.some(
             (docFolder) => part.toLowerCase() === docFolder.toLowerCase(),
@@ -139,7 +143,7 @@ export const filenameConvention: LibraryRule = {
       // Check if filename matches the specified convention
       const expectedFileName = convertToConvention(fileNameWithoutExt, options);
       const expectedFullName =
-        expectedFileName + path.extname(fileInfo.relativePath);
+        expectedFileName + fsAdapter.extname(fileInfo.relativePath);
 
       if (fileNameWithoutExt !== expectedFileName) {
         violations.push({
@@ -163,7 +167,13 @@ export const filenameConvention: LibraryRule = {
   ): Promise<void> {
     if (!violation.file) return;
 
-    const { projectRoot, config } = context;
+    const { projectRoot, config, fsAdapter } = context;
+
+    // Require fsAdapter for fix
+    if (!fsAdapter) {
+      throw new Error("filename-convention fix requires fsAdapter in context");
+    }
+
     const ruleConfig = config?.context?.rules?.find(
       (r) => r.id === "filename-convention",
     );
@@ -186,20 +196,23 @@ export const filenameConvention: LibraryRule = {
       return;
     }
 
-    const oldPath = path.join(projectRoot, violation.file);
-    const fileName = path.basename(violation.file);
-    const fileNameWithoutExt = path.basename(
+    const oldPath = fsAdapter.join(projectRoot, violation.file);
+    const fileName = fsAdapter.basename(violation.file);
+    const fileNameWithoutExt = fsAdapter.basename(
       violation.file,
-      path.extname(violation.file),
+      fsAdapter.extname(violation.file),
     );
-    const dirName = path.dirname(violation.file);
+    const dirName = fsAdapter.dirname(violation.file);
 
     const expectedFileName = convertToConvention(fileNameWithoutExt, options);
-    const expectedFullName = expectedFileName + path.extname(violation.file);
-    const newPath = path.join(projectRoot, dirName, expectedFullName);
+    const expectedFullName = expectedFileName + fsAdapter.extname(violation.file);
+    const newPath = fsAdapter.join(projectRoot, dirName, expectedFullName);
 
     try {
-      await fs.rename(oldPath, newPath);
+      // Read the file content, write to new location, then delete old file
+      const content = fsAdapter.readFile(oldPath);
+      fsAdapter.writeFile(newPath, content);
+      fsAdapter.deleteFile(oldPath);
       console.log(`Renamed "${fileName}" to "${expectedFullName}"`);
     } catch (error) {
       console.error(`Failed to rename file: ${error}`);

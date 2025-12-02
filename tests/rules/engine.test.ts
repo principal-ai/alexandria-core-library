@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { LibraryRulesEngine } from "../../src/rules/engine";
-import { InMemoryFileSystemAdapter } from "../test-adapters/InMemoryFileSystemAdapter";
-import { InMemoryGlobAdapter } from "../test-adapters/InMemoryGlobAdapter";
+import { InMemoryFileSystemAdapter } from "../../src/test-adapters/InMemoryFileSystemAdapter";
+import { InMemoryGlobAdapter } from "../../src/test-adapters/InMemoryGlobAdapter";
 import { AlexandriaConfig } from "../../src/config/types";
 
 describe("LibraryRulesEngine", () => {

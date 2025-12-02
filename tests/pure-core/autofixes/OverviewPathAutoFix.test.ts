@@ -8,12 +8,12 @@ describe("OverviewPathAutoFix", () => {
   let fs: InMemoryFileSystemAdapter;
   let palace: MemoryPalace;
   let autoFix: OverviewPathAutoFix;
+  const repoPath = "/test/repo";
 
   beforeEach(() => {
     fs = new InMemoryFileSystemAdapter();
 
     // Set up a test repository structure
-    const repoPath = "/test/repo";
     fs.createDir(repoPath);
     fs.createDir(`${repoPath}/.git`);
     fs.createDir(`${repoPath}/.alexandria`);
@@ -22,7 +22,7 @@ describe("OverviewPathAutoFix", () => {
 
     palace = new MemoryPalace(repoPath, fs);
 
-    autoFix = new OverviewPathAutoFix(palace, {
+    autoFix = new OverviewPathAutoFix(palace, fs, {
       createMissing: true,
       consolidateDocs: false,
     });
@@ -108,7 +108,7 @@ describe("OverviewPathAutoFix", () => {
   });
 
   test("should suggest consolidation when enabled", async () => {
-    const consolidatingAutoFix = new OverviewPathAutoFix(palace, {
+    const consolidatingAutoFix = new OverviewPathAutoFix(palace, fs, {
       consolidateDocs: true,
       preferredOverviewDir: "docs/views",
     });

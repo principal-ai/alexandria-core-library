@@ -105,6 +105,14 @@ export class NodeFileSystemAdapter implements FileSystemAdapter {
     return path.dirname(pathString);
   }
 
+  basename(pathString: string, ext?: string): string {
+    return ext ? path.basename(pathString, ext) : path.basename(pathString);
+  }
+
+  extname(pathString: string): string {
+    return path.extname(pathString);
+  }
+
   relative(from: string, to: string): string {
     return path.relative(from, to);
   }

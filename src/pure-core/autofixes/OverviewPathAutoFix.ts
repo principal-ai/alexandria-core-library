@@ -3,7 +3,7 @@
  * Handles moving misplaced overview documents and updating paths
  */
 
-import * as path from "node:path";
+import type { FileSystemAdapter } from "../abstractions/filesystem";
 import type { MemoryPalace } from "../../MemoryPalace";
 import { CodebaseView } from "../types";
 import {
@@ -29,10 +29,16 @@ export class OverviewPathAutoFix implements AutoFixProvider {
   description = "Fixes issues with CodebaseView overview document paths";
 
   private palace: MemoryPalace;
+  private fs: FileSystemAdapter;
   private options: OverviewPathAutoFixOptions;
 
-  constructor(palace: MemoryPalace, options: OverviewPathAutoFixOptions = {}) {
+  constructor(
+    palace: MemoryPalace,
+    fsAdapter: FileSystemAdapter,
+    options: OverviewPathAutoFixOptions = {},
+  ) {
     this.palace = palace;
+    this.fs = fsAdapter;
     this.options = {
       preferredOverviewDir: "docs/views",
       createMissing: true,
@@ -127,7 +133,7 @@ export class OverviewPathAutoFix implements AutoFixProvider {
       context: { viewId: view.id, preferredDir },
     };
 
-    const newPath = path.join(preferredDir, `${view.id}.md`);
+    const newPath = this.fs.join(preferredDir, `${view.id}.md`);
 
     return {
       issue,
@@ -186,7 +192,7 @@ export class OverviewPathAutoFix implements AutoFixProvider {
     };
 
     const preferredDir = this.options.preferredOverviewDir || "docs/views";
-    const newPath = path.join(preferredDir, `${view.id}.md`);
+    const newPath = this.fs.join(preferredDir, `${view.id}.md`);
 
     return {
       issue,
@@ -228,7 +234,7 @@ export class OverviewPathAutoFix implements AutoFixProvider {
         this.palace.getRepositoryPath() + "/" + view.overviewPath;
 
       // Ensure directory exists
-      const dir = path.dirname(fullPath);
+      const dir = this.fs.dirname(fullPath);
       if (!this.palace.fileExists(dir)) {
         this.palace.createDirectory(dir);
       }
@@ -267,7 +273,7 @@ export class OverviewPathAutoFix implements AutoFixProvider {
       const newFullPath = this.palace.getRepositoryPath() + "/" + newPath;
 
       // Ensure target directory exists
-      const targetDir = path.dirname(newFullPath);
+      const targetDir = this.fs.dirname(newFullPath);
       if (!this.palace.fileExists(targetDir)) {
         this.palace.createDirectory(targetDir);
       }

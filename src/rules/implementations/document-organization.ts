@@ -4,7 +4,6 @@ import {
   LibraryRuleContext,
 } from "../types";
 import { DocumentOrganizationOptions } from "../../config/types";
-import * as path from "path";
 import { matchesPatterns } from "../utils/patterns";
 
 // Default allowed root-level documentation files
@@ -53,7 +52,14 @@ export const documentOrganization: LibraryRule = {
 
   async check(context: LibraryRuleContext): Promise<LibraryRuleViolation[]> {
     const violations: LibraryRuleViolation[] = [];
-    const { config, globAdapter } = context;
+    const { config, globAdapter, fsAdapter } = context;
+
+    // Require fsAdapter for this rule
+    if (!fsAdapter) {
+      throw new Error(
+        "document-organization rule requires fsAdapter in context",
+      );
+    }
 
     // Get options from config or use defaults
     const ruleConfig = config?.context?.rules?.find(
@@ -86,16 +92,18 @@ export const documentOrganization: LibraryRule = {
 
       for (const fileInfo of markdownFiles) {
         const file = fileInfo.relativePath;
-        const fileName = path.basename(file);
-        const dirName = path.dirname(file);
-        const pathParts = dirName.split(path.sep).filter(Boolean);
+        const fileName = fsAdapter.basename(file);
+        const dirName = fsAdapter.dirname(file);
+        // Split path using "/" since relative paths use forward slashes
+        const pathParts = dirName.split("/").filter(Boolean);
 
         if (matchesPatterns(globAdapter, globalExcludePatterns, file)) {
           continue;
         }
 
         // Check if file is in root directory
-        if (dirName === "." || dirName === "") {
+        // dirname returns "." for relative paths, "" for just filename, or "/" for in-memory adapter
+        if (dirName === "." || dirName === "" || dirName === "/") {
           // Check if it's an allowed root file
           const isAllowedException =
             options.rootExceptions?.some(

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { orphanedReferences } from "../../src/rules/implementations/orphaned-references";
 import { LibraryRuleContext } from "../../src/rules/types";
 import { ValidatedRepositoryPath } from "../../src/pure-core/types";
-import { InMemoryFileSystemAdapter } from "../test-adapters/InMemoryFileSystemAdapter";
+import { InMemoryFileSystemAdapter } from "../../src/test-adapters/InMemoryFileSystemAdapter";
 
 describe("orphaned-references rule", () => {
   let mockContext: LibraryRuleContext;

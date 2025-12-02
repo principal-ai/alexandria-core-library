@@ -44,6 +44,7 @@ export const orphanedReferences: LibraryRule = {
                   `${view.name}.json`,
                 );
                 const lineNumber = findFileReferenceLineNumber(
+                  fsAdapter,
                   viewFilePath,
                   file,
                 );
@@ -73,6 +74,7 @@ export const orphanedReferences: LibraryRule = {
             `${noteWithPath.note.id}.json`,
           );
           const lineNumber = findFileReferenceLineNumber(
+            fsAdapter,
             noteFilePath,
             anchorPath,
           );

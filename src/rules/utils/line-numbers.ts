@@ -1,18 +1,19 @@
-import { readFileSync } from "fs";
-import { join } from "path";
+import { FileSystemAdapter } from "../../pure-core/abstractions/filesystem";
 
 /**
  * Find the line number of a specific property or value in a JSON file
+ * @param fs - File system adapter
  * @param filePath - Path to the JSON file
  * @param searchTerm - The term to search for (property name or value)
  * @returns Line number (1-indexed) or undefined if not found
  */
 export function findLineNumberInJSON(
+  fs: FileSystemAdapter,
   filePath: string,
   searchTerm: string,
 ): number | undefined {
   try {
-    const content = readFileSync(filePath, "utf-8");
+    const content = fs.readFile(filePath);
     const lines = content.split("\n");
 
     // Search for the term in each line
@@ -34,29 +35,33 @@ export function findLineNumberInJSON(
 
 /**
  * Find the line number of a cell definition in a view JSON file
+ * @param fs - File system adapter
  * @param projectRoot - The project root path
  * @param viewName - Name of the view
  * @param cellName - Name of the cell
  * @returns Line number (1-indexed) or undefined if not found
  */
 export function findCellLineNumber(
+  fs: FileSystemAdapter,
   projectRoot: string,
   viewName: string,
   cellName: string,
 ): number | undefined {
-  const viewPath = join(projectRoot, "views", `${viewName}.json`);
-  return findLineNumberInJSON(viewPath, cellName);
+  const viewPath = fs.join(projectRoot, "views", `${viewName}.json`);
+  return findLineNumberInJSON(fs, viewPath, cellName);
 }
 
 /**
  * Find the line number of a file reference in a JSON file
+ * @param fs - File system adapter
  * @param filePath - Path to the JSON file
  * @param referencedFile - The file being referenced
  * @returns Line number (1-indexed) or undefined if not found
  */
 export function findFileReferenceLineNumber(
+  fs: FileSystemAdapter,
   filePath: string,
   referencedFile: string,
 ): number | undefined {
-  return findLineNumberInJSON(filePath, referencedFile);
+  return findLineNumberInJSON(fs, filePath, referencedFile);
 }

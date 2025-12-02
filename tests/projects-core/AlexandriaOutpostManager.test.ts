@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, mock } from "bun:test";
 import { AlexandriaOutpostManager } from "../../src/projects-core/AlexandriaOutpostManager";
-import { InMemoryFileSystemAdapter } from "../test-adapters/InMemoryFileSystemAdapter";
-import { InMemoryGlobAdapter } from "../test-adapters/InMemoryGlobAdapter";
+import { InMemoryFileSystemAdapter } from "../../src/test-adapters/InMemoryFileSystemAdapter";
+import { InMemoryGlobAdapter } from "../../src/test-adapters/InMemoryGlobAdapter";
 import type { CodebaseView } from "../../src/pure-core/types/index";
 
 // Test helper class that allows mocking MemoryPalace
@@ -25,10 +25,15 @@ describe("AlexandriaOutpostManager", () => {
   let fs: InMemoryFileSystemAdapter;
   let globAdapter: InMemoryGlobAdapter;
   const testRepoPath = "/test-repo";
+  const testHomeDir = "/home/testuser";
 
   beforeEach(() => {
     fs = new InMemoryFileSystemAdapter();
     globAdapter = new InMemoryGlobAdapter(fs);
+
+    // Set up home directory structure for the manager
+    fs.createDir(testHomeDir);
+    fs.createDir(`${testHomeDir}/.alexandria`);
 
     // Set up test repository structure
     fs.createDir(testRepoPath);
@@ -42,8 +47,8 @@ describe("AlexandriaOutpostManager", () => {
     fs.writeFile(`${testRepoPath}/.alexandria/views.json`, "[]");
     fs.writeFile(`${testRepoPath}/.alexandria/anchored-notes.json`, "[]");
 
-    // Create testable manager with test adapters
-    manager = new TestableAlexandriaOutpostManager(fs, globAdapter);
+    // Create testable manager with test adapters and homeDir
+    manager = new TestableAlexandriaOutpostManager(fs, globAdapter, testHomeDir);
   });
 
   describe("getAllDocs", () => {
@@ -709,9 +714,13 @@ describe("AlexandriaOutpostManager", () => {
       // Create a fresh manager with a new file system
       const freshFs = new InMemoryFileSystemAdapter();
       const freshGlobAdapter = new InMemoryGlobAdapter(freshFs);
+      const freshHomeDir = "/fresh-home";
+      freshFs.createDir(freshHomeDir);
+      freshFs.createDir(`${freshHomeDir}/.alexandria`);
       const emptyManager = new TestableAlexandriaOutpostManager(
         freshFs,
         freshGlobAdapter,
+        freshHomeDir,
       );
 
       const results = await emptyManager.refreshAllRepositories();

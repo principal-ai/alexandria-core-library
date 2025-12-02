@@ -112,8 +112,14 @@ export class LibraryRulesEngine {
     return { files, markdownFiles };
   }
 
+  /**
+   * Lint a project for library rule violations.
+   *
+   * @param projectRoot - The root path of the project to lint (required)
+   * @param options - Linting options
+   */
   async lint(
-    projectRoot?: string,
+    projectRoot: string,
     options: {
       config?: AlexandriaConfig;
       enabledRules?: string[];
@@ -124,12 +130,12 @@ export class LibraryRulesEngine {
     // Use the injected filesystem adapter
     const validatedPath = MemoryPalace.validateRepositoryPath(
       this.fsAdapter,
-      projectRoot || process.cwd(),
+      projectRoot,
     );
     const memoryPalace = new MemoryPalace(validatedPath, this.fsAdapter);
 
-    // Load configuration
-    const config = options.config || this.configLoader.loadConfig();
+    // Load configuration (search from the project root)
+    const config = options.config || this.configLoader.loadConfig(validatedPath);
 
     // Determine if we should use gitignore (default to true)
     const useGitignore = config?.context?.useGitignore !== false;

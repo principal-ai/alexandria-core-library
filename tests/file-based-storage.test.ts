@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { AnchoredNotesStore } from "../src/pure-core/stores/AnchoredNotesStore";
-import { InMemoryFileSystemAdapter } from "./test-adapters/InMemoryFileSystemAdapter";
+import { InMemoryFileSystemAdapter } from "../src/test-adapters/InMemoryFileSystemAdapter";
 import { CodebaseViewsStore } from "../src/pure-core/stores/CodebaseViewsStore";
 import { MemoryPalace } from "../src/MemoryPalace";
 import type {
