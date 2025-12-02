@@ -83,6 +83,16 @@ export { InMemoryFileSystemAdapter } from "./test-adapters/InMemoryFileSystemAda
 // Glob adapter for pattern matching
 export type { GlobAdapter, GlobOptions } from "./pure-core/abstractions/glob";
 
+// FileTree-based adapters for browser environments
+export {
+  FileTreeFileSystemAdapter,
+  FileTreeGlobAdapter,
+} from "./filetree-adapters";
+export type {
+  FileTreeFileSystemAdapterOptions,
+  FileTreeGlobAdapterOptions,
+} from "./filetree-adapters";
+
 // Note: NodeFileSystemAdapter and NodeGlobAdapter are available via the /node entry point
 // Import from '@principal-ai/alexandria-core-library/node' to use Node.js-specific adapters
 

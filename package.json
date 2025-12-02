@@ -104,5 +104,8 @@
     "typecheck": "tsc --noEmit",
     "knip": "knip"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@principal-ai/repository-abstraction": "^0.2.5"
+  }
 }
