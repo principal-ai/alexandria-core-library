@@ -8,7 +8,7 @@ import { MinimumReferencesOptions } from "../../config/types";
 export const minimumReferences: LibraryRule = {
   id: "minimum-references",
   name: "Minimum References",
-  severity: "warning",
+  severity: "error",
   category: "quality",
   description:
     "Ensures CodebaseViews have a minimum number of file references to prevent orphaned documentation",
@@ -17,7 +17,7 @@ export const minimumReferences: LibraryRule = {
   fixable: false,
   enabled: true,
   options: {
-    minFiles: 3,
+    minFiles: 1,
     excludeCategories: ["planning", "meta"],
     excludeViews: [],
   },
