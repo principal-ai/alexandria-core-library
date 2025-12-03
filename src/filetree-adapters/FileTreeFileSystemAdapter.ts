@@ -211,7 +211,7 @@ export class FileTreeFileSystemAdapter implements FileSystemAdapter {
     return path.startsWith("/");
   }
 
-  normalizeRepositoryPath(inputPath: string): string {
+  normalizeRepositoryPath(_inputPath: string): string {
     // For FileTree adapter, the repository path is fixed
     return this.repositoryPath;
   }
