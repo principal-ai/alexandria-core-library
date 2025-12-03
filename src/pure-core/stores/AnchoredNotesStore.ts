@@ -76,8 +76,7 @@ export class AnchoredNotesStore {
       fileSystemAdapter,
       alexandriaPath,
     );
-    // Ensure notes directory exists
-    this.fs.createDir(this.notesDir);
+    // Note: Directory creation is deferred to write operations
   }
 
   // ============================================================================

@@ -135,30 +135,16 @@ export class MemoryPalace {
   }
 
   /**
-   * Get the Alexandria data directory path
-   * Checks for existing directory and creates if needed
+   * Get the Alexandria data directory path.
+   * Returns the path whether or not the directory exists - stores handle
+   * missing directories gracefully (returning empty data for reads).
    */
   static getAlexandriaPath(
     repositoryPath: ValidatedRepositoryPath,
     fs: FileSystemAdapter,
   ): ValidatedAlexandriaPath {
     const alexandriaPath = fs.join(repositoryPath, ALEXANDRIA_DIRS.PRIMARY);
-
-    // Check if alexandria exists
-    if (fs.exists(alexandriaPath)) {
-      return alexandriaPath as ValidatedAlexandriaPath;
-    }
-
-    // Create the alexandria directory
-    try {
-      fs.createDir(alexandriaPath);
-      return alexandriaPath as ValidatedAlexandriaPath;
-    } catch (error) {
-      throw new Error(
-        `Cannot create Alexandria data directory at ${alexandriaPath}. ` +
-          `Make sure the repository path is writable. Error: ${error}`,
-      );
-    }
+    return alexandriaPath as ValidatedAlexandriaPath;
   }
 
   /**

@@ -51,8 +51,7 @@ export class CodebaseViewsStore {
     this.fs = fileSystemAdapter;
     this.alexandriaPath = alexandriaPath;
     this.viewsDir = this.fs.join(alexandriaPath, "views");
-    // Ensure views directory exists
-    this.fs.createDir(this.viewsDir);
+    // Note: Directory creation is deferred to write operations via ensureViewsDirectory()
   }
 
   // ============================================================================
@@ -67,10 +66,9 @@ export class CodebaseViewsStore {
   }
 
   /**
-   * Ensure the views directory exists.
+   * Ensure the views directory exists (called before write operations).
    */
   private ensureViewsDirectory(): void {
-    // Already ensured in constructor, but keep for compatibility
     if (!this.fs.exists(this.viewsDir)) {
       this.fs.createDir(this.viewsDir);
     }

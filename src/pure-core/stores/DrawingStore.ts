@@ -34,8 +34,7 @@ export class DrawingStore {
     this.fs = fileSystemAdapter;
     this.alexandriaPath = alexandriaPath;
     this.drawingsDir = this.fs.join(alexandriaPath, "drawings");
-    // Ensure drawings directory exists
-    this.fs.createDir(this.drawingsDir);
+    // Note: Directory creation is deferred to write operations via ensureDrawingsDirectory()
   }
 
   /**
