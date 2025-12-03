@@ -160,6 +160,31 @@ export class CodebaseViewsStore {
   }
 
   /**
+   * Async version of getView for environments with async file access.
+   */
+  async getViewAsync(
+    repositoryRootPath: ValidatedRepositoryPath,
+    viewId: string,
+  ): Promise<CodebaseView | null> {
+    const filePath = this.getViewFilePath(repositoryRootPath, viewId);
+
+    if (!this.fs.exists(filePath)) {
+      return null;
+    }
+
+    try {
+      // Use readFileAsync if available, otherwise fall back to sync
+      const content = this.fs.readFileAsync
+        ? await this.fs.readFileAsync(filePath)
+        : this.fs.readFile(filePath);
+      return JSON.parse(content) as CodebaseView;
+    } catch (error) {
+      console.error(`Error reading view ${viewId}:`, error);
+      return null;
+    }
+  }
+
+  /**
    * List all available views in a repository.
    */
   listViews(repositoryRootPath: ValidatedRepositoryPath): CodebaseView[] {
@@ -175,6 +200,50 @@ export class CodebaseViewsStore {
     for (const file of files) {
       const viewId = file.replace(/\.json$/, ""); // Remove .json extension
       const view = this.getView(repositoryRootPath, viewId);
+
+      if (view) {
+        views.push(view);
+      }
+    }
+
+    // Sort by category first, then by displayOrder, then by name as fallback
+    return views.sort((a, b) => {
+      const catA = a.category || "other";
+      const catB = b.category || "other";
+
+      if (catA !== catB) {
+        return catA.localeCompare(catB);
+      }
+
+      const orderA = a.displayOrder ?? 999999;
+      const orderB = b.displayOrder ?? 999999;
+
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+
+      return a.name.localeCompare(b.name);
+    });
+  }
+
+  /**
+   * Async version of listViews for environments with async file access.
+   */
+  async listViewsAsync(
+    repositoryRootPath: ValidatedRepositoryPath,
+  ): Promise<CodebaseView[]> {
+    const viewsDir = this.getViewsDirectory();
+
+    if (!this.fs.exists(viewsDir)) {
+      return [];
+    }
+
+    const files = this.fs.readDir(viewsDir).filter((f) => f.endsWith(".json"));
+    const views: CodebaseView[] = [];
+
+    for (const file of files) {
+      const viewId = file.replace(/\.json$/, ""); // Remove .json extension
+      const view = await this.getViewAsync(repositoryRootPath, viewId);
 
       if (view) {
         views.push(view);

@@ -10,6 +10,8 @@ export interface FileSystemAdapter {
   // File operations
   exists(path: string): boolean;
   readFile(path: string): string;
+  /** Async version of readFile for browser/async environments */
+  readFileAsync?(path: string): Promise<string>;
   writeFile(path: string, content: string): void;
   deleteFile(path: string): void;
 

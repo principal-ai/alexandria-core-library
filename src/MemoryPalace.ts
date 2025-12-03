@@ -379,10 +379,24 @@ export class MemoryPalace {
   }
 
   /**
+   * Async version of listViews for environments with async file access
+   */
+  async listViewsAsync(): Promise<CodebaseView[]> {
+    return this.viewsStore.listViewsAsync(this.repositoryRoot);
+  }
+
+  /**
    * Get a specific codebase view by ID
    */
   getView(viewId: string): CodebaseView | null {
     return this.viewsStore.getView(this.repositoryRoot, viewId);
+  }
+
+  /**
+   * Async version of getView for environments with async file access
+   */
+  async getViewAsync(viewId: string): Promise<CodebaseView | null> {
+    return this.viewsStore.getViewAsync(this.repositoryRoot, viewId);
   }
 
   /**
@@ -470,7 +484,8 @@ export class MemoryPalace {
     });
 
     // Load all views and build a map of overviewPath -> view
-    const views = this.listViews();
+    // Use async version to support browser environments with async file access
+    const views = await this.listViewsAsync();
     const overviewPathToView = new Map<string, CodebaseView>();
 
     for (const view of views) {

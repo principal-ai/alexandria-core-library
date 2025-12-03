@@ -61,8 +61,7 @@ export class TaskStore {
     this.indexPath = this.fs.join(this.tasksPath, INDEX_FILE);
     this.eventsPath = this.fs.join(this.tasksPath, EVENTS_FILE);
 
-    // Load index
-    this.loadIndex();
+    // Note: Index is lazy-loaded on first access to support read-only adapters
   }
 
   // ============================================================================
@@ -90,6 +89,17 @@ export class TaskStore {
     if (!this.fs.exists(this.historyPath)) {
       this.fs.createDir(this.historyPath);
     }
+  }
+
+  /**
+   * Ensure the index is loaded (lazy initialization).
+   * This allows MemoryPalace to be created without errors even with read-only adapters.
+   */
+  private ensureIndex(): TaskIndex {
+    if (this.index === null) {
+      this.loadIndex();
+    }
+    return this.index!;
   }
 
   private loadIndex(): void {
@@ -124,12 +134,11 @@ export class TaskStore {
   }
 
   private saveIndex(): void {
-    if (!this.index) return;
-
+    const index = this.ensureIndex();
     this.ensureWorkDir();
 
-    this.index.lastUpdated = Date.now();
-    this.fs.writeFile(this.indexPath, JSON.stringify(this.index, null, 2));
+    index.lastUpdated = Date.now();
+    this.fs.writeFile(this.indexPath, JSON.stringify(index, null, 2));
   }
 
   // ============================================================================
@@ -324,12 +333,14 @@ export class TaskStore {
    * Unlike completeTask or failTask, this does not move to history
    */
   deleteTask(taskId: string): boolean {
+    const index = this.ensureIndex();
+
     // Check if task exists in index
-    if (!this.index || !this.index.tasks[taskId]) {
+    if (!index.tasks[taskId]) {
       return false;
     }
 
-    const entry = this.index.tasks[taskId];
+    const entry = index.tasks[taskId];
 
     // Remove task file from active directory (don't delete completed tasks from history)
     if (entry.status !== "completed") {
@@ -340,7 +351,7 @@ export class TaskStore {
     }
 
     // Remove from status lists
-    const statusList = this.index.byStatus[entry.status];
+    const statusList = index.byStatus[entry.status];
     if (statusList) {
       const idx = statusList.indexOf(taskId);
       if (idx >= 0) {
@@ -349,8 +360,8 @@ export class TaskStore {
     }
 
     // Remove from sender index
-    if (entry.senderId && this.index.bySender[entry.senderId]) {
-      const senderList = this.index.bySender[entry.senderId];
+    if (entry.senderId && index.bySender[entry.senderId]) {
+      const senderList = index.bySender[entry.senderId];
       const idx = senderList.indexOf(taskId);
       if (idx >= 0) {
         senderList.splice(idx, 1);
@@ -358,8 +369,8 @@ export class TaskStore {
     }
 
     // Remove from ADE index
-    if (entry.adeId && this.index.byADE[entry.adeId]) {
-      const adeList = this.index.byADE[entry.adeId];
+    if (entry.adeId && index.byADE[entry.adeId]) {
+      const adeList = index.byADE[entry.adeId];
       const idx = adeList.indexOf(taskId);
       if (idx >= 0) {
         adeList.splice(idx, 1);
@@ -367,7 +378,7 @@ export class TaskStore {
     }
 
     // Remove from main tasks index
-    delete this.index.tasks[taskId];
+    delete index.tasks[taskId];
 
     // Save updated index
     this.saveIndex();
@@ -391,11 +402,13 @@ export class TaskStore {
    * Get a single task by ID
    */
   getTask(taskId: string): Task | null {
-    if (!this.index || !this.index.tasks[taskId]) {
+    const index = this.ensureIndex();
+
+    if (!index.tasks[taskId]) {
       return null;
     }
 
-    const entry = this.index.tasks[taskId];
+    const entry = index.tasks[taskId];
 
     // If completed, load from history
     if (entry.status === "completed") {
@@ -415,9 +428,9 @@ export class TaskStore {
    * Get next pending task (for ADE to pick up work)
    */
   getNextPendingTask(): Task | null {
-    if (!this.index) return null;
+    const index = this.ensureIndex();
 
-    const pendingIds = this.index.byStatus.pending || [];
+    const pendingIds = index.byStatus.pending || [];
     if (pendingIds.length === 0) return null;
 
     // Get highest priority pending task
@@ -444,9 +457,9 @@ export class TaskStore {
    * Query tasks with filters
    */
   queryTasks(options?: TaskQueryOptions): Task[] {
-    if (!this.index) return [];
+    const index = this.ensureIndex();
 
-    let taskIds = Object.keys(this.index.tasks);
+    let taskIds = Object.keys(index.tasks);
 
     // Apply filters
     if (options) {
@@ -456,7 +469,7 @@ export class TaskStore {
           ? options.status
           : [options.status];
         taskIds = taskIds.filter((id) =>
-          statuses.includes(this.index!.tasks[id].status),
+          statuses.includes(index.tasks[id].status),
         );
       }
 
@@ -466,35 +479,35 @@ export class TaskStore {
           ? options.priority
           : [options.priority];
         taskIds = taskIds.filter((id) =>
-          priorities.includes(this.index!.tasks[id].priority),
+          priorities.includes(index.tasks[id].priority),
         );
       }
 
       // Filter by sender
       if (options.senderId) {
         taskIds = taskIds.filter(
-          (id) => this.index!.tasks[id].senderId === options.senderId,
+          (id) => index.tasks[id].senderId === options.senderId,
         );
       }
 
       // Filter by ADE
       if (options.adeId) {
         taskIds = taskIds.filter(
-          (id) => this.index!.tasks[id].adeId === options.adeId,
+          (id) => index.tasks[id].adeId === options.adeId,
         );
       }
 
       // Filter by directory
       if (options.directoryPath) {
         taskIds = taskIds.filter(
-          (id) => this.index!.tasks[id].directoryPath === options.directoryPath,
+          (id) => index.tasks[id].directoryPath === options.directoryPath,
         );
       }
 
       // Filter by tags
       if (options.tags && options.tags.length > 0) {
         taskIds = taskIds.filter((id) => {
-          const taskTags = this.index!.tasks[id].tags;
+          const taskTags = index.tasks[id].tags;
           return options.tags!.some((tag) => taskTags.includes(tag));
         });
       }
@@ -502,13 +515,13 @@ export class TaskStore {
       // Filter by time
       if (options.receivedAfter) {
         taskIds = taskIds.filter(
-          (id) => this.index!.tasks[id].receivedAt > options.receivedAfter!,
+          (id) => index.tasks[id].receivedAt > options.receivedAfter!,
         );
       }
 
       if (options.receivedBefore) {
         taskIds = taskIds.filter(
-          (id) => this.index!.tasks[id].receivedAt < options.receivedBefore!,
+          (id) => index.tasks[id].receivedAt < options.receivedBefore!,
         );
       }
 
@@ -526,20 +539,14 @@ export class TaskStore {
           };
 
           taskIds.sort((a, b) => {
-            const aPriority =
-              priorityValues[this.index!.tasks[a].priority] || 0;
-            const bPriority =
-              priorityValues[this.index!.tasks[b].priority] || 0;
+            const aPriority = priorityValues[index.tasks[a].priority] || 0;
+            const bPriority = priorityValues[index.tasks[b].priority] || 0;
             return (aPriority - bPriority) * direction;
           });
         } else {
           taskIds.sort((a, b) => {
-            const aVal = this.index!.tasks[a][options.sortBy!] as
-              | string
-              | number;
-            const bVal = this.index!.tasks[b][options.sortBy!] as
-              | string
-              | number;
+            const aVal = index.tasks[a][options.sortBy!] as string | number;
+            const bVal = index.tasks[b][options.sortBy!] as string | number;
             return aVal > bVal ? direction : -direction;
           });
         }
@@ -594,7 +601,8 @@ export class TaskStore {
     if (!completed) return null;
 
     // Convert completed task back to full task format
-    const entry = this.index!.tasks[taskId];
+    const index = this.ensureIndex();
+    const entry = index.tasks[taskId];
     return {
       id: completed.id,
       title: completed.title,
@@ -874,7 +882,7 @@ export class TaskStore {
   // ============================================================================
 
   private updateIndex(task: Task): void {
-    if (!this.index) return;
+    const index = this.ensureIndex();
 
     const entry: TaskIndexEntry = {
       id: task.id,
@@ -894,9 +902,9 @@ export class TaskStore {
     };
 
     // Remove from old status lists
-    const oldEntry = this.index.tasks[task.id];
+    const oldEntry = index.tasks[task.id];
     if (oldEntry && oldEntry.status !== task.status) {
-      const oldStatusList = this.index.byStatus[oldEntry.status];
+      const oldStatusList = index.byStatus[oldEntry.status];
       if (oldStatusList) {
         const idx = oldStatusList.indexOf(task.id);
         if (idx >= 0) oldStatusList.splice(idx, 1);
@@ -904,33 +912,33 @@ export class TaskStore {
     }
 
     // Add to new status list
-    if (!this.index.byStatus[task.status]) {
-      this.index.byStatus[task.status] = [];
+    if (!index.byStatus[task.status]) {
+      index.byStatus[task.status] = [];
     }
-    if (!this.index.byStatus[task.status].includes(task.id)) {
-      this.index.byStatus[task.status].push(task.id);
+    if (!index.byStatus[task.status].includes(task.id)) {
+      index.byStatus[task.status].push(task.id);
     }
 
     // Update sender index
-    if (!this.index.bySender[task.senderId]) {
-      this.index.bySender[task.senderId] = [];
+    if (!index.bySender[task.senderId]) {
+      index.bySender[task.senderId] = [];
     }
-    if (!this.index.bySender[task.senderId].includes(task.id)) {
-      this.index.bySender[task.senderId].push(task.id);
+    if (!index.bySender[task.senderId].includes(task.id)) {
+      index.bySender[task.senderId].push(task.id);
     }
 
     // Update ADE index
     if (task.adeId) {
-      if (!this.index.byADE[task.adeId]) {
-        this.index.byADE[task.adeId] = [];
+      if (!index.byADE[task.adeId]) {
+        index.byADE[task.adeId] = [];
       }
-      if (!this.index.byADE[task.adeId].includes(task.id)) {
-        this.index.byADE[task.adeId].push(task.id);
+      if (!index.byADE[task.adeId].includes(task.id)) {
+        index.byADE[task.adeId].push(task.id);
       }
     }
 
     // Update main entry
-    this.index.tasks[task.id] = entry;
+    index.tasks[task.id] = entry;
 
     // Save index
     this.saveIndex();
