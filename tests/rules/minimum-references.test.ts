@@ -71,9 +71,9 @@ describe("minimum-references rule", () => {
 
     it("should report violations for views below minimum file count", async () => {
       mockContext.views = [
-        createView("view1", 1),
+        createView("view1", 0),
         createView("view2", 3),
-        createView("view3", 2),
+        createView("view3", 0),
       ];
 
       const violations = await minimumReferences.check(mockContext);
@@ -83,17 +83,33 @@ describe("minimum-references rule", () => {
     });
 
     it("should include correct file count in violation message", async () => {
-      mockContext.views = [createView("test-view", 1)];
+      mockContext.views = [createView("test-view", 0)];
 
       const violations = await minimumReferences.check(mockContext);
       expect(violations).toHaveLength(1);
       expect(violations[0].message).toContain(
-        'View "test-view" has only 1 file reference, below minimum of 3',
+        'View "test-view" has only 0 file references, below minimum of 1',
       );
     });
 
     it("should use correct plural form for file count", async () => {
+      // With custom minFiles: 3, a view with 2 files should violate
       mockContext.views = [createView("test-view", 2)];
+      mockContext.config = {
+        version: "1.0.0",
+        context: {
+          rules: [
+            {
+              id: "minimum-references",
+              severity: "error",
+              name: "Minimum References",
+              options: {
+                minFiles: 3,
+              } as MinimumReferencesOptions,
+            },
+          ],
+        },
+      };
 
       const violations = await minimumReferences.check(mockContext);
       expect(violations).toHaveLength(1);
@@ -163,9 +179,9 @@ describe("minimum-references rule", () => {
   describe("category exclusions", () => {
     it("should exclude views with specified categories", async () => {
       mockContext.views = [
-        createView("view1", 1, "planning"),
-        createView("view2", 1, "meta"),
-        createView("view3", 1, "implementation"),
+        createView("view1", 0, "planning"),
+        createView("view2", 0, "meta"),
+        createView("view3", 0, "implementation"),
       ];
 
       const violations = await minimumReferences.check(mockContext);
@@ -175,8 +191,8 @@ describe("minimum-references rule", () => {
 
     it("should respect custom excludeCategories option", async () => {
       mockContext.views = [
-        createView("view1", 1, "architecture"),
-        createView("view2", 1, "implementation"),
+        createView("view1", 0, "architecture"),
+        createView("view2", 0, "implementation"),
       ];
 
       mockContext.config = {
@@ -185,7 +201,7 @@ describe("minimum-references rule", () => {
           rules: [
             {
               id: "minimum-references",
-              severity: "warning",
+              severity: "error",
               name: "Minimum References",
               options: {
                 excludeCategories: ["architecture"],
@@ -202,7 +218,7 @@ describe("minimum-references rule", () => {
 
     it("should handle views without category", async () => {
       mockContext.views = [
-        createView("view1", 1), // no category
+        createView("view1", 0), // no category
         createView("view2", 3),
       ];
 
@@ -215,9 +231,9 @@ describe("minimum-references rule", () => {
   describe("view name exclusions", () => {
     it("should exclude views by name", async () => {
       mockContext.views = [
-        createView("readme-overview", 1),
-        createView("getting-started", 1),
-        createView("api-implementation", 1),
+        createView("readme-overview", 0),
+        createView("getting-started", 0),
+        createView("api-implementation", 0),
       ];
 
       mockContext.config = {
@@ -245,9 +261,9 @@ describe("minimum-references rule", () => {
   describe("combined exclusions", () => {
     it("should apply both category and view name exclusions", async () => {
       mockContext.views = [
-        createView("view1", 1, "planning"), // excluded by category
-        createView("special-view", 1, "implementation"), // excluded by name
-        createView("normal-view", 1, "implementation"), // should violate
+        createView("view1", 0, "planning"), // excluded by category
+        createView("special-view", 0, "implementation"), // excluded by name
+        createView("normal-view", 0, "implementation"), // should violate
         createView("good-view", 5, "implementation"), // has enough files
       ];
 
@@ -310,7 +326,7 @@ describe("minimum-references rule", () => {
         overviewPath: "docs/empty.md",
         referenceGroups: {
           implementation: {
-            files: ["src/file1.ts"],
+            files: [],
           },
           tests: {
             files: [],
@@ -321,7 +337,7 @@ describe("minimum-references rule", () => {
       mockContext.views = [view];
 
       const violations = await minimumReferences.check(mockContext);
-      expect(violations).toHaveLength(1); // only 1 file total < 3
+      expect(violations).toHaveLength(1); // 0 files total < 1
     });
   });
 
@@ -373,11 +389,11 @@ describe("minimum-references rule", () => {
 
   describe("severity and metadata", () => {
     it("should report violations with correct severity", async () => {
-      mockContext.views = [createView("test", 1)];
+      mockContext.views = [createView("test", 0)];
 
       const violations = await minimumReferences.check(mockContext);
       expect(violations).toHaveLength(1);
-      expect(violations[0].severity).toBe("warning");
+      expect(violations[0].severity).toBe("error");
       expect(violations[0].ruleId).toBe("minimum-references");
       expect(violations[0].fixable).toBe(false);
       expect(violations[0].impact).toBeTruthy();
