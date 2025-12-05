@@ -7,12 +7,13 @@
 
 import { FileSystemAdapter } from "../abstractions/filesystem";
 import { ValidatedAlexandriaPath } from "../types/repository";
-import { ExcalidrawData, RoomDrawingMetadata } from "../types/drawing";
+import { ExcalidrawData } from "../types/drawing";
 import { generateId } from "../utils/idGenerator";
 
 export interface DrawingMetadata {
   id: string;
   name: string;
+  fileName: string;
   format: "excalidraw" | "svg" | "png";
   created: string;
   modified: string;
@@ -138,6 +139,7 @@ export class DrawingStore {
       metadata.push({
         id: fileName,
         name: fileName,
+        fileName: fileName,
         format: format as "excalidraw" | "svg" | "png",
         created: new Date().toISOString(), // Would need file stats
         modified: new Date().toISOString(), // Would need file stats
@@ -226,7 +228,7 @@ export class DrawingStore {
   }
 
   // ============================================================================
-  // Room-Aware Drawing Management
+  // Excalidraw Drawing Management
   // ============================================================================
 
   /**
@@ -268,7 +270,7 @@ export class DrawingStore {
   /**
    * Get drawing metadata including the extracted name from appState
    */
-  getDrawingMetadata(drawingId: string): RoomDrawingMetadata | null {
+  getDrawingMetadata(drawingId: string): DrawingMetadata | null {
     const fileName = `${drawingId}.excalidraw`;
     const filePath = this.fs.join(this.drawingsDir, fileName);
 
@@ -292,10 +294,9 @@ export class DrawingStore {
         name: data.appState?.name || drawingId,
         fileName: fileName,
         format: "excalidraw",
-        roomIds: [], // Will be populated by room store
         created: stats.created,
         modified: stats.modified,
-        fileSize: stats.size,
+        size: stats.size,
       };
     } catch (error) {
       console.error(`Error getting metadata for drawing ${drawingId}:`, error);
@@ -380,8 +381,8 @@ export class DrawingStore {
   /**
    * List all drawings with their metadata (including extracted names)
    */
-  listDrawingsWithExtractedNames(): RoomDrawingMetadata[] {
-    const drawings: RoomDrawingMetadata[] = [];
+  listDrawingsWithExtractedNames(): DrawingMetadata[] {
+    const drawings: DrawingMetadata[] = [];
 
     if (!this.fs.exists(this.drawingsDir)) {
       return drawings;

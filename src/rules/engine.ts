@@ -149,15 +149,13 @@ export class LibraryRulesEngine {
       excludePatterns,
     );
 
-    // Load views and notes using MemoryPalace public API
+    // Load views using MemoryPalace public API
     const views = memoryPalace.listViews();
-    const notes = memoryPalace.getNotes();
 
     // Build rule context
     const context: LibraryRuleContext = {
       projectRoot: validatedPath,
       views,
-      notes,
       files,
       markdownFiles,
       config: config || undefined,

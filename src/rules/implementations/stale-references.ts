@@ -18,7 +18,7 @@ export const staleReferences: LibraryRule = {
 
   async check(context: LibraryRuleContext): Promise<LibraryRuleViolation[]> {
     const violations: LibraryRuleViolation[] = [];
-    const { views, notes, files, fsAdapter } = context;
+    const { views, files, fsAdapter } = context;
 
     // Require fsAdapter for this rule
     if (!fsAdapter) {
@@ -123,88 +123,6 @@ export const staleReferences: LibraryRule = {
             severity: this.severity,
             file: view.overviewPath,
             message: `Overview "${view.overviewPath}" ${timeMessage} "${newestFile}" changed`,
-            impact: this.impact,
-            fixable: this.fixable,
-          });
-        }
-      }
-
-      // Check notes with file references
-      for (const noteWithPath of notes) {
-        if (
-          !noteWithPath.note.anchors ||
-          noteWithPath.note.anchors.length === 0
-        )
-          continue;
-
-        // Get the note's modification time from the path
-        const noteRelativePath = noteWithPath.path;
-        const noteLastModified = getLastModified(noteRelativePath);
-
-        if (!noteLastModified) continue;
-
-        let newestFileModification: Date | null = null;
-        let newestFile: string | null = null;
-
-        for (const anchorPath of noteWithPath.note.anchors) {
-          const fileModified = getLastModified(anchorPath);
-          if (
-            fileModified &&
-            (!newestFileModification || fileModified > newestFileModification)
-          ) {
-            newestFileModification = fileModified;
-            newestFile = anchorPath;
-          }
-        }
-
-        if (
-          newestFileModification &&
-          newestFileModification > noteLastModified
-        ) {
-          const timeDifferenceMs =
-            newestFileModification.getTime() - noteLastModified.getTime();
-
-          // Ignore differences less than 5 seconds (formatting/build tool delays)
-          if (timeDifferenceMs < 5000) {
-            continue;
-          }
-
-          const hoursSinceUpdate = Math.floor(
-            timeDifferenceMs / (1000 * 60 * 60),
-          );
-
-          let timeMessage: string;
-          if (hoursSinceUpdate < 24) {
-            if (hoursSinceUpdate === 0) {
-              const minutesSinceUpdate = Math.floor(
-                (newestFileModification.getTime() -
-                  noteLastModified.getTime()) /
-                  (1000 * 60),
-              );
-              if (minutesSinceUpdate <= 1) {
-                timeMessage = "was modified just after";
-              } else {
-                timeMessage = `was modified ${minutesSinceUpdate} minutes after`;
-              }
-            } else if (hoursSinceUpdate === 1) {
-              timeMessage = "has not been updated for 1 hour since";
-            } else {
-              timeMessage = `has not been updated for ${hoursSinceUpdate} hours since`;
-            }
-          } else {
-            const daysSinceUpdate = Math.floor(hoursSinceUpdate / 24);
-            if (daysSinceUpdate === 1) {
-              timeMessage = "has not been updated for 1 day since";
-            } else {
-              timeMessage = `has not been updated for ${daysSinceUpdate} days since`;
-            }
-          }
-
-          violations.push({
-            ruleId: this.id,
-            severity: this.severity,
-            file: `notes/${noteWithPath.note.id}.json`,
-            message: `Note "${noteWithPath.note.id}" ${timeMessage} "${newestFile}" changed`,
             impact: this.impact,
             fixable: this.fixable,
           });

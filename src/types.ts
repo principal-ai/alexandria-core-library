@@ -8,12 +8,6 @@
 
 // Essential types from pure-core
 export type {
-  // Core note types
-  StoredAnchoredNote,
-  AnchoredNoteWithPath,
-  MemoryPalaceConfiguration,
-  StaleAnchoredNote,
-
   // Path validation types
   ValidatedRepositoryPath,
   ValidatedRelativePath,
@@ -27,29 +21,6 @@ export type {
   ViewValidationResult,
   PatternValidationResult,
   FileListValidationResult,
-
-  // PalaceRoom types
-  PalaceRoom,
-  CreatePalaceRoomOptions,
-  UpdatePalaceRoomOptions,
-  PalaceRoomOperationResult,
-
-  // PalacePortal types
-  PalacePortal,
-  PortalTarget,
-  PortalTargetType,
-  PortalDisplayMode,
-  PortalSyncStrategy,
-  PortalReferenceType,
-  PortalStatus,
-  PortalReferences,
-  CreatePortalOptions,
-  ImportPortalOptions,
-  PortalContent,
-  PalaceURI,
-  PalaceResourceType,
-  CrossPalaceReference,
-  ReferenceStatus,
 } from "./pure-core/types/index.js";
 
 // Repository and Alexandria types
@@ -89,10 +60,7 @@ export type {
 
 // Drawing types
 export type { DrawingMetadata } from "./pure-core/stores/DrawingStore.js";
-export type {
-  ExcalidrawData,
-  RoomDrawingMetadata,
-} from "./pure-core/types/drawing.js";
+export type { ExcalidrawData } from "./pure-core/types/drawing.js";
 
 // Storage types
 export type {
@@ -114,25 +82,6 @@ export type {
   AlexandriaDocumentVersion,
   AlexandriaBookmarkedDocument,
 } from "./types/alexandria-state.js";
-
-// Task types
-export type {
-  Task,
-  TaskStatus,
-  TaskPriority,
-  CreateTaskInput,
-  UpdateTaskOptions,
-  TaskQueryOptions,
-  GitReferences,
-  TaskMetadata,
-  TaskAssociations,
-  CompletedTask,
-  TaskEvent,
-  TaskEventType,
-  TaskStatistics,
-  TaskIndex,
-  TaskIndexEntry,
-} from "./pure-core/types/task.js";
 
 // Rule types
 export type {

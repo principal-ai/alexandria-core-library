@@ -4,7 +4,7 @@ import {
   LibraryRuleContext,
 } from "../types";
 import { findFileReferenceLineNumber } from "../utils/line-numbers";
-import { getViewsDir, getNotesDir } from "../../utils/alexandria-paths";
+import { getViewsDir } from "../../utils/alexandria-paths";
 
 export const orphanedReferences: LibraryRule = {
   id: "orphaned-references",
@@ -19,7 +19,7 @@ export const orphanedReferences: LibraryRule = {
 
   async check(context: LibraryRuleContext): Promise<LibraryRuleViolation[]> {
     const violations: LibraryRuleViolation[] = [];
-    const { views, notes, projectRoot, fsAdapter } = context;
+    const { views, projectRoot, fsAdapter } = context;
 
     // Require fsAdapter for this rule
     if (!fsAdapter) {
@@ -60,33 +60,6 @@ export const orphanedReferences: LibraryRule = {
               }
             }
           }
-        }
-      }
-    }
-
-    // Check files referenced in notes
-    for (const noteWithPath of notes) {
-      for (const anchorPath of noteWithPath.note.anchors) {
-        const fullPath = fsAdapter.join(projectRoot, anchorPath);
-        if (!fsAdapter.exists(fullPath)) {
-          const noteFilePath = fsAdapter.join(
-            getNotesDir(fsAdapter, projectRoot),
-            `${noteWithPath.note.id}.json`,
-          );
-          const lineNumber = findFileReferenceLineNumber(
-            fsAdapter,
-            noteFilePath,
-            anchorPath,
-          );
-          violations.push({
-            ruleId: this.id,
-            severity: this.severity,
-            file: `notes/${noteWithPath.note.id}.json`,
-            line: lineNumber,
-            message: `Note "${noteWithPath.note.id}" references non-existent file: ${anchorPath}`,
-            impact: this.impact,
-            fixable: this.fixable,
-          });
         }
       }
     }

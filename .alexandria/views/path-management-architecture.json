@@ -28,8 +28,7 @@
       "label": "Testing Support",
       "coordinates": [1, 1],
       "files": [
-        "src/test-adapters/InMemoryFileSystemAdapter.ts",
-        "tests/path-validation.test.ts"
+        "src/test-adapters/InMemoryFileSystemAdapter.ts"
       ]
     }
   },

@@ -1,8 +1,4 @@
-import {
-  ValidatedRepositoryPath,
-  CodebaseView,
-  AnchoredNoteWithPath,
-} from "../pure-core/types";
+import { ValidatedRepositoryPath, CodebaseView } from "../pure-core/types";
 import { AlexandriaConfig, RuleOptions } from "../config/types";
 import { GlobAdapter } from "../pure-core/abstractions/glob";
 import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
@@ -43,7 +39,6 @@ export interface GitFileHistory {
 export interface LibraryRuleContext {
   projectRoot: ValidatedRepositoryPath;
   views: CodebaseView[];
-  notes: AnchoredNoteWithPath[];
   files: FileInfo[];
   markdownFiles: FileInfo[];
   gitHistory?: Map<string, GitFileHistory>;

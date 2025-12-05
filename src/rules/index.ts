@@ -11,7 +11,7 @@ export type {
 } from "./types";
 
 // Re-export types from pure-core that are used in rules
-export type { CodebaseView, AnchoredNoteWithPath } from "../pure-core/types";
+export type { CodebaseView } from "../pure-core/types";
 
 export { LibraryRulesEngine } from "./engine";
 export { requireReferences } from "./implementations/require-references";

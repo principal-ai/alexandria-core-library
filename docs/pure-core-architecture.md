@@ -22,9 +22,8 @@ The `abstractions` directory defines the contracts that allow pure-core to work 
 
 The `stores` directory contains the core data management classes:
 
-- **AnchoredNotesStore**: Manages note storage, retrieval, and validation
 - **CodebaseViewsStore**: Handles codebase view configurations and layouts
-- **A24zConfigurationStore**: Manages repository-level configuration settings
+- **DrawingStore**: Manages Excalidraw drawings and visual content
 
 **Key Principle**: All data operations go through these stores, ensuring consistent data management and validation.
 
@@ -36,8 +35,7 @@ The `types` directory defines the complete type system:
 
 - **Path Validation Types**: Branded types for secure path handling
 - **CodebaseView Types**: Grid layout and visualization types
-- **Note Types**: Data structures for notes, anchors, and metadata
-- **Configuration Types**: System configuration and limits
+- **Drawing Types**: Data structures for Excalidraw drawings
 
 **Key Principle**: Strong typing ensures runtime safety and provides excellent developer experience.
 
@@ -47,23 +45,11 @@ The `types` directory defines the complete type system:
 
 The `utils` directory contains platform-independent utility functions:
 
-- **GuidanceGenerator**: Creates default guidance content and configuration
 - **Validation**: Pure validation functions for data integrity
 - **Path Utilities**: Cross-platform path manipulation helpers
+- **ID Generation**: Unique ID generation for drawings and other resources
 
 **Key Principle**: All utilities are pure functions with no side effects, making them easily testable and reusable.
-
-### 🟤 Config (Bottom-Middle)
-
-**Default Configuration**
-
-The `config` directory provides system defaults:
-
-- **Default Repository Config**: Base configuration for new repositories
-- **System Limits**: Default limits for notes, tags, and storage
-- **Feature Flags**: Default settings for optional features
-
-**Key Principle**: Sensible defaults that can be overridden per repository.
 
 ### ⚪ Validation (Bottom-Right)
 
@@ -98,15 +84,9 @@ The `autofixes` directory contains automatic repair utilities:
          │                       │                       │
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│     Types       │    │     Utils       │    │     Config      │
-│ (Type Safety)   │    │ (Pure Functions)│    │ (Defaults)      │
+│     Types       │    │     Utils       │    │   Autofixes     │
+│ (Type Safety)   │    │ (Pure Functions)│    │ (Auto Repair)   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │
-                                ▼
-                       ┌─────────────────┐
-                       │    Autofixes    │
-                       │ (Auto Repair)   │
-                       └─────────────────┘
 ```
 
 ## Key Architectural Principles
@@ -134,12 +114,6 @@ The `autofixes` directory contains automatic repair utilities:
 - Utility functions have no side effects
 - Easy to test and reason about
 - Composable and reusable
-
-### 5. **Configuration Management**
-
-- Centralized configuration store
-- Repository-specific overrides
-- Sensible defaults with customization options
 
 ## Benefits of This Architecture
 

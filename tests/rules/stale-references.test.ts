@@ -26,7 +26,6 @@ describe("stale-references rule", () => {
     mockContext = {
       projectRoot: "/test/project" as ValidatedRepositoryPath,
       views: [],
-      notes: [],
       files: [],
       markdownFiles: [],
       fsAdapter,
@@ -208,110 +207,6 @@ describe("stale-references rule", () => {
     });
   });
 
-  describe("note staleness detection", () => {
-    it("should not report violations when note is newer than anchored files", async () => {
-      const noteTime = new Date("2024-01-15T12:00:00Z");
-      const fileTime = new Date("2024-01-10T12:00:00Z");
-
-      mockContext.files = [
-        createFileInfo(".alexandria/notes/note1.json", noteTime),
-        createFileInfo("src/index.ts", fileTime),
-      ];
-
-      mockContext.notes = [
-        {
-          path: ".alexandria/notes/note1.json",
-          note: {
-            id: "note1",
-            note: "Test note",
-            anchors: ["src/index.ts"],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-        },
-      ];
-
-      const violations = await staleReferences.check(mockContext);
-      expect(violations).toHaveLength(0);
-    });
-
-    it("should report violations when anchored file is newer than note", async () => {
-      const noteTime = new Date("2024-01-10T12:00:00Z");
-      const fileTime = new Date("2024-01-15T12:00:00Z");
-
-      mockContext.files = [
-        createFileInfo(".alexandria/notes/note1.json", noteTime),
-        createFileInfo("src/index.ts", fileTime),
-      ];
-
-      mockContext.notes = [
-        {
-          path: ".alexandria/notes/note1.json",
-          note: {
-            id: "note1",
-            note: "Test note",
-            anchors: ["src/index.ts"],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-        },
-      ];
-
-      const violations = await staleReferences.check(mockContext);
-      expect(violations).toHaveLength(1);
-      expect(violations[0].file).toBe("notes/note1.json");
-      expect(violations[0].message).toContain("note1");
-      expect(violations[0].message).toContain("src/index.ts");
-    });
-
-    it("should handle notes without anchors", async () => {
-      mockContext.notes = [
-        {
-          path: ".alexandria/notes/note1.json",
-          note: {
-            id: "note1",
-            note: "Test note",
-            anchors: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-        },
-      ];
-
-      const violations = await staleReferences.check(mockContext);
-      expect(violations).toHaveLength(0);
-    });
-
-    it("should track newest anchor across multiple anchors", async () => {
-      const noteTime = new Date("2024-01-10T12:00:00Z");
-      const oldFileTime = new Date("2024-01-05T12:00:00Z");
-      const newestFileTime = new Date("2024-01-20T12:00:00Z");
-
-      mockContext.files = [
-        createFileInfo(".alexandria/notes/note1.json", noteTime),
-        createFileInfo("src/old.ts", oldFileTime),
-        createFileInfo("src/newest.ts", newestFileTime),
-      ];
-
-      mockContext.notes = [
-        {
-          path: ".alexandria/notes/note1.json",
-          note: {
-            id: "note1",
-            note: "Test note",
-            anchors: ["src/old.ts", "src/newest.ts"],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-        },
-      ];
-
-      const violations = await staleReferences.check(mockContext);
-      expect(violations).toHaveLength(1);
-      expect(violations[0].message).toContain("src/newest.ts");
-    });
-  });
-
   describe("time message formatting", () => {
     it("should format message for minutes", async () => {
       const overviewTime = new Date("2024-01-10T12:00:00Z");
@@ -404,55 +299,6 @@ describe("stale-references rule", () => {
       const violations = await staleReferences.check(mockContext);
       expect(violations).toHaveLength(1);
       expect(violations[0].message).toContain("5 days");
-    });
-  });
-
-  describe("combined scenarios", () => {
-    it("should check both views and notes", async () => {
-      const oldTime = new Date("2024-01-10T12:00:00Z");
-      const newTime = new Date("2024-01-15T12:00:00Z");
-
-      mockContext.files = [
-        createFileInfo("docs/overview.md", oldTime),
-        createFileInfo(".alexandria/notes/note1.json", oldTime),
-        createFileInfo("src/index.ts", newTime),
-        createFileInfo("src/utils.ts", newTime),
-      ];
-
-      mockContext.views = [
-        {
-          id: "view1",
-          name: "view1",
-          title: "View 1",
-          description: "Test view",
-          overviewPath: "docs/overview.md",
-          referenceGroups: {
-            primary: {
-              label: "Primary",
-              description: "Primary files",
-              files: ["src/index.ts"],
-            },
-          },
-        },
-      ];
-
-      mockContext.notes = [
-        {
-          path: ".alexandria/notes/note1.json",
-          note: {
-            id: "note1",
-            note: "Test note",
-            anchors: ["src/utils.ts"],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-        },
-      ];
-
-      const violations = await staleReferences.check(mockContext);
-      expect(violations).toHaveLength(2);
-      expect(violations.some((v) => v.file === "docs/overview.md")).toBe(true);
-      expect(violations.some((v) => v.file === "notes/note1.json")).toBe(true);
     });
   });
 

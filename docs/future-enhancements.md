@@ -14,29 +14,6 @@ This document captures ideas for improving the Alexandria core library and docum
 - Comprehensive test suites added for all rule implementations (73.50% overall coverage)
 - Improved maintainability and testability of rules engine
 
-## Recently Completed (2025-09-29)
-
-### Task System Lazy Initialization
-
-✅ **Implemented**: Deferred directory creation for .palace-work/ structure
-
-- TaskStore now creates directories only when needed (lazy initialization)
-- Reduces startup overhead and filesystem operations
-- Keeps repositories clean until tasks are actually used
-- Maintains separation between knowledge storage (.alexandria/) and work queues (.palace-work/)
-
-## Recently Completed (2025-09-25)
-
-### PalaceRooms and PalacePortals
-
-✅ **Implemented**: Organizational system for memory palace content
-
-- PalaceRooms provide workspaces to group related drawings, views, and notes
-- PalacePortals enable cross-repository references
-- Palace URI scheme (palace://host/resourceType/resourceId) for linking
-- Full CRUD operations with safety checks (can't delete rooms with content)
-- Foundation ready for UI implementation and user feedback collection
-
 ## Documentation Organization
 
 ### Folder-Based Categories
@@ -135,19 +112,11 @@ docs/
 - Reduce filesystem calls for frequently accessed repositories
 - Implement cache invalidation on directory structure changes
 
-### Cross-Repository Support ✅ FOUNDATION IMPLEMENTED
+### Cross-Repository Support
 
-- ✅ **Implemented**: PalacePortals enable cross-repository references (2025-09-25)
-  - PalaceRooms for organizing content into workspaces
-  - PalacePortals for creating associations between workspaces
-  - Palace URI scheme for cross-palace linking
-  - Support for local, Git, and URL-based repository references
-  - Selective content referencing configuration
-- **Future Iterations** (based on user feedback):
-  - Content resolution strategies (manual pull, auto-sync, reference-only)
-  - Permission models for portal content (read-only, bidirectional sync)
-  - Caching strategies for remote content
-  - UI representations (links, previews, embedded content)
+- Link documentation across repositories
+- Support for local, Git, and URL-based repository references
+- Content resolution strategies (manual pull, auto-sync, reference-only)
 
 ## Developer Experience
 
@@ -215,4 +184,4 @@ When implementing these enhancements:
 
 ---
 
-_Last reviewed: 2025-10-14 - Confirmed roadmap remains accurate. Recent changes include Task interface filePath field addition._
+_Last reviewed: 2025-12-04 - Updated to reflect removal of task management, anchored notes, and palace rooms._
