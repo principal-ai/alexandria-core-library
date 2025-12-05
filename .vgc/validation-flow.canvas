@@ -1,0 +1,234 @@
+{
+  "nodes": [
+    {
+      "id": "rules-engine",
+      "type": "text",
+      "x": 100,
+      "y": 200,
+      "width": 180,
+      "height": 80,
+      "text": "LibraryRulesEngine",
+      "color": "#dc2626",
+      "vv": {
+        "nodeType": "rule-engine",
+        "shape": "hexagon",
+        "icon": "Cog",
+        "sources": ["src/rules/LibraryRulesEngine.ts"]
+      }
+    },
+    {
+      "id": "require-refs-rule",
+      "type": "text",
+      "x": 380,
+      "y": 50,
+      "width": 160,
+      "height": 60,
+      "text": "requireReferences",
+      "color": "#f97316",
+      "vv": {
+        "nodeType": "rule",
+        "shape": "rectangle",
+        "icon": "CheckSquare",
+        "sources": ["src/rules/implementations/requireReferences.ts"]
+      }
+    },
+    {
+      "id": "orphaned-rule",
+      "type": "text",
+      "x": 380,
+      "y": 130,
+      "width": 160,
+      "height": 60,
+      "text": "orphanedReferences",
+      "color": "#f97316",
+      "vv": {
+        "nodeType": "rule",
+        "shape": "rectangle",
+        "icon": "CheckSquare",
+        "sources": ["src/rules/implementations/orphanedReferences.ts"]
+      }
+    },
+    {
+      "id": "stale-rule",
+      "type": "text",
+      "x": 380,
+      "y": 210,
+      "width": 160,
+      "height": 60,
+      "text": "staleReferences",
+      "color": "#f97316",
+      "vv": {
+        "nodeType": "rule",
+        "shape": "rectangle",
+        "icon": "CheckSquare",
+        "sources": ["src/rules/implementations/staleReferences.ts"]
+      }
+    },
+    {
+      "id": "coverage-rule",
+      "type": "text",
+      "x": 380,
+      "y": 290,
+      "width": 160,
+      "height": 60,
+      "text": "codebaseCoverage",
+      "color": "#f97316",
+      "vv": {
+        "nodeType": "rule",
+        "shape": "rectangle",
+        "icon": "CheckSquare",
+        "sources": ["src/rules/implementations/codebaseCoverage.ts"]
+      }
+    },
+    {
+      "id": "min-refs-rule",
+      "type": "text",
+      "x": 380,
+      "y": 370,
+      "width": 160,
+      "height": 60,
+      "text": "minimumReferences",
+      "color": "#f97316",
+      "vv": {
+        "nodeType": "rule",
+        "shape": "rectangle",
+        "icon": "CheckSquare",
+        "sources": ["src/rules/implementations/minimumReferences.ts"]
+      }
+    },
+    {
+      "id": "glob-adapter",
+      "type": "text",
+      "x": 100,
+      "y": 370,
+      "width": 160,
+      "height": 70,
+      "text": "GlobAdapter",
+      "color": "#06b6d4",
+      "vv": {
+        "nodeType": "adapter-interface",
+        "shape": "hexagon",
+        "icon": "Plug",
+        "sources": ["src/pure-core/abstractions/GlobAdapter.ts"]
+      }
+    },
+    {
+      "id": "config",
+      "type": "text",
+      "x": 100,
+      "y": 50,
+      "width": 160,
+      "height": 60,
+      "text": "AlexandriaConfig",
+      "color": "#0ea5e9",
+      "vv": {
+        "nodeType": "config",
+        "shape": "rectangle",
+        "icon": "Settings",
+        "sources": ["src/config/AlexandriaConfig.ts"]
+      }
+    },
+    {
+      "id": "lint-result",
+      "type": "text",
+      "x": 620,
+      "y": 200,
+      "width": 160,
+      "height": 70,
+      "text": "LibraryLintResult",
+      "color": "#64748b",
+      "vv": {
+        "nodeType": "type",
+        "shape": "rectangle",
+        "icon": "FileType",
+        "sources": ["src/rules/types.ts"]
+      }
+    },
+    {
+      "id": "violation",
+      "type": "text",
+      "x": 620,
+      "y": 300,
+      "width": 160,
+      "height": 60,
+      "text": "RuleViolation",
+      "color": "#64748b",
+      "vv": {
+        "nodeType": "type",
+        "shape": "rectangle",
+        "icon": "FileType",
+        "sources": ["src/rules/types.ts"]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "config-to-engine",
+      "fromNode": "config",
+      "toNode": "rules-engine",
+      "label": "rule options",
+      "vv": { "edgeType": "uses" }
+    },
+    {
+      "id": "engine-to-require",
+      "fromNode": "rules-engine",
+      "toNode": "require-refs-rule",
+      "label": "check()",
+      "vv": { "edgeType": "uses" }
+    },
+    {
+      "id": "engine-to-orphaned",
+      "fromNode": "rules-engine",
+      "toNode": "orphaned-rule",
+      "label": "check()",
+      "vv": { "edgeType": "uses" }
+    },
+    {
+      "id": "engine-to-stale",
+      "fromNode": "rules-engine",
+      "toNode": "stale-rule",
+      "label": "check()",
+      "vv": { "edgeType": "uses" }
+    },
+    {
+      "id": "engine-to-coverage",
+      "fromNode": "rules-engine",
+      "toNode": "coverage-rule",
+      "label": "check()",
+      "vv": { "edgeType": "uses" }
+    },
+    {
+      "id": "engine-to-minrefs",
+      "fromNode": "rules-engine",
+      "toNode": "min-refs-rule",
+      "label": "check()",
+      "vv": { "edgeType": "uses" }
+    },
+    {
+      "id": "engine-to-glob",
+      "fromNode": "rules-engine",
+      "toNode": "glob-adapter",
+      "label": "scanFiles()",
+      "vv": { "edgeType": "uses" }
+    },
+    {
+      "id": "rules-to-result",
+      "fromNode": "rules-engine",
+      "toNode": "lint-result",
+      "label": "produces",
+      "vv": { "edgeType": "data-flow" }
+    },
+    {
+      "id": "result-to-violation",
+      "fromNode": "lint-result",
+      "toNode": "violation",
+      "label": "contains",
+      "vv": { "edgeType": "uses" }
+    }
+  ],
+  "vv": {
+    "name": "Validation Rules Flow",
+    "version": "1.0.0",
+    "description": "Shows how the LibraryRulesEngine orchestrates validation rules and produces lint results"
+  }
+}
