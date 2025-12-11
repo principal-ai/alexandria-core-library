@@ -4,7 +4,7 @@ name: "Alexandria Core Library"
 nodeComponents:
   # Public API Layer
   api:
-    label: "API"
+    defaultLabel: "API"
     description: "Public API classes that serve as main entry points"
     color: "#3b82f6"
     shape: "rectangle"
@@ -12,7 +12,7 @@ nodeComponents:
 
   # Data Persistence
   store:
-    label: "Store"
+    defaultLabel: "Store"
     description: "Data persistence and storage management"
     color: "#8b5cf6"
     shape: "cylinder"
@@ -20,7 +20,7 @@ nodeComponents:
 
   # Abstraction Interfaces
   adapter-interface:
-    label: "Adapter Interface"
+    defaultLabel: "Adapter Interface"
     description: "Platform-agnostic abstraction interfaces"
     color: "#06b6d4"
     shape: "hexagon"
@@ -28,21 +28,21 @@ nodeComponents:
 
   # Platform-specific Implementations
   node-adapter:
-    label: "Node Adapter"
+    defaultLabel: "Node Adapter"
     description: "Node.js specific adapter implementations"
     color: "#22c55e"
     shape: "rectangle"
     icon: "Server"
 
   browser-adapter:
-    label: "Browser Adapter"
+    defaultLabel: "Browser Adapter"
     description: "Browser/FileTree adapter implementations"
     color: "#f59e0b"
     shape: "rectangle"
     icon: "Globe"
 
   test-adapter:
-    label: "Test Adapter"
+    defaultLabel: "Test Adapter"
     description: "In-memory adapters for testing"
     color: "#a855f7"
     shape: "rectangle"
@@ -50,21 +50,21 @@ nodeComponents:
 
   # Validation System
   validator:
-    label: "Validator"
+    defaultLabel: "Validator"
     description: "Schema and data validation components"
     color: "#ef4444"
     shape: "diamond"
     icon: "Shield"
 
   rule:
-    label: "Rule"
+    defaultLabel: "Rule"
     description: "Individual validation rule implementation"
     color: "#f97316"
     shape: "rectangle"
     icon: "CheckSquare"
 
   rule-engine:
-    label: "Rule Engine"
+    defaultLabel: "Rule Engine"
     description: "Orchestrates validation rules execution"
     color: "#dc2626"
     shape: "hexagon"
@@ -72,14 +72,14 @@ nodeComponents:
 
   # Domain Types
   type:
-    label: "Type"
+    defaultLabel: "Type"
     description: "Core domain types and interfaces"
     color: "#64748b"
     shape: "rectangle"
     icon: "FileType"
 
   branded-type:
-    label: "Branded Type"
+    defaultLabel: "Branded Type"
     description: "Type-safe validated path types"
     color: "#475569"
     shape: "rectangle"
@@ -87,7 +87,7 @@ nodeComponents:
 
   # Configuration
   config:
-    label: "Config"
+    defaultLabel: "Config"
     description: "Configuration schema and loading"
     color: "#0ea5e9"
     shape: "rectangle"
@@ -95,14 +95,14 @@ nodeComponents:
 
   # Storage Layer
   storage-manager:
-    label: "Storage Manager"
+    defaultLabel: "Storage Manager"
     description: "Reading session and record management"
     color: "#84cc16"
     shape: "rectangle"
     icon: "Archive"
 
   storage-adapter:
-    label: "Storage Adapter"
+    defaultLabel: "Storage Adapter"
     description: "Backend storage implementations"
     color: "#65a30d"
     shape: "cylinder"
@@ -110,11 +110,19 @@ nodeComponents:
 
   # Utilities
   utility:
-    label: "Utility"
+    defaultLabel: "Utility"
     description: "Helper functions and utilities"
     color: "#78716c"
     shape: "rectangle"
     icon: "Wrench"
+
+  # External Systems
+  external:
+    defaultLabel: "External"
+    description: "External systems, users, or file system boundaries"
+    color: "#94a3b8"
+    shape: "rectangle"
+    icon: "ExternalLink"
 
 edgeComponents:
   # Implementation relationship

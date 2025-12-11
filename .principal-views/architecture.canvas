@@ -3,225 +3,253 @@
     {
       "id": "memory-palace",
       "type": "text",
-      "x": 300,
-      "y": 50,
+      "x": 387,
+      "y": -102,
       "width": 180,
       "height": 80,
       "text": "MemoryPalace",
       "color": "#3b82f6",
-      "vv": {
+      "pv": {
         "nodeType": "api",
         "shape": "rectangle",
         "icon": "Box",
-        "sources": ["src/MemoryPalace.ts"]
+        "sources": [
+          "src/MemoryPalace.ts"
+        ]
       }
     },
     {
       "id": "project-registry",
       "type": "text",
-      "x": 100,
-      "y": 50,
+      "x": 10,
+      "y": 260,
       "width": 180,
       "height": 80,
       "text": "ProjectRegistryStore",
       "color": "#3b82f6",
-      "vv": {
+      "pv": {
         "nodeType": "api",
         "shape": "rectangle",
         "icon": "Box",
-        "sources": ["src/projects-core/ProjectRegistryStore.ts"]
+        "sources": [
+          "src/projects-core/ProjectRegistryStore.ts"
+        ]
       }
     },
     {
       "id": "outpost-manager",
       "type": "text",
-      "x": 500,
-      "y": 50,
+      "x": 12,
+      "y": 65,
       "width": 200,
       "height": 80,
       "text": "AlexandriaOutpostManager",
       "color": "#3b82f6",
-      "vv": {
+      "pv": {
         "nodeType": "api",
         "shape": "rectangle",
         "icon": "Box",
-        "sources": ["src/projects-core/AlexandriaOutpostManager.ts"]
+        "sources": [
+          "src/projects-core/AlexandriaOutpostManager.ts"
+        ]
       }
     },
     {
       "id": "views-store",
       "type": "text",
-      "x": 200,
-      "y": 180,
+      "x": 410,
+      "y": 265,
       "width": 180,
       "height": 70,
       "text": "CodebaseViewsStore",
       "color": "#8b5cf6",
-      "vv": {
+      "pv": {
         "nodeType": "store",
         "shape": "cylinder",
         "icon": "Database",
-        "sources": ["src/pure-core/stores/CodebaseViewsStore.ts"]
+        "sources": [
+          "src/pure-core/stores/CodebaseViewsStore.ts"
+        ]
       }
     },
     {
       "id": "drawing-store",
       "type": "text",
-      "x": 400,
-      "y": 180,
+      "x": 220,
+      "y": 265,
       "width": 160,
       "height": 70,
       "text": "DrawingStore",
       "color": "#8b5cf6",
-      "vv": {
+      "pv": {
         "nodeType": "store",
         "shape": "cylinder",
         "icon": "Database",
-        "sources": ["src/pure-core/stores/DrawingStore.ts"]
+        "sources": [
+          "src/pure-core/stores/DrawingStore.ts"
+        ]
       }
     },
     {
       "id": "rules-engine",
       "type": "text",
-      "x": 580,
-      "y": 180,
+      "x": 900,
+      "y": 228,
       "width": 180,
       "height": 70,
       "text": "LibraryRulesEngine",
       "color": "#dc2626",
-      "vv": {
+      "pv": {
         "nodeType": "rule-engine",
         "shape": "hexagon",
         "icon": "Cog",
-        "sources": ["src/rules/LibraryRulesEngine.ts"]
+        "sources": [
+          "src/rules/LibraryRulesEngine.ts"
+        ]
       }
     },
     {
       "id": "validator",
       "type": "text",
-      "x": 20,
-      "y": 180,
+      "x": 594,
+      "y": 263,
       "width": 160,
       "height": 70,
       "text": "CodebaseViewValidator",
       "color": "#ef4444",
-      "vv": {
+      "pv": {
         "nodeType": "validator",
         "shape": "diamond",
         "icon": "Shield",
-        "sources": ["src/pure-core/validation/CodebaseViewValidator.ts"]
+        "sources": [
+          "src/pure-core/validation/CodebaseViewValidator.ts"
+        ]
       }
     },
     {
       "id": "fs-adapter",
       "type": "text",
-      "x": 150,
-      "y": 320,
+      "x": 312,
+      "y": 614,
       "width": 180,
       "height": 70,
       "text": "FileSystemAdapter",
       "color": "#06b6d4",
-      "vv": {
+      "pv": {
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": ["src/pure-core/abstractions/FileSystemAdapter.ts"]
+        "sources": [
+          "src/pure-core/abstractions/FileSystemAdapter.ts"
+        ]
       }
     },
     {
       "id": "glob-adapter",
       "type": "text",
-      "x": 350,
-      "y": 320,
+      "x": 801,
+      "y": 620,
       "width": 160,
       "height": 70,
       "text": "GlobAdapter",
       "color": "#06b6d4",
-      "vv": {
+      "pv": {
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": ["src/pure-core/abstractions/GlobAdapter.ts"]
+        "sources": [
+          "src/pure-core/abstractions/GlobAdapter.ts"
+        ]
       }
     },
     {
       "id": "reading-manager",
       "type": "text",
-      "x": 530,
-      "y": 320,
+      "x": 1222,
+      "y": 63,
       "width": 180,
       "height": 70,
       "text": "ReadingRecordManager",
       "color": "#84cc16",
-      "vv": {
+      "pv": {
         "nodeType": "storage-manager",
         "shape": "rectangle",
         "icon": "Archive",
-        "sources": ["src/storage/ReadingRecordManager.ts"]
+        "sources": [
+          "src/storage/ReadingRecordManager.ts"
+        ]
       }
     },
     {
       "id": "codebase-view",
       "type": "text",
-      "x": 100,
-      "y": 450,
+      "x": 494,
+      "y": 463,
       "width": 140,
       "height": 60,
       "text": "CodebaseView",
       "color": "#64748b",
-      "vv": {
+      "pv": {
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": ["src/pure-core/types/CodebaseView.ts"]
+        "sources": [
+          "src/pure-core/types/CodebaseView.ts"
+        ]
       }
     },
     {
       "id": "validated-paths",
       "type": "text",
-      "x": 260,
-      "y": 450,
+      "x": 657,
+      "y": 33,
       "width": 160,
       "height": 60,
       "text": "ValidatedPaths",
       "color": "#475569",
-      "vv": {
+      "pv": {
         "nodeType": "branded-type",
         "shape": "rectangle",
         "icon": "Lock",
-        "sources": ["src/pure-core/types/ValidatedPaths.ts"]
+        "sources": [
+          "src/pure-core/types/ValidatedPaths.ts"
+        ]
       }
     },
     {
       "id": "config",
       "type": "text",
-      "x": 440,
-      "y": 450,
+      "x": 1023,
+      "y": 470,
       "width": 160,
       "height": 60,
       "text": "AlexandriaConfig",
       "color": "#0ea5e9",
-      "vv": {
+      "pv": {
         "nodeType": "config",
         "shape": "rectangle",
         "icon": "Settings",
-        "sources": ["src/config/AlexandriaConfig.ts"]
+        "sources": [
+          "src/config/AlexandriaConfig.ts"
+        ]
       }
     },
     {
       "id": "storage-adapters",
       "type": "text",
-      "x": 620,
-      "y": 450,
+      "x": 1220,
+      "y": 270,
       "width": 160,
       "height": 60,
       "text": "StorageAdapters",
       "color": "#65a30d",
-      "vv": {
+      "pv": {
         "nodeType": "storage-adapter",
         "shape": "cylinder",
         "icon": "HardDrive",
-        "sources": ["src/storage/adapters/*.ts"]
+        "sources": [
+          "src/storage/adapters/*.ts"
+        ]
       }
     }
   ],
@@ -230,70 +258,92 @@
       "id": "palace-to-views",
       "fromNode": "memory-palace",
       "toNode": "views-store",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "palace-to-drawings",
       "fromNode": "memory-palace",
       "toNode": "drawing-store",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "palace-to-validator",
       "fromNode": "memory-palace",
       "toNode": "validator",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "views-to-fs",
       "fromNode": "views-store",
       "toNode": "fs-adapter",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "drawings-to-fs",
       "fromNode": "drawing-store",
       "toNode": "fs-adapter",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "rules-to-glob",
       "fromNode": "rules-engine",
       "toNode": "glob-adapter",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "rules-to-config",
       "fromNode": "rules-engine",
       "toNode": "config",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "validator-to-view",
       "fromNode": "validator",
       "toNode": "codebase-view",
-      "vv": { "edgeType": "validates" }
+      "pv": {
+        "edgeType": "validates"
+      }
     },
     {
       "id": "views-to-view",
       "fromNode": "views-store",
       "toNode": "codebase-view",
-      "vv": { "edgeType": "stores" }
+      "pv": {
+        "edgeType": "stores"
+      }
     },
     {
       "id": "reading-to-storage",
       "fromNode": "reading-manager",
       "toNode": "storage-adapters",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "outpost-to-registry",
       "fromNode": "outpost-manager",
       "toNode": "project-registry",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     }
   ],
-  "vv": {
+  "pv": {
     "name": "Alexandria Core Library Architecture",
     "version": "1.0.0",
     "description": "High-level architecture showing the main components of the Alexandria Core Library and their relationships"

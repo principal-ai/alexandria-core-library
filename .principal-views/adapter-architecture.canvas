@@ -3,140 +3,156 @@
     {
       "id": "fs-adapter-interface",
       "type": "text",
-      "x": 300,
-      "y": 50,
+      "x": 177,
+      "y": 755,
       "width": 180,
       "height": 80,
       "text": "FileSystemAdapter",
       "color": "#06b6d4",
-      "vv": {
+      "pv": {
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": ["src/pure-core/abstractions/FileSystemAdapter.ts"]
+        "sources": [
+          "src/pure-core/abstractions/FileSystemAdapter.ts"
+        ]
       }
     },
     {
       "id": "glob-adapter-interface",
       "type": "text",
-      "x": 300,
-      "y": 350,
+      "x": 562,
+      "y": 752,
       "width": 180,
       "height": 80,
       "text": "GlobAdapter",
       "color": "#06b6d4",
-      "vv": {
+      "pv": {
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": ["src/pure-core/abstractions/GlobAdapter.ts"]
+        "sources": [
+          "src/pure-core/abstractions/GlobAdapter.ts"
+        ]
       }
     },
     {
       "id": "node-fs-adapter",
       "type": "text",
-      "x": 100,
-      "y": 180,
+      "x": -350,
+      "y": 433,
       "width": 180,
       "height": 70,
       "text": "NodeFileSystemAdapter",
       "color": "#22c55e",
-      "vv": {
+      "pv": {
         "nodeType": "node-adapter",
         "shape": "rectangle",
         "icon": "Server",
-        "sources": ["src/node-adapters/NodeFileSystemAdapter.ts"]
+        "sources": [
+          "src/node-adapters/NodeFileSystemAdapter.ts"
+        ]
       }
     },
     {
       "id": "inmemory-fs-adapter",
       "type": "text",
-      "x": 300,
-      "y": 180,
+      "x": 290,
+      "y": 430,
       "width": 180,
       "height": 70,
       "text": "InMemoryFileSystemAdapter",
       "color": "#a855f7",
-      "vv": {
+      "pv": {
         "nodeType": "test-adapter",
         "shape": "rectangle",
         "icon": "TestTube",
-        "sources": ["src/test-adapters/InMemoryFileSystemAdapter.ts"]
+        "sources": [
+          "src/test-adapters/InMemoryFileSystemAdapter.ts"
+        ]
       }
     },
     {
       "id": "filetree-fs-adapter",
       "type": "text",
-      "x": 500,
-      "y": 180,
+      "x": 797,
+      "y": 422,
       "width": 180,
       "height": 70,
       "text": "FileTreeFileSystemAdapter",
       "color": "#f59e0b",
-      "vv": {
+      "pv": {
         "nodeType": "browser-adapter",
         "shape": "rectangle",
         "icon": "Globe",
-        "sources": ["src/filetree-adapters/FileTreeFileSystemAdapter.ts"]
+        "sources": [
+          "src/filetree-adapters/FileTreeFileSystemAdapter.ts"
+        ]
       }
     },
     {
       "id": "node-glob-adapter",
       "type": "text",
-      "x": 100,
-      "y": 480,
+      "x": -119,
+      "y": 428,
       "width": 180,
       "height": 70,
       "text": "NodeGlobAdapter",
       "color": "#22c55e",
-      "vv": {
+      "pv": {
         "nodeType": "node-adapter",
         "shape": "rectangle",
         "icon": "Server",
-        "sources": ["src/node-adapters/NodeGlobAdapter.ts"]
+        "sources": [
+          "src/node-adapters/NodeGlobAdapter.ts"
+        ]
       }
     },
     {
       "id": "inmemory-glob-adapter",
       "type": "text",
-      "x": 300,
-      "y": 480,
+      "x": 528,
+      "y": 423,
       "width": 180,
       "height": 70,
       "text": "InMemoryGlobAdapter",
       "color": "#a855f7",
-      "vv": {
+      "pv": {
         "nodeType": "test-adapter",
         "shape": "rectangle",
         "icon": "TestTube",
-        "sources": ["src/test-adapters/InMemoryGlobAdapter.ts"]
+        "sources": [
+          "src/test-adapters/InMemoryGlobAdapter.ts"
+        ]
       }
     },
     {
       "id": "filetree-glob-adapter",
       "type": "text",
-      "x": 500,
-      "y": 480,
+      "x": 1061,
+      "y": 410,
       "width": 180,
       "height": 70,
       "text": "FileTreeGlobAdapter",
       "color": "#f59e0b",
-      "vv": {
+      "pv": {
         "nodeType": "browser-adapter",
         "shape": "rectangle",
         "icon": "Globe",
-        "sources": ["src/filetree-adapters/FileTreeGlobAdapter.ts"]
+        "sources": [
+          "src/filetree-adapters/FileTreeGlobAdapter.ts"
+        ]
       }
     },
     {
       "id": "node-env",
       "type": "text",
-      "x": 50,
-      "y": 330,
+      "x": -185,
+      "y": 164,
       "width": 100,
       "height": 50,
       "text": "Node.js",
-      "vv": {
+      "pv": {
         "nodeType": "external",
         "shape": "rectangle",
         "icon": "Server"
@@ -145,12 +161,12 @@
     {
       "id": "test-env",
       "type": "text",
-      "x": 350,
-      "y": 280,
+      "x": 444,
+      "y": 182,
       "width": 100,
       "height": 50,
       "text": "Tests",
-      "vv": {
+      "pv": {
         "nodeType": "external",
         "shape": "rectangle",
         "icon": "TestTube"
@@ -159,12 +175,12 @@
     {
       "id": "browser-env",
       "type": "text",
-      "x": 620,
-      "y": 330,
+      "x": 968,
+      "y": 194,
       "width": 100,
       "height": 50,
       "text": "Browser",
-      "vv": {
+      "pv": {
         "nodeType": "external",
         "shape": "rectangle",
         "icon": "Globe"
@@ -176,76 +192,100 @@
       "id": "node-fs-impl",
       "fromNode": "node-fs-adapter",
       "toNode": "fs-adapter-interface",
-      "vv": { "edgeType": "implements" }
+      "pv": {
+        "edgeType": "implements"
+      }
     },
     {
       "id": "inmemory-fs-impl",
       "fromNode": "inmemory-fs-adapter",
       "toNode": "fs-adapter-interface",
-      "vv": { "edgeType": "implements" }
+      "pv": {
+        "edgeType": "implements"
+      }
     },
     {
       "id": "filetree-fs-impl",
       "fromNode": "filetree-fs-adapter",
       "toNode": "fs-adapter-interface",
-      "vv": { "edgeType": "implements" }
+      "pv": {
+        "edgeType": "implements"
+      }
     },
     {
       "id": "node-glob-impl",
       "fromNode": "node-glob-adapter",
       "toNode": "glob-adapter-interface",
-      "vv": { "edgeType": "implements" }
+      "pv": {
+        "edgeType": "implements"
+      }
     },
     {
       "id": "inmemory-glob-impl",
       "fromNode": "inmemory-glob-adapter",
       "toNode": "glob-adapter-interface",
-      "vv": { "edgeType": "implements" }
+      "pv": {
+        "edgeType": "implements"
+      }
     },
     {
       "id": "filetree-glob-impl",
       "fromNode": "filetree-glob-adapter",
       "toNode": "glob-adapter-interface",
-      "vv": { "edgeType": "implements" }
+      "pv": {
+        "edgeType": "implements"
+      }
     },
     {
       "id": "node-env-fs",
       "fromNode": "node-env",
       "toNode": "node-fs-adapter",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "node-env-glob",
       "fromNode": "node-env",
       "toNode": "node-glob-adapter",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "test-env-fs",
       "fromNode": "test-env",
       "toNode": "inmemory-fs-adapter",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "test-env-glob",
       "fromNode": "test-env",
       "toNode": "inmemory-glob-adapter",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "browser-env-fs",
       "fromNode": "browser-env",
       "toNode": "filetree-fs-adapter",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     },
     {
       "id": "browser-env-glob",
       "fromNode": "browser-env",
       "toNode": "filetree-glob-adapter",
-      "vv": { "edgeType": "uses" }
+      "pv": {
+        "edgeType": "uses"
+      }
     }
   ],
-  "vv": {
+  "pv": {
     "name": "Adapter Architecture",
     "version": "1.0.0",
     "description": "Shows the ports-and-adapters pattern with platform-specific implementations for FileSystem and Glob operations"

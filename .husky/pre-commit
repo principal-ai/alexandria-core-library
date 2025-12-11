@@ -25,3 +25,6 @@ alexandria lint --errors-only 2>/dev/null || {
     exit 1
   fi
 }
+
+# Run principal view linting
+npx @principal-ai/principal-view-cli lint --quiet
