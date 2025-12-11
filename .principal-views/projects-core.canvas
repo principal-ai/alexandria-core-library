@@ -1,0 +1,362 @@
+{
+  "nodes": [
+    {
+      "id": "outpost-manager",
+      "type": "text",
+      "x": 300,
+      "y": 50,
+      "width": 220,
+      "height": 80,
+      "text": "AlexandriaOutpostManager",
+      "color": "#3b82f6",
+      "pv": {
+        "nodeType": "api",
+        "shape": "rectangle",
+        "icon": "Box",
+        "sources": [
+          "src/projects-core/AlexandriaOutpostManager.ts"
+        ]
+      }
+    },
+    {
+      "id": "project-registry",
+      "type": "text",
+      "x": 100,
+      "y": 220,
+      "width": 180,
+      "height": 70,
+      "text": "ProjectRegistryStore",
+      "color": "#8b5cf6",
+      "pv": {
+        "nodeType": "store",
+        "shape": "cylinder",
+        "icon": "Database",
+        "sources": [
+          "src/projects-core/ProjectRegistryStore.ts"
+        ]
+      }
+    },
+    {
+      "id": "workspace-manager",
+      "type": "text",
+      "x": 320,
+      "y": 220,
+      "width": 180,
+      "height": 70,
+      "text": "WorkspaceManager",
+      "color": "#8b5cf6",
+      "pv": {
+        "nodeType": "store",
+        "shape": "cylinder",
+        "icon": "Database",
+        "sources": [
+          "src/projects-core/WorkspaceManager.ts"
+        ]
+      }
+    },
+    {
+      "id": "memory-palace",
+      "type": "text",
+      "x": 540,
+      "y": 220,
+      "width": 160,
+      "height": 70,
+      "text": "MemoryPalace",
+      "color": "#3b82f6",
+      "pv": {
+        "nodeType": "api",
+        "shape": "rectangle",
+        "icon": "Box",
+        "sources": [
+          "src/MemoryPalace.ts"
+        ]
+      }
+    },
+    {
+      "id": "config-loader",
+      "type": "text",
+      "x": 540,
+      "y": 50,
+      "width": 160,
+      "height": 70,
+      "text": "ConfigLoader",
+      "color": "#0ea5e9",
+      "pv": {
+        "nodeType": "config",
+        "shape": "rectangle",
+        "icon": "Settings",
+        "sources": [
+          "src/config/loader.ts"
+        ]
+      }
+    },
+    {
+      "id": "fs-adapter",
+      "type": "text",
+      "x": 100,
+      "y": 400,
+      "width": 180,
+      "height": 70,
+      "text": "FileSystemAdapter",
+      "color": "#06b6d4",
+      "pv": {
+        "nodeType": "adapter-interface",
+        "shape": "hexagon",
+        "icon": "Plug",
+        "sources": [
+          "src/pure-core/abstractions/FileSystemAdapter.ts"
+        ]
+      }
+    },
+    {
+      "id": "glob-adapter",
+      "type": "text",
+      "x": 320,
+      "y": 400,
+      "width": 160,
+      "height": 70,
+      "text": "GlobAdapter",
+      "color": "#06b6d4",
+      "pv": {
+        "nodeType": "adapter-interface",
+        "shape": "hexagon",
+        "icon": "Plug",
+        "sources": [
+          "src/pure-core/abstractions/GlobAdapter.ts"
+        ]
+      }
+    },
+    {
+      "id": "alexandria-entry",
+      "type": "text",
+      "x": 100,
+      "y": 560,
+      "width": 160,
+      "height": 60,
+      "text": "AlexandriaEntry",
+      "color": "#64748b",
+      "pv": {
+        "nodeType": "type",
+        "shape": "rectangle",
+        "icon": "FileType",
+        "sources": [
+          "src/pure-core/types/repository.ts"
+        ]
+      }
+    },
+    {
+      "id": "workspace-type",
+      "type": "text",
+      "x": 280,
+      "y": 560,
+      "width": 140,
+      "height": 60,
+      "text": "Workspace",
+      "color": "#64748b",
+      "pv": {
+        "nodeType": "type",
+        "shape": "rectangle",
+        "icon": "FileType",
+        "sources": [
+          "src/projects-core/types.ts"
+        ]
+      }
+    },
+    {
+      "id": "membership-type",
+      "type": "text",
+      "x": 440,
+      "y": 560,
+      "width": 180,
+      "height": 60,
+      "text": "WorkspaceMembership",
+      "color": "#64748b",
+      "pv": {
+        "nodeType": "type",
+        "shape": "rectangle",
+        "icon": "FileType",
+        "sources": [
+          "src/projects-core/types.ts"
+        ]
+      }
+    },
+    {
+      "id": "projects-json",
+      "type": "text",
+      "x": 60,
+      "y": 700,
+      "width": 180,
+      "height": 60,
+      "text": "~/.alexandria/projects.json",
+      "pv": {
+        "nodeType": "external",
+        "shape": "folder",
+        "icon": "Folder"
+      }
+    },
+    {
+      "id": "workspaces-json",
+      "type": "text",
+      "x": 260,
+      "y": 700,
+      "width": 200,
+      "height": 60,
+      "text": "~/.alexandria/workspaces.json",
+      "pv": {
+        "nodeType": "external",
+        "shape": "folder",
+        "icon": "Folder"
+      }
+    },
+    {
+      "id": "memberships-json",
+      "type": "text",
+      "x": 480,
+      "y": 700,
+      "width": 260,
+      "height": 60,
+      "text": "~/.alexandria/workspace-memberships.json",
+      "pv": {
+        "nodeType": "external",
+        "shape": "folder",
+        "icon": "Folder"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "outpost-to-registry",
+      "fromNode": "outpost-manager",
+      "toNode": "project-registry",
+      "label": "manages",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "outpost-to-workspace",
+      "fromNode": "outpost-manager",
+      "toNode": "workspace-manager",
+      "label": "exposes",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "outpost-to-palace",
+      "fromNode": "outpost-manager",
+      "toNode": "memory-palace",
+      "label": "creates",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "outpost-to-config",
+      "fromNode": "outpost-manager",
+      "toNode": "config-loader",
+      "label": "loads config",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "outpost-to-fs",
+      "fromNode": "outpost-manager",
+      "toNode": "fs-adapter",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "outpost-to-glob",
+      "fromNode": "outpost-manager",
+      "toNode": "glob-adapter",
+      "label": "scan docs",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "registry-to-fs",
+      "fromNode": "project-registry",
+      "toNode": "fs-adapter",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "workspace-to-fs",
+      "fromNode": "workspace-manager",
+      "toNode": "fs-adapter",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "workspace-to-registry",
+      "fromNode": "workspace-manager",
+      "toNode": "project-registry",
+      "label": "queries",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "registry-stores-entry",
+      "fromNode": "project-registry",
+      "toNode": "alexandria-entry",
+      "pv": {
+        "edgeType": "stores"
+      }
+    },
+    {
+      "id": "workspace-stores-ws",
+      "fromNode": "workspace-manager",
+      "toNode": "workspace-type",
+      "pv": {
+        "edgeType": "stores"
+      }
+    },
+    {
+      "id": "workspace-stores-membership",
+      "fromNode": "workspace-manager",
+      "toNode": "membership-type",
+      "pv": {
+        "edgeType": "stores"
+      }
+    },
+    {
+      "id": "fs-to-projects",
+      "fromNode": "fs-adapter",
+      "toNode": "projects-json",
+      "label": "persists",
+      "pv": {
+        "edgeType": "data-flow"
+      }
+    },
+    {
+      "id": "fs-to-workspaces",
+      "fromNode": "fs-adapter",
+      "toNode": "workspaces-json",
+      "label": "persists",
+      "pv": {
+        "edgeType": "data-flow"
+      }
+    },
+    {
+      "id": "fs-to-memberships",
+      "fromNode": "fs-adapter",
+      "toNode": "memberships-json",
+      "label": "persists",
+      "pv": {
+        "edgeType": "data-flow"
+      }
+    }
+  ],
+  "pv": {
+    "name": "Projects Core Architecture",
+    "version": "1.0.0",
+    "description": "Shows the AlexandriaOutpostManager and ProjectRegistryStore components for managing registered repositories and workspaces"
+  }
+}
