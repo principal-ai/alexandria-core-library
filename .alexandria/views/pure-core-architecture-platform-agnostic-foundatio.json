@@ -5,7 +5,17 @@
   "description": "Codebase view extracted from documentation",
   "rows": 1,
   "cols": 1,
-  "referenceGroups": {},
+  "referenceGroups": {
+    "Abstractions": {
+      "coordinates": [0, 0],
+      "files": [
+        "src/pure-core/abstractions/filesystem.ts",
+        "src/pure-core/abstractions/glob.ts",
+        "src/pure-core/types/index.ts"
+      ],
+      "priority": 0
+    }
+  },
   "overviewPath": "docs/pure-core-architecture.md",
   "category": "other",
   "displayOrder": 0,

@@ -5,7 +5,18 @@
   "description": "Codebase view extracted from documentation",
   "rows": 1,
   "cols": 1,
-  "referenceGroups": {},
+  "referenceGroups": {
+    "Core Entry Points": {
+      "coordinates": [0, 0],
+      "files": [
+        "src/index.ts",
+        "src/browser.ts",
+        "src/node.ts",
+        "src/github.ts"
+      ],
+      "priority": 0
+    }
+  },
   "overviewPath": "AGENTS.md",
   "category": "other",
   "displayOrder": 0,

@@ -1,6 +1,6 @@
 {
   "name": "@principal-ai/alexandria-core-library",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "Principal AI Team",
   "repository": {
     "type": "git",
@@ -23,6 +23,11 @@
       "types": "./dist/browser.d.ts",
       "import": "./dist/browser.js",
       "default": "./dist/browser.js"
+    },
+    "./github": {
+      "types": "./dist/github.d.ts",
+      "import": "./dist/github.js",
+      "default": "./dist/github.js"
     },
     "./types": {
       "types": "./dist/types.d.ts",

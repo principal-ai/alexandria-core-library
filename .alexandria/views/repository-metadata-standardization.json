@@ -5,7 +5,16 @@
   "description": "Codebase view extracted from documentation",
   "rows": 1,
   "cols": 1,
-  "referenceGroups": {},
+  "referenceGroups": {
+    "Repository Types": {
+      "coordinates": [0, 0],
+      "files": [
+        "src/pure-core/types/repository.ts",
+        "src/pure-core/types/index.ts"
+      ],
+      "priority": 0
+    }
+  },
   "overviewPath": "docs/repository-metadata-standardization.md",
   "category": "other",
   "displayOrder": 0,

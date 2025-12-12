@@ -5,7 +5,17 @@
   "description": "Codebase view extracted from documentation",
   "rows": 1,
   "cols": 1,
-  "referenceGroups": {},
+  "referenceGroups": {
+    "Rules Engine": {
+      "coordinates": [0, 0],
+      "files": [
+        "src/rules/engine.ts",
+        "src/rules/types.ts",
+        "src/rules/index.ts"
+      ],
+      "priority": 0
+    }
+  },
   "overviewPath": "docs/rule-implementation-checklist.md",
   "category": "other",
   "displayOrder": 0,
