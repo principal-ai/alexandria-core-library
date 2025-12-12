@@ -1,0 +1,373 @@
+{
+  "nodes": [
+    {
+      "id": "fs-adapter-interface",
+      "type": "text",
+      "x": 353,
+      "y": 664,
+      "width": 200,
+      "height": 80,
+      "text": "FileSystemAdapter",
+      "color": "#06b6d4",
+      "pv": {
+        "nodeType": "adapter-interface",
+        "shape": "hexagon",
+        "icon": "Plug",
+        "sources": [
+          "src/pure-core/abstractions/filesystem.ts"
+        ]
+      }
+    },
+    {
+      "id": "workspace-manager",
+      "type": "text",
+      "x": 486,
+      "y": 418,
+      "width": 240,
+      "height": 80,
+      "text": "WorkspaceManager",
+      "color": "#8b5cf6",
+      "pv": {
+        "nodeType": "store",
+        "shape": "cylinder",
+        "icon": "Database",
+        "sources": [
+          "src/projects-core/WorkspaceManager.ts"
+        ]
+      }
+    },
+    {
+      "id": "node-fs-adapter",
+      "type": "text",
+      "x": 684,
+      "y": 415,
+      "width": 200,
+      "height": 70,
+      "text": "NodeFileSystemAdapter",
+      "color": "#22c55e",
+      "pv": {
+        "nodeType": "node-adapter",
+        "shape": "rectangle",
+        "icon": "Server",
+        "sources": [
+          "src/node-adapters/NodeFileSystemAdapter.ts"
+        ]
+      }
+    },
+    {
+      "id": "db-storage-adapter",
+      "type": "text",
+      "x": 195,
+      "y": 424,
+      "width": 280,
+      "height": 70,
+      "text": "DatabaseStorageAdapter",
+      "color": "#ec4899",
+      "pv": {
+        "nodeType": "storage-adapter",
+        "shape": "rectangle",
+        "icon": "Cloud"
+      }
+    },
+    {
+      "id": "localstorage-fs-adapter",
+      "type": "text",
+      "x": -61,
+      "y": 447,
+      "width": 240,
+      "height": 70,
+      "text": "LocalStorageFileSystemAdapter",
+      "color": "#f59e0b",
+      "pv": {
+        "nodeType": "browser-adapter",
+        "shape": "rectangle",
+        "icon": "Globe",
+        "sources": [
+          "src/browser-adapters/LocalStorageFileSystemAdapter.ts"
+        ]
+      }
+    },
+    {
+      "id": "electron-app",
+      "type": "text",
+      "x": 460,
+      "y": 70,
+      "width": 180,
+      "height": 60,
+      "text": "electron-app",
+      "color": "#3b82f6",
+      "pv": {
+        "nodeType": "external",
+        "shape": "rectangle",
+        "icon": "Monitor"
+      }
+    },
+    {
+      "id": "web-ade",
+      "type": "text",
+      "x": 260,
+      "y": 70,
+      "width": 180,
+      "height": 60,
+      "text": "web-ade",
+      "color": "#3b82f6",
+      "pv": {
+        "nodeType": "external",
+        "shape": "rectangle",
+        "icon": "Globe"
+      }
+    },
+    {
+      "id": "filesystem-storage",
+      "type": "text",
+      "x": 640,
+      "y": 670,
+      "width": 220,
+      "height": 60,
+      "text": "~/.alexandria/*.json",
+      "pv": {
+        "nodeType": "external",
+        "shape": "folder",
+        "icon": "Folder"
+      }
+    },
+    {
+      "id": "database",
+      "type": "text",
+      "x": 371,
+      "y": 514,
+      "width": 200,
+      "height": 60,
+      "text": "Cloud Database",
+      "color": "#ec4899",
+      "pv": {
+        "nodeType": "external",
+        "shape": "cylinder",
+        "icon": "Database"
+      }
+    },
+    {
+      "id": "localstorage-cache",
+      "type": "text",
+      "x": -43,
+      "y": 643,
+      "width": 220,
+      "height": 60,
+      "text": "localStorage (offline cache)",
+      "pv": {
+        "nodeType": "external",
+        "shape": "folder",
+        "icon": "HardDrive"
+      }
+    },
+    {
+      "id": "registry-service",
+      "type": "text",
+      "x": 540,
+      "y": 270,
+      "width": 220,
+      "height": 60,
+      "text": "AlexandriaRegistryService",
+      "color": "#22c55e",
+      "pv": {
+        "nodeType": "api",
+        "shape": "rectangle",
+        "icon": "Server"
+      }
+    },
+    {
+      "id": "web-workspace-store",
+      "type": "text",
+      "x": 130,
+      "y": 280,
+      "width": 200,
+      "height": 60,
+      "text": "BrowserWorkspaceStore",
+      "color": "#f59e0b",
+      "pv": {
+        "nodeType": "api",
+        "shape": "rectangle",
+        "icon": "Globe"
+      }
+    },
+    {
+      "id": "user-account",
+      "type": "text",
+      "x": 357,
+      "y": 195,
+      "width": 200,
+      "height": 60,
+      "text": "User Account (Auth)",
+      "color": "#ec4899",
+      "pv": {
+        "nodeType": "external",
+        "shape": "rectangle",
+        "icon": "User"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "node-fs-impl",
+      "fromNode": "node-fs-adapter",
+      "toNode": "fs-adapter-interface",
+      "pv": {
+        "edgeType": "implements"
+      }
+    },
+    {
+      "id": "db-adapter-impl",
+      "fromNode": "db-storage-adapter",
+      "toNode": "fs-adapter-interface",
+      "pv": {
+        "edgeType": "implements"
+      }
+    },
+    {
+      "id": "localstorage-fs-impl",
+      "fromNode": "localstorage-fs-adapter",
+      "toNode": "fs-adapter-interface",
+      "pv": {
+        "edgeType": "implements"
+      }
+    },
+    {
+      "id": "workspace-uses-fs",
+      "fromNode": "workspace-manager",
+      "toNode": "fs-adapter-interface",
+      "label": "uses",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "electron-to-registry",
+      "fromNode": "electron-app",
+      "toNode": "registry-service",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "registry-to-workspace",
+      "fromNode": "registry-service",
+      "toNode": "workspace-manager",
+      "label": "wraps",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "webade-to-webstore",
+      "fromNode": "web-ade",
+      "toNode": "web-workspace-store",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "webstore-to-workspace",
+      "fromNode": "web-workspace-store",
+      "toNode": "workspace-manager",
+      "label": "wraps",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "node-adapter-to-filesystem",
+      "fromNode": "node-fs-adapter",
+      "toNode": "filesystem-storage",
+      "label": "local cache",
+      "pv": {
+        "edgeType": "data-flow"
+      }
+    },
+    {
+      "id": "db-adapter-to-db",
+      "fromNode": "db-storage-adapter",
+      "toNode": "database",
+      "label": "sync",
+      "pv": {
+        "edgeType": "data-flow"
+      }
+    },
+    {
+      "id": "localstorage-adapter-to-cache",
+      "fromNode": "localstorage-fs-adapter",
+      "toNode": "localstorage-cache",
+      "label": "offline cache",
+      "pv": {
+        "edgeType": "data-flow"
+      }
+    },
+    {
+      "id": "registry-to-db-adapter",
+      "fromNode": "registry-service",
+      "toNode": "db-storage-adapter",
+      "label": "injects",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "webstore-to-db-adapter",
+      "fromNode": "web-workspace-store",
+      "toNode": "db-storage-adapter",
+      "label": "injects",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "registry-to-node-adapter",
+      "fromNode": "registry-service",
+      "toNode": "node-fs-adapter",
+      "label": "offline fallback",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "webstore-to-localstorage",
+      "fromNode": "web-workspace-store",
+      "toNode": "localstorage-fs-adapter",
+      "label": "offline fallback",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "user-to-db",
+      "fromNode": "user-account",
+      "toNode": "database",
+      "label": "owns data",
+      "pv": {
+        "edgeType": "data-flow"
+      }
+    },
+    {
+      "id": "electron-to-user",
+      "fromNode": "electron-app",
+      "toNode": "user-account",
+      "label": "authenticates",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "webade-to-user",
+      "fromNode": "web-ade",
+      "toNode": "user-account",
+      "label": "authenticates",
+      "pv": {
+        "edgeType": "uses"
+      }
+    }
+  ],
+  "pv": {
+    "name": "Unified Database Architecture (Future)",
+    "version": "1.0.0",
+    "description": "Shows the future state where both electron-app and web-ade can sync workspaces through a shared DatabaseStorageAdapter, with local storage as offline fallback. User authentication enables cross-device sync."
+  }
+}
