@@ -74,7 +74,8 @@
     "README.md",
     "USAGE_GUIDE.md",
     "LIBRARY_USAGE.md",
-    "LICENSE"
+    "LICENSE",
+    "PATENTS.md"
   ],
   "homepage": "https://principal.ai",
   "keywords": [
@@ -84,7 +85,7 @@
     "library",
     "utilities"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "lint-staged": {
     "src/**/*.{ts,js}": [
       "eslint --fix",
