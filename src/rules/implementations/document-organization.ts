@@ -5,33 +5,18 @@ import {
 } from "../types";
 import { DocumentOrganizationOptions } from "../../config/types";
 import { matchesPatterns } from "../utils/patterns";
-
-// Default allowed root-level documentation files
-const DEFAULT_ROOT_EXCEPTIONS = [
-  "README.md",
-  "readme.md",
-  "CHANGELOG.md",
-  "changelog.md",
-  "CONTRIBUTING.md",
-  "contributing.md",
-  "LICENSE.md",
-  "license.md",
-  "CODE_OF_CONDUCT.md",
-  "code_of_conduct.md",
-  "SECURITY.md",
-  "security.md",
-  "AUTHORS.md",
-  "authors.md",
-  "CONTRIBUTORS.md",
-  "contributors.md",
-  "INSTALL.md",
-  "install.md",
-  "SETUP.md",
-  "setup.md",
-];
+import {
+  getRootExceptions,
+  getOrganizationExemptions,
+  isLocationBound,
+  getLocationBoundExplanation,
+} from "../utils/location-bound-files";
 
 // Default documentation folder names
 const DEFAULT_DOC_FOLDERS = ["docs", "documentation", "doc"];
+
+// Get root exceptions from centralized location-bound files
+const DEFAULT_ROOT_EXCEPTIONS = getRootExceptions();
 
 export const documentOrganization: LibraryRule = {
   id: "document-organization",
@@ -153,12 +138,9 @@ export const documentOrganization: LibraryRule = {
           );
 
           if (!isInDocFolder && !isInSpecialDir) {
-            // Check if this specific file is an exception even when not in root
-            const isException = DEFAULT_ROOT_EXCEPTIONS.some(
-              (exception) => fileName.toLowerCase() === exception.toLowerCase(),
-            );
-
-            if (!isException) {
+            // Check if this is a location-bound file (e.g., README.md describing a subdirectory)
+            // Location-bound files should never be suggested for centralization
+            if (!isLocationBound(fileName)) {
               violations.push({
                 ruleId: this.id,
                 severity: this.severity,

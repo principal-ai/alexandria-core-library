@@ -5,18 +5,10 @@ import {
 } from "../types";
 import { FilenameConventionOptions, FilenameStyle } from "../../config/types";
 import { matchesPatterns } from "../utils/patterns";
+import { getNamingExemptions } from "../utils/location-bound-files";
 
-// Default exceptions for common files
-const DEFAULT_EXCEPTIONS = [
-  "README.md",
-  "CHANGELOG.md",
-  "CONTRIBUTING.md",
-  "LICENSE.md",
-  "CODE_OF_CONDUCT.md",
-  "SECURITY.md",
-  "AUTHORS.md",
-  "CONTRIBUTORS.md",
-];
+// Get naming exceptions from centralized location-bound files
+const DEFAULT_EXCEPTIONS = getNamingExemptions();
 
 // Default extensions to check
 const DEFAULT_EXTENSIONS = [".md", ".mdx"];

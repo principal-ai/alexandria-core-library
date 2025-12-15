@@ -114,6 +114,24 @@ export type {
   GitFileHistory,
 } from "./rules/types";
 
+// Location-bound files - for understanding which files should not be centralized
+export type {
+  LocationConstraint,
+  LocationBoundFile,
+} from "./rules/utils/location-bound-files";
+export {
+  LOCATION_BOUND_FILES,
+  isLocationBound,
+  isNamingExempt,
+  getLocationBoundInfo,
+  getLocationBoundExplanation,
+  getNamingExemptions,
+  getRootExceptions,
+  getOrganizationExemptions,
+  validateLocationBoundFile,
+  filterLocationBoundFiles,
+} from "./rules/utils/location-bound-files";
+
 // Configuration types
 export type {
   AlexandriaConfig,
