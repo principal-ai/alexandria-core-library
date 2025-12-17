@@ -1,0 +1,58 @@
+name: Quality Lens Analysis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Quality Lens CLI
+        run: npm install -g @principal-ai/quality-lens-cli
+
+      - name: Run quality lenses
+        run: |
+          quality-lens run . \
+            --output results.json \
+            --format json
+        continue-on-error: true
+
+      - name: Display results summary
+        if: always()
+        run: |
+          if [ -f results.json ]; then
+            echo "Quality Lens Analysis Complete"
+            node -e "
+              const fs = require('fs');
+              const results = JSON.parse(fs.readFileSync('results.json', 'utf8'));
+              const total = results.results.length;
+              const passed = results.results.filter(r => r.execution?.success).length;
+              console.log('Total Checks:', total);
+              console.log('Passed:', passed);
+              console.log('Failed:', total - passed);
+            "
+          fi
+
+      - name: Upload results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-lens-results-${{ github.sha }}
+          path: results.json
+          if-no-files-found: warn
