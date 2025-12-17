@@ -43,6 +43,7 @@
           "excludeFiles": [
             "CHANGELOG.md",
             "README.md",
+            "PATENTS.md",
             "src/future-work/README.md"
           ]
         }
@@ -58,7 +59,8 @@
             "README.md",
             "CHANGELOG.md",
             "LICENSE",
-            "AGENTS.md"
+            "AGENTS.md",
+            "PATENTS.md"
           ],
           "checkNested": true
         }
@@ -71,7 +73,7 @@
         "options": {
           "style": "kebab-case",
           "extensions": [".md"],
-          "exceptions": ["README.md", "CHANGELOG.md", "LICENSE", "AGENTS.md"],
+          "exceptions": ["README.md", "CHANGELOG.md", "LICENSE", "AGENTS.md", "PATENTS.md"],
           "documentFoldersOnly": false,
           "autoFix": true
         }
