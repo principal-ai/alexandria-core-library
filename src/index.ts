@@ -100,6 +100,14 @@ export type { ExcalidrawData } from "./pure-core/types/drawing";
 export { LibraryRulesEngine } from "./rules/index";
 export { OverviewPathAutoFix } from "./pure-core/autofixes/OverviewPathAutoFix";
 export { ConfigValidator } from "./config/validator";
+export { ConfigLoader } from "./config/loader";
+
+// Pattern utilities
+export {
+  matchesPatterns,
+  getExcludePatterns,
+  filterByExcludePatterns,
+} from "./rules/utils/patterns";
 
 // Rule types for CLI and external consumers
 export type {
