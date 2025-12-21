@@ -35,10 +35,10 @@
     {
       "id": "codebase-view-validator",
       "type": "text",
-      "x": 10,
-      "y": 465,
-      "width": 180,
-      "height": 70,
+      "x": -26,
+      "y": 404,
+      "width": 210,
+      "height": 199,
       "text": "CodebaseViewValidator",
       "color": "#ef4444",
       "pv": {
@@ -53,8 +53,8 @@
     {
       "id": "codebase-views-store",
       "type": "text",
-      "x": 210,
-      "y": 465,
+      "x": 211,
+      "y": 468,
       "width": 180,
       "height": 70,
       "text": "CodebaseViewsStore",
@@ -107,8 +107,8 @@
     {
       "id": "alexandria-dir",
       "type": "text",
-      "x": 120,
-      "y": 870,
+      "x": 218,
+      "y": 856,
       "width": 160,
       "height": 60,
       "text": ".alexandria/views/",

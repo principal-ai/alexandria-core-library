@@ -23,7 +23,7 @@
       "type": "text",
       "x": 479,
       "y": 366,
-      "width": 180,
+      "width": 184,
       "height": 70,
       "text": "ProjectRegistryStore",
       "color": "#8b5cf6",
@@ -129,8 +129,8 @@
     {
       "id": "alexandria-entry",
       "type": "text",
-      "x": 520,
-      "y": 670,
+      "x": 490,
+      "y": 581,
       "width": 160,
       "height": 60,
       "text": "AlexandriaEntry",
@@ -147,8 +147,8 @@
     {
       "id": "workspace-type",
       "type": "text",
-      "x": 885,
-      "y": 672,
+      "x": 919,
+      "y": 576,
       "width": 140,
       "height": 60,
       "text": "Workspace",
@@ -165,8 +165,8 @@
     {
       "id": "membership-type",
       "type": "text",
-      "x": 705,
-      "y": 670,
+      "x": 700,
+      "y": 578,
       "width": 180,
       "height": 60,
       "text": "WorkspaceMembership",
@@ -183,9 +183,9 @@
     {
       "id": "projects-json",
       "type": "text",
-      "x": 610,
-      "y": 870,
-      "width": 180,
+      "x": 502,
+      "y": 864,
+      "width": 141,
       "height": 60,
       "text": "~/.alexandria/projects.json",
       "pv": {
@@ -197,9 +197,9 @@
     {
       "id": "workspaces-json",
       "type": "text",
-      "x": 400,
-      "y": 870,
-      "width": 200,
+      "x": 331,
+      "y": 867,
+      "width": 137,
       "height": 60,
       "text": "~/.alexandria/workspaces.json",
       "pv": {
@@ -211,9 +211,9 @@
     {
       "id": "memberships-json",
       "type": "text",
-      "x": 170,
-      "y": 870,
-      "width": 260,
+      "x": 146,
+      "y": 866,
+      "width": 143,
       "height": 60,
       "text": "~/.alexandria/workspace-memberships.json",
       "pv": {
