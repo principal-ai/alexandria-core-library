@@ -191,7 +191,9 @@
     {
       "id": "node-fs-impl",
       "fromNode": "node-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -199,7 +201,9 @@
     {
       "id": "inmemory-fs-impl",
       "fromNode": "inmemory-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -207,7 +211,9 @@
     {
       "id": "filetree-fs-impl",
       "fromNode": "filetree-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -215,7 +221,9 @@
     {
       "id": "node-glob-impl",
       "fromNode": "node-glob-adapter",
+      "fromSide": "bottom",
       "toNode": "glob-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -223,7 +231,9 @@
     {
       "id": "inmemory-glob-impl",
       "fromNode": "inmemory-glob-adapter",
+      "fromSide": "bottom",
       "toNode": "glob-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -231,7 +241,9 @@
     {
       "id": "filetree-glob-impl",
       "fromNode": "filetree-glob-adapter",
+      "fromSide": "bottom",
       "toNode": "glob-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -239,7 +251,9 @@
     {
       "id": "node-env-fs",
       "fromNode": "node-env",
+      "fromSide": "bottom",
       "toNode": "node-fs-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -247,7 +261,9 @@
     {
       "id": "node-env-glob",
       "fromNode": "node-env",
+      "fromSide": "bottom",
       "toNode": "node-glob-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -255,7 +271,9 @@
     {
       "id": "test-env-fs",
       "fromNode": "test-env",
+      "fromSide": "bottom",
       "toNode": "inmemory-fs-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -263,7 +281,9 @@
     {
       "id": "test-env-glob",
       "fromNode": "test-env",
+      "fromSide": "bottom",
       "toNode": "inmemory-glob-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -271,7 +291,9 @@
     {
       "id": "browser-env-fs",
       "fromNode": "browser-env",
+      "fromSide": "bottom",
       "toNode": "filetree-fs-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -279,7 +301,9 @@
     {
       "id": "browser-env-glob",
       "fromNode": "browser-env",
+      "fromSide": "bottom",
       "toNode": "filetree-glob-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }

@@ -227,7 +227,9 @@
     {
       "id": "outpost-to-registry",
       "fromNode": "outpost-manager",
+      "fromSide": "bottom",
       "toNode": "project-registry",
+      "toSide": "top",
       "label": "manages",
       "pv": {
         "edgeType": "uses"
@@ -236,7 +238,9 @@
     {
       "id": "outpost-to-workspace",
       "fromNode": "outpost-manager",
+      "fromSide": "bottom",
       "toNode": "workspace-manager",
+      "toSide": "top",
       "label": "exposes",
       "pv": {
         "edgeType": "uses"
@@ -245,7 +249,9 @@
     {
       "id": "outpost-to-palace",
       "fromNode": "outpost-manager",
+      "fromSide": "bottom",
       "toNode": "memory-palace",
+      "toSide": "top",
       "label": "creates",
       "pv": {
         "edgeType": "uses"
@@ -254,7 +260,9 @@
     {
       "id": "outpost-to-config",
       "fromNode": "outpost-manager",
+      "fromSide": "bottom",
       "toNode": "config-loader",
+      "toSide": "top",
       "label": "loads config",
       "pv": {
         "edgeType": "uses"
@@ -263,7 +271,9 @@
     {
       "id": "outpost-to-fs",
       "fromNode": "outpost-manager",
+      "fromSide": "bottom",
       "toNode": "fs-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -271,7 +281,9 @@
     {
       "id": "outpost-to-glob",
       "fromNode": "outpost-manager",
+      "fromSide": "bottom",
       "toNode": "glob-adapter",
+      "toSide": "top",
       "label": "scan docs",
       "pv": {
         "edgeType": "uses"
@@ -280,7 +292,9 @@
     {
       "id": "registry-to-fs",
       "fromNode": "project-registry",
+      "fromSide": "bottom",
       "toNode": "fs-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -288,7 +302,9 @@
     {
       "id": "workspace-to-fs",
       "fromNode": "workspace-manager",
+      "fromSide": "bottom",
       "toNode": "fs-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -296,7 +312,9 @@
     {
       "id": "workspace-to-registry",
       "fromNode": "workspace-manager",
+      "fromSide": "bottom",
       "toNode": "project-registry",
+      "toSide": "top",
       "label": "queries",
       "pv": {
         "edgeType": "uses"
@@ -305,7 +323,9 @@
     {
       "id": "registry-stores-entry",
       "fromNode": "project-registry",
+      "fromSide": "bottom",
       "toNode": "alexandria-entry",
+      "toSide": "top",
       "pv": {
         "edgeType": "stores"
       }
@@ -313,7 +333,9 @@
     {
       "id": "workspace-stores-ws",
       "fromNode": "workspace-manager",
+      "fromSide": "bottom",
       "toNode": "workspace-type",
+      "toSide": "top",
       "pv": {
         "edgeType": "stores"
       }
@@ -321,7 +343,9 @@
     {
       "id": "workspace-stores-membership",
       "fromNode": "workspace-manager",
+      "fromSide": "bottom",
       "toNode": "membership-type",
+      "toSide": "top",
       "pv": {
         "edgeType": "stores"
       }
@@ -329,7 +353,9 @@
     {
       "id": "fs-to-projects",
       "fromNode": "fs-adapter",
+      "fromSide": "bottom",
       "toNode": "projects-json",
+      "toSide": "top",
       "label": "persists",
       "pv": {
         "edgeType": "data-flow"
@@ -338,7 +364,9 @@
     {
       "id": "fs-to-workspaces",
       "fromNode": "fs-adapter",
+      "fromSide": "bottom",
       "toNode": "workspaces-json",
+      "toSide": "top",
       "label": "persists",
       "pv": {
         "edgeType": "data-flow"
@@ -347,7 +375,9 @@
     {
       "id": "fs-to-memberships",
       "fromNode": "fs-adapter",
+      "fromSide": "bottom",
       "toNode": "memberships-json",
+      "toSide": "top",
       "label": "persists",
       "pv": {
         "edgeType": "data-flow"

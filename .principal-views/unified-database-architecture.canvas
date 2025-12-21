@@ -210,7 +210,9 @@
     {
       "id": "node-fs-impl",
       "fromNode": "node-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -218,7 +220,9 @@
     {
       "id": "db-adapter-impl",
       "fromNode": "db-storage-adapter",
+      "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -226,7 +230,9 @@
     {
       "id": "localstorage-fs-impl",
       "fromNode": "localstorage-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -234,7 +240,9 @@
     {
       "id": "workspace-uses-fs",
       "fromNode": "workspace-manager",
+      "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
+      "toSide": "top",
       "label": "uses",
       "pv": {
         "edgeType": "uses"
@@ -243,7 +251,9 @@
     {
       "id": "electron-to-registry",
       "fromNode": "electron-app",
+      "fromSide": "bottom",
       "toNode": "registry-service",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -251,7 +261,9 @@
     {
       "id": "registry-to-workspace",
       "fromNode": "registry-service",
+      "fromSide": "bottom",
       "toNode": "workspace-manager",
+      "toSide": "top",
       "label": "wraps",
       "pv": {
         "edgeType": "uses"
@@ -260,7 +272,9 @@
     {
       "id": "webade-to-webstore",
       "fromNode": "web-ade",
+      "fromSide": "bottom",
       "toNode": "web-workspace-store",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -268,7 +282,9 @@
     {
       "id": "webstore-to-workspace",
       "fromNode": "web-workspace-store",
+      "fromSide": "bottom",
       "toNode": "workspace-manager",
+      "toSide": "top",
       "label": "wraps",
       "pv": {
         "edgeType": "uses"
@@ -277,7 +293,9 @@
     {
       "id": "node-adapter-to-filesystem",
       "fromNode": "node-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "filesystem-storage",
+      "toSide": "top",
       "label": "local cache",
       "pv": {
         "edgeType": "data-flow"
@@ -286,7 +304,9 @@
     {
       "id": "db-adapter-to-db",
       "fromNode": "db-storage-adapter",
+      "fromSide": "bottom",
       "toNode": "database",
+      "toSide": "top",
       "label": "sync",
       "pv": {
         "edgeType": "data-flow"
@@ -295,7 +315,9 @@
     {
       "id": "localstorage-adapter-to-cache",
       "fromNode": "localstorage-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "localstorage-cache",
+      "toSide": "top",
       "label": "offline cache",
       "pv": {
         "edgeType": "data-flow"
@@ -304,7 +326,9 @@
     {
       "id": "registry-to-db-adapter",
       "fromNode": "registry-service",
+      "fromSide": "bottom",
       "toNode": "db-storage-adapter",
+      "toSide": "top",
       "label": "injects",
       "pv": {
         "edgeType": "uses"
@@ -313,7 +337,9 @@
     {
       "id": "webstore-to-db-adapter",
       "fromNode": "web-workspace-store",
+      "fromSide": "bottom",
       "toNode": "db-storage-adapter",
+      "toSide": "top",
       "label": "injects",
       "pv": {
         "edgeType": "uses"
@@ -322,7 +348,9 @@
     {
       "id": "registry-to-node-adapter",
       "fromNode": "registry-service",
+      "fromSide": "bottom",
       "toNode": "node-fs-adapter",
+      "toSide": "top",
       "label": "offline fallback",
       "pv": {
         "edgeType": "uses"
@@ -331,7 +359,9 @@
     {
       "id": "webstore-to-localstorage",
       "fromNode": "web-workspace-store",
+      "fromSide": "bottom",
       "toNode": "localstorage-fs-adapter",
+      "toSide": "top",
       "label": "offline fallback",
       "pv": {
         "edgeType": "uses"
@@ -340,7 +370,9 @@
     {
       "id": "user-to-db",
       "fromNode": "user-account",
+      "fromSide": "bottom",
       "toNode": "database",
+      "toSide": "top",
       "label": "owns data",
       "pv": {
         "edgeType": "data-flow"
@@ -349,7 +381,9 @@
     {
       "id": "electron-to-user",
       "fromNode": "electron-app",
+      "fromSide": "bottom",
       "toNode": "user-account",
+      "toSide": "top",
       "label": "authenticates",
       "pv": {
         "edgeType": "uses"
@@ -358,7 +392,9 @@
     {
       "id": "webade-to-user",
       "fromNode": "web-ade",
+      "fromSide": "bottom",
       "toNode": "user-account",
+      "toSide": "top",
       "label": "authenticates",
       "pv": {
         "edgeType": "uses"

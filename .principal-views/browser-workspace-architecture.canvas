@@ -201,7 +201,9 @@
     {
       "id": "node-fs-impl",
       "fromNode": "node-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -209,7 +211,9 @@
     {
       "id": "localstorage-fs-impl",
       "fromNode": "localstorage-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
+      "toSide": "top",
       "pv": {
         "edgeType": "implements"
       }
@@ -217,7 +221,9 @@
     {
       "id": "workspace-uses-fs",
       "fromNode": "workspace-manager",
+      "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
+      "toSide": "top",
       "label": "uses",
       "pv": {
         "edgeType": "uses"
@@ -226,7 +232,9 @@
     {
       "id": "electron-to-registry",
       "fromNode": "electron-app",
+      "fromSide": "bottom",
       "toNode": "registry-service",
+      "toSide": "top",
       "label": "uses",
       "pv": {
         "edgeType": "uses"
@@ -235,7 +243,9 @@
     {
       "id": "registry-to-workspace",
       "fromNode": "registry-service",
+      "fromSide": "bottom",
       "toNode": "workspace-manager",
+      "toSide": "top",
       "label": "wraps",
       "pv": {
         "edgeType": "uses"
@@ -244,7 +254,9 @@
     {
       "id": "registry-to-node-adapter",
       "fromNode": "registry-service",
+      "fromSide": "bottom",
       "toNode": "node-fs-adapter",
+      "toSide": "top",
       "label": "injects",
       "pv": {
         "edgeType": "uses"
@@ -253,7 +265,9 @@
     {
       "id": "webade-to-webstore",
       "fromNode": "web-ade",
+      "fromSide": "bottom",
       "toNode": "web-workspace-store",
+      "toSide": "top",
       "label": "uses",
       "pv": {
         "edgeType": "uses"
@@ -262,7 +276,9 @@
     {
       "id": "webstore-to-workspace",
       "fromNode": "web-workspace-store",
+      "fromSide": "bottom",
       "toNode": "workspace-manager",
+      "toSide": "top",
       "label": "wraps",
       "pv": {
         "edgeType": "uses"
@@ -271,7 +287,9 @@
     {
       "id": "webstore-to-localstorage-adapter",
       "fromNode": "web-workspace-store",
+      "fromSide": "bottom",
       "toNode": "localstorage-fs-adapter",
+      "toSide": "top",
       "label": "injects",
       "pv": {
         "edgeType": "uses"
@@ -280,7 +298,9 @@
     {
       "id": "node-adapter-to-filesystem",
       "fromNode": "node-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "filesystem-storage",
+      "toSide": "top",
       "label": "persists to",
       "pv": {
         "edgeType": "data-flow"
@@ -289,7 +309,9 @@
     {
       "id": "localstorage-adapter-to-localstorage",
       "fromNode": "localstorage-fs-adapter",
+      "fromSide": "bottom",
       "toNode": "localstorage-storage",
+      "toSide": "top",
       "label": "persists to",
       "pv": {
         "edgeType": "data-flow"
@@ -298,7 +320,9 @@
     {
       "id": "workspace-stores-ws",
       "fromNode": "workspace-manager",
+      "fromSide": "bottom",
       "toNode": "workspace-type",
+      "toSide": "top",
       "pv": {
         "edgeType": "stores"
       }
@@ -306,7 +330,9 @@
     {
       "id": "workspace-stores-membership",
       "fromNode": "workspace-manager",
+      "fromSide": "bottom",
       "toNode": "membership-type",
+      "toSide": "top",
       "pv": {
         "edgeType": "stores"
       }

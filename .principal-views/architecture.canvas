@@ -257,7 +257,9 @@
     {
       "id": "palace-to-views",
       "fromNode": "memory-palace",
+      "fromSide": "bottom",
       "toNode": "views-store",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -265,7 +267,9 @@
     {
       "id": "palace-to-drawings",
       "fromNode": "memory-palace",
+      "fromSide": "bottom",
       "toNode": "drawing-store",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -273,7 +277,9 @@
     {
       "id": "palace-to-validator",
       "fromNode": "memory-palace",
+      "fromSide": "bottom",
       "toNode": "validator",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -281,7 +287,9 @@
     {
       "id": "views-to-fs",
       "fromNode": "views-store",
+      "fromSide": "bottom",
       "toNode": "fs-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -289,7 +297,9 @@
     {
       "id": "drawings-to-fs",
       "fromNode": "drawing-store",
+      "fromSide": "bottom",
       "toNode": "fs-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -297,7 +307,9 @@
     {
       "id": "rules-to-glob",
       "fromNode": "rules-engine",
+      "fromSide": "bottom",
       "toNode": "glob-adapter",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -305,7 +317,9 @@
     {
       "id": "rules-to-config",
       "fromNode": "rules-engine",
+      "fromSide": "bottom",
       "toNode": "config",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -313,7 +327,9 @@
     {
       "id": "validator-to-view",
       "fromNode": "validator",
+      "fromSide": "bottom",
       "toNode": "codebase-view",
+      "toSide": "top",
       "pv": {
         "edgeType": "validates"
       }
@@ -321,7 +337,9 @@
     {
       "id": "views-to-view",
       "fromNode": "views-store",
+      "fromSide": "bottom",
       "toNode": "codebase-view",
+      "toSide": "top",
       "pv": {
         "edgeType": "stores"
       }
@@ -329,7 +347,9 @@
     {
       "id": "reading-to-storage",
       "fromNode": "reading-manager",
+      "fromSide": "bottom",
       "toNode": "storage-adapters",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }
@@ -337,7 +357,9 @@
     {
       "id": "outpost-to-registry",
       "fromNode": "outpost-manager",
+      "fromSide": "bottom",
       "toNode": "project-registry",
+      "toSide": "top",
       "pv": {
         "edgeType": "uses"
       }

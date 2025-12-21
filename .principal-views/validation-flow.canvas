@@ -185,7 +185,9 @@
     {
       "id": "config-to-engine",
       "fromNode": "config",
+      "fromSide": "bottom",
       "toNode": "rules-engine",
+      "toSide": "top",
       "label": "rule options",
       "pv": {
         "edgeType": "uses"
@@ -194,7 +196,9 @@
     {
       "id": "engine-to-require",
       "fromNode": "rules-engine",
+      "fromSide": "bottom",
       "toNode": "require-refs-rule",
+      "toSide": "top",
       "label": "check()",
       "pv": {
         "edgeType": "uses"
@@ -203,7 +207,9 @@
     {
       "id": "engine-to-orphaned",
       "fromNode": "rules-engine",
+      "fromSide": "bottom",
       "toNode": "orphaned-rule",
+      "toSide": "top",
       "label": "check()",
       "pv": {
         "edgeType": "uses"
@@ -212,7 +218,9 @@
     {
       "id": "engine-to-stale",
       "fromNode": "rules-engine",
+      "fromSide": "bottom",
       "toNode": "stale-rule",
+      "toSide": "top",
       "label": "check()",
       "pv": {
         "edgeType": "uses"
@@ -221,7 +229,9 @@
     {
       "id": "engine-to-coverage",
       "fromNode": "rules-engine",
+      "fromSide": "bottom",
       "toNode": "coverage-rule",
+      "toSide": "top",
       "label": "check()",
       "pv": {
         "edgeType": "uses"
@@ -230,7 +240,9 @@
     {
       "id": "engine-to-minrefs",
       "fromNode": "rules-engine",
+      "fromSide": "bottom",
       "toNode": "min-refs-rule",
+      "toSide": "top",
       "label": "check()",
       "pv": {
         "edgeType": "uses"
@@ -239,7 +251,9 @@
     {
       "id": "engine-to-glob",
       "fromNode": "rules-engine",
+      "fromSide": "bottom",
       "toNode": "glob-adapter",
+      "toSide": "top",
       "label": "scanFiles()",
       "pv": {
         "edgeType": "uses"
@@ -248,7 +262,9 @@
     {
       "id": "rules-to-result",
       "fromNode": "rules-engine",
+      "fromSide": "bottom",
       "toNode": "lint-result",
+      "toSide": "top",
       "label": "produces",
       "pv": {
         "edgeType": "data-flow"
@@ -257,7 +273,9 @@
     {
       "id": "result-to-violation",
       "fromNode": "lint-result",
+      "fromSide": "bottom",
       "toNode": "violation",
+      "toSide": "top",
       "label": "contains",
       "pv": {
         "edgeType": "uses"
