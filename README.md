@@ -16,11 +16,15 @@ bun add @principal-ai/alexandria-core-library
 
 ## Features
 
-- **MemoryPalace**: Primary API for managing anchored notes and codebase views
-- **Project Management**: Tools for managing Alexandria repositories and projects
-- **Validation Rules**: Extensible rules engine for codebase validation
-- **FileSystem Abstraction**: Dependency injection for filesystem operations
-- **In-Memory Testing**: Built-in InMemoryFileSystemAdapter for testing
+- **MemoryPalace**: Primary API for managing codebase views, drawings, and repository knowledge
+- **CodebaseViews**: Structured documentation-to-code linking with grid-based layouts
+- **Drawing Support**: Excalidraw integration for visual diagrams and architecture drawings
+- **Project Management**: Tools for managing Alexandria repositories, projects, and workspaces
+- **Validation Rules**: Extensible rules engine with 7+ built-in validation rules
+- **Configuration System**: YAML-based configuration with schema validation
+- **Storage & Bookmarking**: Track reading history and bookmarks across Alexandria documents
+- **FileSystem Abstraction**: Dependency injection for filesystem operations (Node.js, browser, in-memory)
+- **Multi-Platform Support**: Separate entry points for Node.js, browser, and GitHub environments
 
 ## Basic Usage
 
@@ -28,31 +32,35 @@ bun add @principal-ai/alexandria-core-library
 
 ```typescript
 import { MemoryPalace } from "@principal-ai/alexandria-core-library";
-import { NodeFileSystemAdapter } from "@principal-ai/alexandria-core-library/node";
+import { NodeFileSystemAdapter, NodeGlobAdapter } from "@principal-ai/alexandria-core-library/node";
 
 // Initialize with filesystem adapter
 const fsAdapter = new NodeFileSystemAdapter();
-const memory = new MemoryPalace("/path/to/repo", fsAdapter);
+const palace = new MemoryPalace("/path/to/repo", fsAdapter);
 
-// Save a note
-const noteId = await memory.saveNote({
-  note: "This function handles user authentication",
-  anchors: ["src/auth.ts", "src/middleware/auth.ts"],
-  tags: ["authentication", "security"],
-  metadata: {
-    author: "john.doe",
-    jiraTicket: "AUTH-123",
-  },
+// List all codebase views
+const views = palace.listViews();
+
+// Get a specific view
+const view = palace.getView("authentication-overview");
+
+// Save a view with validation
+const result = palace.saveViewWithValidation({
+  id: "my-view",
+  name: "My View",
+  description: "Overview of authentication system",
+  grid: [
+    [{ type: "file", files: ["src/auth.ts", "src/middleware/auth.ts"] }]
+  ],
 });
 
-// Retrieve notes for a path
-const notes = memory.getNotesForPath("src/auth.ts");
+// Get documents overview (requires glob adapter)
+const globAdapter = new NodeGlobAdapter();
+const docs = await palace.getDocumentsOverview(globAdapter);
 
-// List all views
-const views = memory.listViews();
-
-// Get repository guidance
-const guidance = memory.getGuidance();
+// Work with drawings
+palace.saveDrawing("architecture", excalidrawContent);
+const drawings = palace.listDrawingsWithMetadata();
 ```
 
 ### Project Management
@@ -91,7 +99,7 @@ import { MemoryPalace, InMemoryFileSystemAdapter } from "@principal-ai/alexandri
 const fsAdapter = new InMemoryFileSystemAdapter();
 fsAdapter.setupTestRepo("/test-repo");
 
-const memory = new MemoryPalace("/test-repo", fsAdapter);
+const palace = new MemoryPalace("/test-repo", fsAdapter);
 // ... run tests without touching real filesystem
 ```
 
@@ -139,17 +147,40 @@ const docs = await palace.getDocumentsOverview(globAdapter);
 - `FileTreeGlobAdapter` efficiently filters `FileTree.allFiles` without recursive directory traversal
 - You must provide a `matchesPath` function using whatever glob library is available in your environment (minimatch, picomatch, micromatch, etc.)
 
+## Entry Points
+
+The library provides multiple entry points for different environments:
+
+```typescript
+// Main entry - full implementation
+import { MemoryPalace, LibraryRulesEngine } from "@principal-ai/alexandria-core-library";
+
+// Node.js-specific adapters
+import { NodeFileSystemAdapter, NodeGlobAdapter } from "@principal-ai/alexandria-core-library/node";
+
+// Browser-compatible APIs
+import { /* browser exports */ } from "@principal-ai/alexandria-core-library/browser";
+
+// GitHub integration
+import { /* github exports */ } from "@principal-ai/alexandria-core-library/github";
+
+// Type-only exports (no runtime code)
+import type { CodebaseView, AlexandriaRepository } from "@principal-ai/alexandria-core-library/types";
+```
+
 ## Core Exports
 
 ### Primary APIs
 
-- `MemoryPalace` - Main API for note and view management
+- `MemoryPalace` - Main API for view, drawing, and repository knowledge management
 - `ProjectRegistryStore` - Project registry management
 - `AlexandriaOutpostManager` - Alexandria repository management
+- `WorkspaceManager` - Team workspace and membership management
 
 ### FileSystem Adapters
 
 - `NodeFileSystemAdapter` - Node.js filesystem implementation (from `/node` entry point)
+- `NodeGlobAdapter` - Node.js glob implementation (from `/node` entry point)
 - `InMemoryFileSystemAdapter` - In-memory implementation for testing
 - `FileTreeFileSystemAdapter` - Browser-compatible adapter using FileTree metadata
 - `FileTreeGlobAdapter` - Browser-compatible glob adapter using FileTree metadata
@@ -157,26 +188,51 @@ const docs = await palace.getDocumentsOverview(globAdapter);
 ### Stores
 
 - `CodebaseViewsStore` - Manage codebase views
+- `DrawingStore` - Manage Excalidraw drawings and diagrams
 - `generateViewIdFromName` - Utility for view ID generation
+
+### Configuration
+
+- `ConfigLoader` - Load and parse Alexandria configuration files
+- `ConfigValidator` - Configuration validation
+- `CONFIG_FILENAME` - Default configuration filename constant
+
+### Validation & Rules
+
+- `LibraryRulesEngine` - Validation rules engine with 7+ built-in rules
+- `OverviewPathAutoFix` - Auto-fix for overview paths
+
+### Storage & Bookmarking
+
+- `ReadingRecordManager` - Track reading history and bookmarks
+- `MemoryReadingRecordAdapter` - In-memory storage adapter
+- `LocalStorageReadingRecordAdapter` - Browser localStorage adapter
 
 ### Utilities
 
-- `LibraryRulesEngine` - Validation rules engine
-- `ConfigValidator` - Configuration validation
-- `OverviewPathAutoFix` - Auto-fix for overview paths
+- `matchesPatterns` - Pattern matching utility
+- `getExcludePatterns` - Get exclusion patterns from config
+- `filterByExcludePatterns` - Filter files by exclusion patterns
+- `hasAlexandriaWorkflow` - Check if repository has Alexandria workflow
+- `hasMemoryNotes` - Check if repository has memory notes
+- `isLocationBound` - Check if a file is location-bound
+- `LOCATION_BOUND_FILES` - List of location-bound file patterns
 
 ### Types
 
 See the TypeScript definitions for comprehensive type exports including:
 
-- Note types (`StoredAnchoredNote`, `AnchoredNoteWithPath`)
-- View types (`CodebaseView`, `CodebaseViewSummary`)
-- Repository types (`AlexandriaRepository`, `AlexandriaEntry`)
-- Validation types (`ValidationResult`, `ValidationIssue`)
+- View types (`CodebaseView`, `CodebaseViewSummary`, `CodebaseViewCell`)
+- Repository types (`AlexandriaRepository`, `AlexandriaEntry`, `GithubRepository`)
+- Drawing types (`DrawingMetadata`, `ExcalidrawData`)
+- Validation types (`ValidationResult`, `ValidationIssue`, `LibraryRuleViolation`)
+- Storage types (`AlexandriaVisit`, `AlexandriaBookmark`, `AlexandriaLibraryCard`)
+- Workspace types (`Workspace`, `WorkspaceMembership`)
+- Config types (`AlexandriaConfig`, `RuleOptions`, `RuleSeverity`)
 
 ## License
 
-MIT
+Apache-2.0
 
 ## Contributing
 
