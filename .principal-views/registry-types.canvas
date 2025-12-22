@@ -1,0 +1,268 @@
+{
+  "nodes": [
+    {
+      "id": "project-registry-store",
+      "type": "text",
+      "x": -215,
+      "y": -12,
+      "width": 280,
+      "height": 200,
+      "text": "ProjectRegistryStore\n\nMethods:\n• registerProject(name, path, remoteUrl?)\n• listProjects(): AlexandriaEntry[]\n• getProject(name): AlexandriaEntry\n• updateProject(name, updates)\n• removeProject(name)",
+      "color": "#3b82f6",
+      "pv": {
+        "nodeType": "store",
+        "shape": "cylinder",
+        "icon": "Database",
+        "sources": [
+          "src/projects-core/ProjectRegistryStore.ts"
+        ]
+      }
+    },
+    {
+      "id": "project-registry-data",
+      "type": "text",
+      "x": 87,
+      "y": 260,
+      "width": 200,
+      "height": 100,
+      "text": "ProjectRegistryData\n\n• version: string\n• projects: AlexandriaEntry[]",
+      "color": "#64748b",
+      "pv": {
+        "nodeType": "type",
+        "shape": "rectangle",
+        "icon": "FileType",
+        "sources": [
+          "src/projects-core/types.ts"
+        ]
+      }
+    },
+    {
+      "id": "alexandria-entry",
+      "type": "text",
+      "x": 400,
+      "y": -80,
+      "width": 280,
+      "height": 100,
+      "text": "AlexandriaEntry\nextends AlexandriaRepository\n\n• path: ValidatedRepositoryPath",
+      "color": "#8b5cf6",
+      "pv": {
+        "nodeType": "type",
+        "shape": "rectangle",
+        "icon": "FileType",
+        "sources": [
+          "src/pure-core/types/repository.ts"
+        ]
+      }
+    },
+    {
+      "id": "alexandria-repository",
+      "type": "text",
+      "x": 400,
+      "y": 60,
+      "width": 280,
+      "height": 240,
+      "text": "AlexandriaRepository\n\n• name: string\n• remoteUrl?: string\n• registeredAt: string (ISO)\n• github?: GithubRepository\n• hasViews: boolean\n• viewCount: number\n• views: CodebaseViewSummary[]\n• lastChecked?: string\n• bookColor?: string\n• theme?: string",
+      "color": "#a855f7",
+      "pv": {
+        "nodeType": "type",
+        "shape": "rectangle",
+        "icon": "FileType",
+        "sources": [
+          "src/pure-core/types/repository.ts"
+        ]
+      }
+    },
+    {
+      "id": "github-repository",
+      "type": "text",
+      "x": 750,
+      "y": 0,
+      "width": 220,
+      "height": 280,
+      "text": "GithubRepository\n\n• id: string (owner/name)\n• owner: string\n• name: string\n• description?: string\n• stars: number\n• primaryLanguage?: string\n• topics?: string[]\n• license?: string\n• lastCommit?: string\n• defaultBranch?: string\n• isPublic?: boolean\n• lastUpdated: string",
+      "color": "#22c55e",
+      "pv": {
+        "nodeType": "type",
+        "shape": "rectangle",
+        "icon": "FileType",
+        "sources": [
+          "src/pure-core/types/repository.ts"
+        ]
+      }
+    },
+    {
+      "id": "codebase-view-summary",
+      "type": "text",
+      "x": 750,
+      "y": 320,
+      "width": 220,
+      "height": 200,
+      "text": "CodebaseViewSummary\n\n• id: string\n• name: string\n• description: string\n• referenceGroupCount: number\n• gridSize: [rows, cols]\n• overviewPath: string\n• category: string\n• displayOrder: number",
+      "color": "#f59e0b",
+      "pv": {
+        "nodeType": "type",
+        "shape": "rectangle",
+        "icon": "FileType",
+        "sources": [
+          "src/pure-core/types/summary.ts"
+        ]
+      }
+    },
+    {
+      "id": "validated-path",
+      "type": "text",
+      "x": 403,
+      "y": 447,
+      "width": 280,
+      "height": 80,
+      "text": "ValidatedRepositoryPath\n\nBranded type: string & { __repositoryPath: true }",
+      "color": "#475569",
+      "pv": {
+        "nodeType": "branded-type",
+        "shape": "rectangle",
+        "icon": "Lock",
+        "sources": [
+          "src/pure-core/types/ValidatedPaths.ts"
+        ]
+      }
+    },
+    {
+      "id": "projects-json",
+      "type": "text",
+      "x": 87,
+      "y": 422,
+      "width": 200,
+      "height": 60,
+      "text": "~/.alexandria/projects.json",
+      "pv": {
+        "nodeType": "external",
+        "shape": "folder",
+        "icon": "Folder"
+      }
+    },
+    {
+      "id": "fs-adapter",
+      "type": "text",
+      "x": -165,
+      "y": 359,
+      "width": 180,
+      "height": 164,
+      "text": "FileSystemAdapter",
+      "color": "#06b6d4",
+      "pv": {
+        "nodeType": "adapter-interface",
+        "shape": "hexagon",
+        "icon": "Plug",
+        "sources": [
+          "src/pure-core/abstractions/FileSystemAdapter.ts"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "store-to-data",
+      "fromNode": "project-registry-store",
+      "fromSide": "bottom",
+      "toNode": "project-registry-data",
+      "toSide": "top",
+      "label": "serializes",
+      "pv": {
+        "edgeType": "data-flow"
+      }
+    },
+    {
+      "id": "data-to-entry",
+      "fromNode": "project-registry-data",
+      "fromSide": "right",
+      "toNode": "alexandria-entry",
+      "toSide": "left",
+      "label": "contains",
+      "pv": {
+        "edgeType": "stores"
+      }
+    },
+    {
+      "id": "store-to-entry",
+      "fromNode": "project-registry-store",
+      "fromSide": "right",
+      "toNode": "alexandria-entry",
+      "toSide": "left",
+      "label": "manages",
+      "pv": {
+        "edgeType": "uses"
+      }
+    },
+    {
+      "id": "entry-extends-repo",
+      "fromNode": "alexandria-entry",
+      "fromSide": "bottom",
+      "toNode": "alexandria-repository",
+      "toSide": "top",
+      "label": "extends",
+      "pv": {
+        "edgeType": "extends"
+      }
+    },
+    {
+      "id": "repo-to-github",
+      "fromNode": "alexandria-repository",
+      "fromSide": "right",
+      "toNode": "github-repository",
+      "toSide": "left",
+      "label": "github?",
+      "pv": {
+        "edgeType": "stores"
+      }
+    },
+    {
+      "id": "repo-to-views",
+      "fromNode": "alexandria-repository",
+      "fromSide": "right",
+      "toNode": "codebase-view-summary",
+      "toSide": "left",
+      "label": "views[]",
+      "pv": {
+        "edgeType": "stores"
+      }
+    },
+    {
+      "id": "entry-to-path",
+      "fromNode": "alexandria-entry",
+      "fromSide": "bottom",
+      "toNode": "validated-path",
+      "toSide": "top",
+      "label": "path",
+      "pv": {
+        "edgeType": "stores"
+      }
+    },
+    {
+      "id": "data-to-json",
+      "fromNode": "project-registry-data",
+      "fromSide": "bottom",
+      "toNode": "projects-json",
+      "toSide": "top",
+      "label": "persisted as",
+      "pv": {
+        "edgeType": "data-flow"
+      }
+    },
+    {
+      "id": "store-to-fs",
+      "fromNode": "project-registry-store",
+      "fromSide": "bottom",
+      "toNode": "fs-adapter",
+      "toSide": "top",
+      "label": "uses",
+      "pv": {
+        "edgeType": "uses"
+      }
+    }
+  ],
+  "pv": {
+    "name": "Registry Types",
+    "version": "1.0.0",
+    "description": "Shows the ProjectRegistryStore and AlexandriaEntry type hierarchy, including related types like GithubRepository and CodebaseViewSummary"
+  }
+}
