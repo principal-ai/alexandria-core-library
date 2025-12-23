@@ -8,7 +8,6 @@ export const ALEXANDRIA_DIRS = {
 
   // Subdirectories
   VIEWS: "views",
-  NOTES: "notes",
   OVERVIEWS: "overviews",
   CONFIG: "config",
 

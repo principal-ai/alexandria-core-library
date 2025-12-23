@@ -2,7 +2,7 @@
  * @principal-ai/alexandria-core-library
  *
  * Core library exports for the Principal AI Alexandria ecosystem.
- * Provides essential functionality for managing notes, views, and configurations.
+ * Provides essential functionality for managing views and configurations.
  */
 
 // Essential types from pure-core
@@ -166,10 +166,7 @@ export { ALEXANDRIA_DIRS } from "./constants/paths";
 export { CONFIG_FILENAME } from "./config/schema";
 
 // Project utilities
-export {
-  hasAlexandriaWorkflow,
-  hasMemoryNotes,
-} from "./projects-core/workflow-utils";
+export { hasAlexandriaWorkflow } from "./projects-core/workflow-utils";
 
 // ============================================================================
 // Storage and Bookmarking System

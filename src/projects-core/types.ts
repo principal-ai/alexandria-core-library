@@ -58,8 +58,6 @@ export interface WorkspaceMembership {
   metadata?: {
     /** Pin to top of workspace */
     pinned?: boolean;
-    /** Workspace-specific notes */
-    notes?: string;
     [key: string]: unknown;
   };
 }

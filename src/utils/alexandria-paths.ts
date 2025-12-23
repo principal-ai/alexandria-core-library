@@ -34,16 +34,6 @@ export function getViewsDir(
 }
 
 /**
- * Gets the notes directory with fallback support
- */
-export function getNotesDir(
-  fs: FileSystemAdapter,
-  projectRoot: ValidatedRepositoryPath,
-): string {
-  return getAlexandriaSubdir(fs, projectRoot, ALEXANDRIA_DIRS.NOTES);
-}
-
-/**
  * Gets the overviews directory with fallback support
  */
 export function getOverviewsDir(
