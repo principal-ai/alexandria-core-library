@@ -257,7 +257,7 @@ describe("WorkspaceManager", () => {
 
         const memberships = await manager.getWorkspaceMemberships(workspaceId);
         expect(memberships).toHaveLength(1);
-        expect(memberships[0].repositoryId).toBe("pkg:generic/local-only-repo");
+        expect(memberships[0].repositoryId).toBe("pkg:generic/local/home-user-repos-local");
       });
 
       it("should add metadata to membership", async () => {

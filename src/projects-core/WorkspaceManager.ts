@@ -12,7 +12,11 @@
 import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
 import { AlexandriaEntry } from "../pure-core/types/repository";
 import { idGenerator } from "../pure-core/utils/idGenerator";
-import { githubIdToPurl, type Purl } from "../pure-core/utils/purl";
+import {
+  githubIdToPurl,
+  createLocalRepoPurl,
+  type Purl,
+} from "../pure-core/utils/purl";
 import { ProjectRegistryStore } from "./ProjectRegistryStore";
 import {
   Workspace,
@@ -138,8 +142,8 @@ export class WorkspaceManager {
       return repository.github.purl as string;
     }
 
-    // Generate generic PURL for local-only repos
-    return `pkg:generic/${repository.name}` as Purl as string;
+    // Generate path-based PURL for local-only repos to ensure uniqueness
+    return createLocalRepoPurl(repository.path) as string;
   }
 
   // ===== Workspace CRUD =====

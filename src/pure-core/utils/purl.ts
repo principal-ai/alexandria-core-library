@@ -259,6 +259,43 @@ export function extractPurlFromRemoteUrl(remoteUrl: string): Purl | null {
 }
 
 /**
+ * Encode a local filesystem path for use in a PURL
+ * Converts absolute paths to a PURL-safe format
+ *
+ * Examples:
+ * - /Users/user/projects/my-app -> Users-user-projects-my-app
+ * - C:\Users\user\projects\my-app -> C-Users-user-projects-my-app
+ * - /home/user/my-app -> home-user-my-app
+ */
+export function encodePathForPurl(path: string): string {
+  // Remove leading slash
+  let normalized = path.startsWith('/') ? path.slice(1) : path;
+
+  // Replace path separators and colons with dashes
+  normalized = normalized
+    .replace(/[/\\:]/g, '-')
+    .replace(/--+/g, '-'); // Collapse multiple dashes
+
+  return normalized;
+}
+
+/**
+ * Create a PURL for a local repository using its filesystem path
+ * This ensures unique PURLs for local repos even if they have the same name
+ *
+ * @param path - Absolute filesystem path to the repository
+ * @returns PURL in format pkg:generic/local--{encoded-path}
+ */
+export function createLocalRepoPurl(path: string): Purl {
+  const encodedPath = encodePathForPurl(path);
+  return createPurl({
+    type: 'generic',
+    namespace: 'local',
+    name: encodedPath,
+  });
+}
+
+/**
  * PURL builders for common providers
  */
 export const PurlBuilders = {
@@ -279,4 +316,7 @@ export const PurlBuilders = {
 
   git: (host: string, owner: string, repo: string, version?: string): Purl =>
     createPurl({ type: 'git', namespace: `${host}/${owner}`, name: repo, version }),
+
+  local: (path: string): Purl =>
+    createLocalRepoPurl(path),
 };

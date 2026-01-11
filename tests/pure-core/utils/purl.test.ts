@@ -6,6 +6,8 @@ import {
   githubIdToPurl,
   purlToGithubId,
   extractPurlFromRemoteUrl,
+  encodePathForPurl,
+  createLocalRepoPurl,
   PurlBuilders,
   type Purl,
 } from "../../../src/pure-core/utils/purl";
@@ -258,6 +260,67 @@ describe("PURL utilities", () => {
       const purl = PurlBuilders.git("example.com", "owner", "repo");
 
       expect(purl).toBe("pkg:git/example.com/owner/repo");
+    });
+
+    it("should build local PURL from path", () => {
+      const purl = PurlBuilders.local("/Users/griever/projects/my-app");
+
+      expect(purl).toBe("pkg:generic/local/Users-griever-projects-my-app");
+    });
+  });
+
+  describe("encodePathForPurl", () => {
+    it("should encode Unix absolute path", () => {
+      const encoded = encodePathForPurl("/Users/griever/projects/my-app");
+
+      expect(encoded).toBe("Users-griever-projects-my-app");
+    });
+
+    it("should encode Windows path", () => {
+      const encoded = encodePathForPurl("C:\\Users\\user\\projects\\my-app");
+
+      expect(encoded).toBe("C-Users-user-projects-my-app");
+    });
+
+    it("should handle relative paths", () => {
+      const encoded = encodePathForPurl("projects/my-app");
+
+      expect(encoded).toBe("projects-my-app");
+    });
+
+    it("should collapse multiple separators", () => {
+      const encoded = encodePathForPurl("/Users//griever///projects/my-app");
+
+      expect(encoded).toBe("Users-griever-projects-my-app");
+    });
+
+    it("should handle paths with colons", () => {
+      const encoded = encodePathForPurl("/Volumes/Data:Projects/my-app");
+
+      expect(encoded).toBe("Volumes-Data-Projects-my-app");
+    });
+  });
+
+  describe("createLocalRepoPurl", () => {
+    it("should create PURL for local repository", () => {
+      const purl = createLocalRepoPurl("/Users/griever/projects/my-app");
+
+      expect(purl).toBe("pkg:generic/local/Users-griever-projects-my-app");
+    });
+
+    it("should create unique PURLs for repos with same name", () => {
+      const purl1 = createLocalRepoPurl("/Users/alice/repos/my-app");
+      const purl2 = createLocalRepoPurl("/Users/bob/repos/my-app");
+
+      expect(purl1).toBe("pkg:generic/local/Users-alice-repos-my-app");
+      expect(purl2).toBe("pkg:generic/local/Users-bob-repos-my-app");
+      expect(purl1).not.toBe(purl2);
+    });
+
+    it("should handle Windows paths", () => {
+      const purl = createLocalRepoPurl("C:\\Users\\user\\projects\\my-app");
+
+      expect(purl).toBe("pkg:generic/local/C-Users-user-projects-my-app");
     });
   });
 });

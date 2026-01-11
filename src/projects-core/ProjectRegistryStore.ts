@@ -8,7 +8,11 @@ import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
 import { ValidatedRepositoryPath } from "../pure-core/types";
 import { AlexandriaEntry } from "../pure-core/types/repository";
 import { ProjectRegistryData } from "./types";
-import { extractPurlFromRemoteUrl, type Purl } from "../pure-core/utils/purl.js";
+import {
+  extractPurlFromRemoteUrl,
+  createLocalRepoPurl,
+  type Purl,
+} from "../pure-core/utils/purl.js";
 
 export class ProjectRegistryStore {
   private fs: FileSystemAdapter;
@@ -130,6 +134,9 @@ export class ProjectRegistryStore {
     // Extract PURL from remote URL if available
     if (remoteUrl) {
       purl = extractPurlFromRemoteUrl(remoteUrl) || undefined;
+    } else {
+      // Generate path-based PURL for local repos without remote
+      purl = createLocalRepoPurl(projectPath);
     }
 
     if (customName) {

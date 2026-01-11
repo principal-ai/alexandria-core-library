@@ -40,6 +40,8 @@ export {
   githubIdToPurl,
   purlToGithubId,
   extractPurlFromRemoteUrl,
+  encodePathForPurl,
+  createLocalRepoPurl,
   PurlBuilders,
 } from "./pure-core/utils/purl";
 

@@ -300,6 +300,37 @@ describe("ProjectRegistryStore", () => {
 
       expect(entry.name).toBe("local-project");
     });
+
+    it("should generate path-based PURL for local repos without remote", () => {
+      const projectPath =
+        "/home/user/projects/local-project" as ValidatedRepositoryPath;
+
+      const entry = store.registerWithGitHubName(projectPath);
+
+      expect(entry.purl).toBe("pkg:generic/local/home-user-projects-local-project");
+    });
+
+    it("should generate unique PURLs for local repos with same name", () => {
+      const path1 = "/home/alice/repos/my-app" as ValidatedRepositoryPath;
+      const path2 = "/home/bob/repos/my-app" as ValidatedRepositoryPath;
+
+      const entry1 = store.registerWithGitHubName(path1, undefined, "alice-my-app");
+      const entry2 = store.registerWithGitHubName(path2, undefined, "bob-my-app");
+
+      expect(entry1.purl).toBe("pkg:generic/local/home-alice-repos-my-app");
+      expect(entry2.purl).toBe("pkg:generic/local/home-bob-repos-my-app");
+      expect(entry1.purl).not.toBe(entry2.purl);
+    });
+
+    it("should generate PURL from remote URL when available", () => {
+      const projectPath =
+        "/home/user/projects/test-repo" as ValidatedRepositoryPath;
+      const remoteUrl = "https://github.com/anthropic/my-app.git";
+
+      const entry = store.registerWithGitHubName(projectPath, remoteUrl);
+
+      expect(entry.purl).toBe("pkg:github/anthropic/my-app");
+    });
   });
 
   describe("findClonesByGitHubId", () => {
