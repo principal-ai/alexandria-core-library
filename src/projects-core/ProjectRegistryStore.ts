@@ -8,6 +8,7 @@ import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
 import { ValidatedRepositoryPath } from "../pure-core/types";
 import { AlexandriaEntry } from "../pure-core/types/repository";
 import { ProjectRegistryData } from "./types";
+import { extractPurlFromRemoteUrl, type Purl } from "../pure-core/utils/purl.js";
 
 export class ProjectRegistryStore {
   private fs: FileSystemAdapter;
@@ -61,6 +62,16 @@ export class ProjectRegistryStore {
   }
 
   /**
+   * Extract owner/name from GitHub URL
+   * @returns GitHub ID in format "owner/repo" or null if not a GitHub URL
+   */
+  private extractGitHubId(remoteUrl: string): string | null {
+    const match = remoteUrl.match(/github\.com[:/]([^/]+)\/([^/.]+)(\.git)?$/);
+    if (!match) return null;
+    return `${match[1]}/${match[2]}`;
+  }
+
+  /**
    * Register a new project
    */
   public registerProject(
@@ -97,6 +108,79 @@ export class ProjectRegistryStore {
     registry.projects.push(entry);
 
     this.saveRegistry(registry);
+  }
+
+  /**
+   * Register a project with auto-detected name from GitHub URL
+   * Uses owner/name format for GitHub repos to avoid name collisions
+   * Also generates PURL for canonical identification
+   * @param projectPath - Local path to the repository
+   * @param remoteUrl - Git remote URL (optional)
+   * @param customName - Override auto-detected name (optional)
+   * @returns The registered AlexandriaEntry
+   */
+  public registerWithGitHubName(
+    projectPath: ValidatedRepositoryPath,
+    remoteUrl?: string,
+    customName?: string,
+  ): AlexandriaEntry {
+    let name: string;
+    let purl: Purl | undefined;
+
+    // Extract PURL from remote URL if available
+    if (remoteUrl) {
+      purl = extractPurlFromRemoteUrl(remoteUrl) || undefined;
+    }
+
+    if (customName) {
+      name = customName;
+    } else if (remoteUrl) {
+      const githubId = this.extractGitHubId(remoteUrl);
+      if (githubId) {
+        name = githubId; // Use "owner/repo" format
+      } else {
+        // Fallback to last component of path
+        name = projectPath.split("/").pop() || "unknown";
+      }
+    } else {
+      // No remote URL, use last component of path
+      name = projectPath.split("/").pop() || "unknown";
+    }
+
+    this.registerProject(name, projectPath, remoteUrl);
+
+    // Update with PURL if we generated one
+    if (purl) {
+      this.updateProject(name, { purl });
+    }
+
+    const entry = this.getProject(name);
+    if (!entry) {
+      throw new Error(`Failed to register project at ${projectPath}`);
+    }
+    return entry;
+  }
+
+  /**
+   * Find all projects that share the same GitHub repository
+   * (multiple local clones of the same repo)
+   * @param githubId - GitHub ID in format "owner/repo"
+   * @returns Array of AlexandriaEntry instances
+   */
+  public findClonesByGitHubId(githubId: string): AlexandriaEntry[] {
+    const registry = this.loadRegistry();
+    return registry.projects.filter((p) => p.github?.id === githubId);
+  }
+
+  /**
+   * Find all projects that share the same PURL
+   * (multiple local clones or worktrees of the same repo)
+   * @param purl - Package URL identifier
+   * @returns Array of AlexandriaEntry instances
+   */
+  public findClonesByPurl(purl: Purl): AlexandriaEntry[] {
+    const registry = this.loadRegistry();
+    return registry.projects.filter((p) => p.purl === purl);
   }
 
   /**
@@ -170,5 +254,51 @@ export class ProjectRegistryStore {
     };
 
     this.saveRegistry(registry);
+  }
+
+  /**
+   * Migrate all projects to use PURLs
+   * Generates PURLs from remoteUrl or github.id for projects that don't have them
+   */
+  public migrateToPurl(): number {
+    const registry = this.loadRegistry();
+    let migratedCount = 0;
+
+    for (const project of registry.projects) {
+      if (project.purl) {
+        // Already has PURL, skip
+        continue;
+      }
+
+      let purl: Purl | undefined;
+
+      // Try to extract PURL from remote URL
+      if (project.remoteUrl) {
+        purl = extractPurlFromRemoteUrl(project.remoteUrl) || undefined;
+      }
+
+      // Fallback: Convert github.id to PURL
+      if (!purl && project.github?.id) {
+        try {
+          purl = extractPurlFromRemoteUrl(
+            `https://github.com/${project.github.id}.git`,
+          ) || undefined;
+        } catch {
+          // Ignore errors
+        }
+      }
+
+      // Update if we generated a PURL
+      if (purl) {
+        project.purl = purl;
+        migratedCount++;
+      }
+    }
+
+    if (migratedCount > 0) {
+      this.saveRegistry(registry);
+    }
+
+    return migratedCount;
   }
 }

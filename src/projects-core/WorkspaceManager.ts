@@ -12,6 +12,7 @@
 import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
 import { AlexandriaEntry } from "../pure-core/types/repository";
 import { idGenerator } from "../pure-core/utils/idGenerator";
+import { githubIdToPurl, type Purl } from "../pure-core/utils/purl";
 import { ProjectRegistryStore } from "./ProjectRegistryStore";
 import {
   Workspace,
@@ -116,22 +117,29 @@ export class WorkspaceManager {
 
   /**
    * Extract repository ID from an entry or string
-   * Returns github.id if available, otherwise entry.name
+   * Uses PURL as canonical identifier
    *
    * @internal
    */
   private getRepositoryId(repository: AlexandriaEntry | string): string {
     if (typeof repository === "string") {
+      // Direct string ID (should be PURL format)
       return repository;
     }
 
-    // Primary: use GitHub identity
-    if (repository.github?.id) {
-      return repository.github.id; // "owner/name"
+    // Use PURL if available
+    if (repository.purl) {
+      return repository.purl as string;
     }
 
-    // Fallback: local-only repos without GitHub metadata
-    return repository.name;
+    // For repositories without PURL, generate one
+    // This ensures all workspace memberships use PURL format
+    if (repository.github?.purl) {
+      return repository.github.purl as string;
+    }
+
+    // Generate generic PURL for local-only repos
+    return `pkg:generic/${repository.name}` as Purl as string;
   }
 
   // ===== Workspace CRUD =====

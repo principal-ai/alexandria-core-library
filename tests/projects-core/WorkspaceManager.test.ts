@@ -207,12 +207,12 @@ describe("WorkspaceManager", () => {
     });
 
     describe("addRepositoryToWorkspace", () => {
-      it("should add a repository by ID string", async () => {
-        await manager.addRepositoryToWorkspace("owner/repo", workspaceId);
+      it("should add a repository by ID string (PURL format)", async () => {
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo", workspaceId);
 
         const memberships = await manager.getWorkspaceMemberships(workspaceId);
         expect(memberships).toHaveLength(1);
-        expect(memberships[0].repositoryId).toBe("owner/repo");
+        expect(memberships[0].repositoryId).toBe("pkg:github/owner/repo");
         expect(memberships[0].workspaceId).toBe(workspaceId);
         expect(memberships[0].addedAt).toBeGreaterThan(0);
       });
@@ -222,27 +222,14 @@ describe("WorkspaceManager", () => {
           name: "local-name",
           path: "/home/user/repos/test" as ValidatedRepositoryPath,
           registeredAt: new Date().toISOString(),
+          purl: "pkg:github/owner/repo" as any,
           github: {
             id: "owner/repo",
+            purl: "pkg:github/owner/repo" as any,
             owner: "owner",
             name: "repo",
-            fullName: "owner/repo",
-            description: "Test repo",
-            url: "https://github.com/owner/repo",
-            defaultBranch: "main",
-            isPrivate: false,
-            createdAt: "2024-01-01T00:00:00Z",
-            updatedAt: "2024-01-01T00:00:00Z",
-            pushedAt: "2024-01-01T00:00:00Z",
-            size: 100,
-            stargazersCount: 10,
-            watchersCount: 5,
-            forksCount: 2,
-            openIssuesCount: 1,
-            topics: [],
-            hasIssues: true,
-            hasProjects: true,
-            hasWiki: true,
+            stars: 100,
+            lastUpdated: new Date().toISOString(),
           },
           hasViews: false,
           viewCount: 0,
@@ -253,7 +240,7 @@ describe("WorkspaceManager", () => {
 
         const memberships = await manager.getWorkspaceMemberships(workspaceId);
         expect(memberships).toHaveLength(1);
-        expect(memberships[0].repositoryId).toBe("owner/repo");
+        expect(memberships[0].repositoryId).toBe("pkg:github/owner/repo");
       });
 
       it("should add a repository by entry without GitHub metadata", async () => {
@@ -270,7 +257,7 @@ describe("WorkspaceManager", () => {
 
         const memberships = await manager.getWorkspaceMemberships(workspaceId);
         expect(memberships).toHaveLength(1);
-        expect(memberships[0].repositoryId).toBe("local-only-repo");
+        expect(memberships[0].repositoryId).toBe("pkg:generic/local-only-repo");
       });
 
       it("should add metadata to membership", async () => {
@@ -315,16 +302,16 @@ describe("WorkspaceManager", () => {
 
     describe("removeRepositoryFromWorkspace", () => {
       beforeEach(async () => {
-        await manager.addRepositoryToWorkspace("owner/repo1", workspaceId);
-        await manager.addRepositoryToWorkspace("owner/repo2", workspaceId);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo1", workspaceId);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo2", workspaceId);
       });
 
       it("should remove a repository by ID string", async () => {
-        await manager.removeRepositoryFromWorkspace("owner/repo1", workspaceId);
+        await manager.removeRepositoryFromWorkspace("pkg:github/owner/repo1", workspaceId);
 
         const memberships = await manager.getWorkspaceMemberships(workspaceId);
         expect(memberships).toHaveLength(1);
-        expect(memberships[0].repositoryId).toBe("owner/repo2");
+        expect(memberships[0].repositoryId).toBe("pkg:github/owner/repo2");
       });
 
       it("should handle removing non-existent membership", async () => {
@@ -345,16 +332,16 @@ describe("WorkspaceManager", () => {
       });
 
       it("should return all memberships for a workspace", async () => {
-        await manager.addRepositoryToWorkspace("owner/repo1", workspaceId);
-        await manager.addRepositoryToWorkspace("owner/repo2", workspaceId);
-        await manager.addRepositoryToWorkspace("owner/repo3", workspaceId);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo1", workspaceId);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo2", workspaceId);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo3", workspaceId);
 
         const memberships = await manager.getWorkspaceMemberships(workspaceId);
         expect(memberships).toHaveLength(3);
         expect(memberships.map((m) => m.repositoryId).sort()).toEqual([
-          "owner/repo1",
-          "owner/repo2",
-          "owner/repo3",
+          "pkg:github/owner/repo1",
+          "pkg:github/owner/repo2",
+          "pkg:github/owner/repo3",
         ]);
       });
     });
@@ -413,60 +400,34 @@ describe("WorkspaceManager", () => {
 
     describe("getRepositoriesInWorkspace", () => {
       it("should return all entries for repositories in workspace", async () => {
-        // Update projects with github metadata
+        // Update projects with github metadata and PURL
         projectRegistry.updateProject("repo1", {
+          purl: "pkg:github/owner/repo1" as any,
           github: {
             id: "owner/repo1",
+            purl: "pkg:github/owner/repo1" as any,
             owner: "owner",
             name: "repo1",
-            fullName: "owner/repo1",
-            description: "",
-            url: "https://github.com/owner/repo1",
-            defaultBranch: "main",
-            isPrivate: false,
-            createdAt: "2024-01-01T00:00:00Z",
-            updatedAt: "2024-01-01T00:00:00Z",
-            pushedAt: "2024-01-01T00:00:00Z",
-            size: 100,
-            stargazersCount: 0,
-            watchersCount: 0,
-            forksCount: 0,
-            openIssuesCount: 0,
-            topics: [],
-            hasIssues: true,
-            hasProjects: true,
-            hasWiki: true,
+            stars: 100,
+            lastUpdated: new Date().toISOString(),
           },
         });
 
         projectRegistry.updateProject("repo2", {
+          purl: "pkg:github/owner/repo2" as any,
           github: {
             id: "owner/repo2",
+            purl: "pkg:github/owner/repo2" as any,
             owner: "owner",
             name: "repo2",
-            fullName: "owner/repo2",
-            description: "",
-            url: "https://github.com/owner/repo2",
-            defaultBranch: "main",
-            isPrivate: false,
-            createdAt: "2024-01-01T00:00:00Z",
-            updatedAt: "2024-01-01T00:00:00Z",
-            pushedAt: "2024-01-01T00:00:00Z",
-            size: 100,
-            stargazersCount: 0,
-            watchersCount: 0,
-            forksCount: 0,
-            openIssuesCount: 0,
-            topics: [],
-            hasIssues: true,
-            hasProjects: true,
-            hasWiki: true,
+            stars: 100,
+            lastUpdated: new Date().toISOString(),
           },
         });
 
         // Add repos to workspace
-        await manager.addRepositoryToWorkspace("owner/repo1", workspaceId);
-        await manager.addRepositoryToWorkspace("owner/repo2", workspaceId);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo1", workspaceId);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo2", workspaceId);
 
         const repos = await manager.getRepositoriesInWorkspace(
           workspaceId,
@@ -488,10 +449,10 @@ describe("WorkspaceManager", () => {
 
     describe("isRepositoryInWorkspace", () => {
       it("should return true if repository is in workspace", async () => {
-        await manager.addRepositoryToWorkspace("owner/repo", workspaceId);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo", workspaceId);
 
         const isIn = await manager.isRepositoryInWorkspace(
-          "owner/repo",
+          "pkg:github/owner/repo",
           workspaceId,
         );
         expect(isIn).toBe(true);
@@ -499,7 +460,7 @@ describe("WorkspaceManager", () => {
 
       it("should return false if repository is not in workspace", async () => {
         const isIn = await manager.isRepositoryInWorkspace(
-          "owner/repo",
+          "pkg:github/owner/repo",
           workspaceId,
         );
         expect(isIn).toBe(false);
@@ -509,8 +470,8 @@ describe("WorkspaceManager", () => {
     describe("getWorkspaceStats", () => {
       it("should return correct statistics", async () => {
         // Add repos to workspace
-        await manager.addRepositoryToWorkspace("owner/repo1", workspaceId);
-        await manager.addRepositoryToWorkspace("owner/repo2", workspaceId);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo1", workspaceId);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo2", workspaceId);
 
         const stats = await manager.getWorkspaceStats(
           workspaceId,
@@ -548,20 +509,20 @@ describe("WorkspaceManager", () => {
     describe("removeRepositoriesFromWorkspace", () => {
       beforeEach(async () => {
         await manager.addRepositoriesToWorkspace(
-          ["owner/repo1", "owner/repo2", "owner/repo3"],
+          ["pkg:github/owner/repo1", "pkg:github/owner/repo2", "pkg:github/owner/repo3"],
           workspaceId,
         );
       });
 
       it("should remove multiple repositories at once", async () => {
         await manager.removeRepositoriesFromWorkspace(
-          ["owner/repo1", "owner/repo3"],
+          ["pkg:github/owner/repo1", "pkg:github/owner/repo3"],
           workspaceId,
         );
 
         const memberships = await manager.getWorkspaceMemberships(workspaceId);
         expect(memberships).toHaveLength(1);
-        expect(memberships[0].repositoryId).toBe("owner/repo2");
+        expect(memberships[0].repositoryId).toBe("pkg:github/owner/repo2");
       });
     });
   });
@@ -626,22 +587,22 @@ describe("WorkspaceManager", () => {
         const ws1 = await manager.createWorkspace({ name: "Workspace 1" });
         const ws2 = await manager.createWorkspace({ name: "Workspace 2" });
 
-        await manager.addRepositoryToWorkspace("owner/repo", ws1.id);
-        await manager.addRepositoryToWorkspace("owner/repo", ws2.id);
-        await manager.addRepositoryToWorkspace("owner/other", ws1.id);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo", ws1.id);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/repo", ws2.id);
+        await manager.addRepositoryToWorkspace("pkg:github/owner/other", ws1.id);
 
-        await manager.cleanupRepositoryMemberships("owner/repo");
+        await manager.cleanupRepositoryMemberships("pkg:github/owner/repo");
 
         const ws1Memberships = await manager.getWorkspaceMemberships(ws1.id);
         const ws2Memberships = await manager.getWorkspaceMemberships(ws2.id);
 
         expect(ws1Memberships).toHaveLength(1);
-        expect(ws1Memberships[0].repositoryId).toBe("owner/other");
+        expect(ws1Memberships[0].repositoryId).toBe("pkg:github/owner/other");
         expect(ws2Memberships).toHaveLength(0);
       });
 
       it("should handle cleanup for non-existent repository", async () => {
-        await manager.cleanupRepositoryMemberships("owner/non-existent");
+        await manager.cleanupRepositoryMemberships("pkg:github/owner/non-existent");
         // Should not throw
       });
     });

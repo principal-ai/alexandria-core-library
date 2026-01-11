@@ -216,6 +216,177 @@ describe("ProjectRegistryStore", () => {
     });
   });
 
+  describe("registerWithGitHubName", () => {
+    it("should auto-detect name from GitHub URL", () => {
+      const projectPath =
+        "/home/user/projects/test-repo" as ValidatedRepositoryPath;
+      const remoteUrl = "https://github.com/anthropic/my-app.git";
+
+      const entry = store.registerWithGitHubName(projectPath, remoteUrl);
+
+      expect(entry.name).toBe("anthropic/my-app");
+      expect(entry.path).toBe(projectPath);
+      expect(entry.remoteUrl).toBe(remoteUrl);
+    });
+
+    it("should handle SSH GitHub URLs", () => {
+      const projectPath =
+        "/home/user/projects/test-repo" as ValidatedRepositoryPath;
+      const remoteUrl = "git@github.com:griever/my-app.git";
+
+      const entry = store.registerWithGitHubName(projectPath, remoteUrl);
+
+      expect(entry.name).toBe("griever/my-app");
+      expect(entry.path).toBe(projectPath);
+    });
+
+    it("should handle GitHub URLs without .git extension", () => {
+      const projectPath =
+        "/home/user/projects/test-repo" as ValidatedRepositoryPath;
+      const remoteUrl = "https://github.com/owner/repo";
+
+      const entry = store.registerWithGitHubName(projectPath, remoteUrl);
+
+      expect(entry.name).toBe("owner/repo");
+    });
+
+    it("should allow multiple repos with same name but different owners", () => {
+      const path1 =
+        "/home/user/projects/anthropic-app" as ValidatedRepositoryPath;
+      const path2 = "/home/user/projects/griever-app" as ValidatedRepositoryPath;
+      const remoteUrl1 = "https://github.com/anthropic/my-app.git";
+      const remoteUrl2 = "https://github.com/griever/my-app.git";
+
+      const entry1 = store.registerWithGitHubName(path1, remoteUrl1);
+      const entry2 = store.registerWithGitHubName(path2, remoteUrl2);
+
+      expect(entry1.name).toBe("anthropic/my-app");
+      expect(entry2.name).toBe("griever/my-app");
+
+      const projects = store.listProjects();
+      expect(projects).toHaveLength(2);
+    });
+
+    it("should use custom name when provided", () => {
+      const projectPath =
+        "/home/user/projects/test-repo" as ValidatedRepositoryPath;
+      const remoteUrl = "https://github.com/owner/repo.git";
+      const customName = "my-custom-name";
+
+      const entry = store.registerWithGitHubName(
+        projectPath,
+        remoteUrl,
+        customName,
+      );
+
+      expect(entry.name).toBe(customName);
+    });
+
+    it("should fallback to path basename for non-GitHub URLs", () => {
+      const projectPath =
+        "/home/user/projects/my-local-repo" as ValidatedRepositoryPath;
+      const remoteUrl = "https://gitlab.com/user/repo.git";
+
+      const entry = store.registerWithGitHubName(projectPath, remoteUrl);
+
+      expect(entry.name).toBe("my-local-repo");
+    });
+
+    it("should fallback to path basename for local-only repos", () => {
+      const projectPath =
+        "/home/user/projects/local-project" as ValidatedRepositoryPath;
+
+      const entry = store.registerWithGitHubName(projectPath);
+
+      expect(entry.name).toBe("local-project");
+    });
+  });
+
+  describe("findClonesByGitHubId", () => {
+    it("should find all clones of same GitHub repo", () => {
+      const remoteUrl = "https://github.com/anthropic/my-app.git";
+
+      // Register multiple clones with different paths
+      store.registerProject(
+        "anthropic/my-app",
+        "/home/user/clone1" as ValidatedRepositoryPath,
+        remoteUrl,
+      );
+      store.registerProject(
+        "clone2-custom-name",
+        "/home/user/clone2" as ValidatedRepositoryPath,
+        remoteUrl,
+      );
+
+      // Update both with same github.id
+      store.updateProject("anthropic/my-app", {
+        github: {
+          id: "anthropic/my-app",
+          owner: "anthropic",
+          name: "my-app",
+          stars: 100,
+          lastUpdated: new Date().toISOString(),
+        },
+      });
+      store.updateProject("clone2-custom-name", {
+        github: {
+          id: "anthropic/my-app",
+          owner: "anthropic",
+          name: "my-app",
+          stars: 100,
+          lastUpdated: new Date().toISOString(),
+        },
+      });
+
+      const clones = store.findClonesByGitHubId("anthropic/my-app");
+
+      expect(clones).toHaveLength(2);
+      expect(clones[0].path).toBe("/home/user/clone1");
+      expect(clones[1].path).toBe("/home/user/clone2");
+    });
+
+    it("should return empty array when no clones found", () => {
+      const clones = store.findClonesByGitHubId("nonexistent/repo");
+      expect(clones).toEqual([]);
+    });
+
+    it("should only return repos with matching github.id", () => {
+      // Register repos with different github.id values
+      store.registerProject(
+        "repo1",
+        "/home/user/repo1" as ValidatedRepositoryPath,
+      );
+      store.registerProject(
+        "repo2",
+        "/home/user/repo2" as ValidatedRepositoryPath,
+      );
+
+      store.updateProject("repo1", {
+        github: {
+          id: "owner1/repo",
+          owner: "owner1",
+          name: "repo",
+          stars: 0,
+          lastUpdated: new Date().toISOString(),
+        },
+      });
+      store.updateProject("repo2", {
+        github: {
+          id: "owner2/repo",
+          owner: "owner2",
+          name: "repo",
+          stars: 0,
+          lastUpdated: new Date().toISOString(),
+        },
+      });
+
+      const clones = store.findClonesByGitHubId("owner1/repo");
+
+      expect(clones).toHaveLength(1);
+      expect(clones[0].name).toBe("repo1");
+    });
+  });
+
   describe("persistence", () => {
     it("should persist projects across store instances", () => {
       const projectName = "persistent-project";

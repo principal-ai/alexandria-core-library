@@ -61,7 +61,7 @@ describe("AlexandriaOutpostManager", () => {
       fs.writeFile(`${testRepoPath}/.alexandria/internal.md`, "# Internal");
 
       // Register the test repo
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
 
       // Get the entry
       const entries = manager.getAllEntries();
@@ -93,7 +93,7 @@ describe("AlexandriaOutpostManager", () => {
         return originalFindFiles(patterns, options);
       };
 
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
       const entries = manager.getAllEntries();
       const entry = entries.find((e) => e.name === "test-repo")!;
 
@@ -121,7 +121,7 @@ describe("AlexandriaOutpostManager", () => {
         } as CodebaseView,
       ]);
 
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
       const entries = manager.getAllEntries();
       const entry = entries.find((e) => e.name === "test-repo")!;
 
@@ -154,7 +154,7 @@ describe("AlexandriaOutpostManager", () => {
       );
 
       // Register repo first to get proper entry structure
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
       const entries = manager.getAllEntries();
       const entry = entries.find((e) => e.name === "test-repo")!;
 
@@ -167,7 +167,7 @@ describe("AlexandriaOutpostManager", () => {
 
     it("should return empty array if no config", async () => {
       // Register repo first to get proper entry structure
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
       const entries = manager.getAllEntries();
       const entry = entries.find((e) => e.name === "test-repo")!;
 
@@ -213,7 +213,7 @@ describe("AlexandriaOutpostManager", () => {
         JSON.stringify(config),
       );
 
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
       const entries = manager.getAllEntries();
       const entry = entries.find((e) => e.name === "test-repo")!;
 
@@ -233,7 +233,7 @@ describe("AlexandriaOutpostManager", () => {
     });
 
     it("should handle repository with no markdown files", async () => {
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
       const entries = manager.getAllEntries();
       const entry = entries.find((e) => e.name === "test-repo")!;
 
@@ -274,7 +274,7 @@ describe("AlexandriaOutpostManager", () => {
         JSON.stringify(config),
       );
 
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
       const entries = manager.getAllEntries();
       const entry = entries.find((e) => e.name === "test-repo")!;
 
@@ -286,7 +286,7 @@ describe("AlexandriaOutpostManager", () => {
 
   describe("updateRepository", () => {
     it("should update repository metadata", async () => {
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
 
       const updated = await manager.updateRepository("test-repo", {
         bookColor: "#FF5733",
@@ -308,7 +308,7 @@ describe("AlexandriaOutpostManager", () => {
     });
 
     it("should persist updates across retrieval", async () => {
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
 
       await manager.updateRepository("test-repo", {
         bookColor: "#00FF00",
@@ -323,7 +323,7 @@ describe("AlexandriaOutpostManager", () => {
 
   describe("updateGitHubMetadata", () => {
     it("should update GitHub metadata", async () => {
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
 
       const updated = await manager.updateGitHubMetadata("test-repo", {
         owner: "test-owner",
@@ -341,7 +341,7 @@ describe("AlexandriaOutpostManager", () => {
     });
 
     it("should merge with existing GitHub data", async () => {
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
 
       // First update
       await manager.updateGitHubMetadata("test-repo", {
@@ -363,7 +363,7 @@ describe("AlexandriaOutpostManager", () => {
     });
 
     it("should always update lastUpdated timestamp", async () => {
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
 
       const updated1 = await manager.updateGitHubMetadata("test-repo", {
         owner: "test-owner",
@@ -411,9 +411,9 @@ describe("AlexandriaOutpostManager", () => {
 
       try {
         await manager.registerRepository(
-          "test-repo",
           testRepoPath,
           "https://github.com/octocat/hello-world.git",
+          "test-repo",
         );
 
         const updated = await manager.refreshGitHubMetadata("test-repo");
@@ -448,9 +448,9 @@ describe("AlexandriaOutpostManager", () => {
 
       try {
         await manager.registerRepository(
-          "test-repo",
           testRepoPath,
           "https://github.com/owner/repo.git",
+          "test-repo",
         );
 
         const updated = await manager.refreshGitHubMetadata("test-repo");
@@ -466,7 +466,7 @@ describe("AlexandriaOutpostManager", () => {
     });
 
     it("should throw error for repository without remote URL", async () => {
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
 
       expect(async () => {
         await manager.refreshGitHubMetadata("test-repo");
@@ -475,9 +475,9 @@ describe("AlexandriaOutpostManager", () => {
 
     it("should handle non-GitHub URLs", async () => {
       await manager.registerRepository(
-        "test-repo",
         testRepoPath,
         "https://gitlab.com/owner/repo.git",
+        "test-repo",
       );
 
       expect(async () => {
@@ -511,27 +511,27 @@ describe("AlexandriaOutpostManager", () => {
 
         // Test HTTPS URL with .git
         await manager.registerRepository(
-          "repo1",
           "/test-repo1",
           "https://github.com/owner/repo.git",
+          "repo1",
         );
         const updated1 = await manager.refreshGitHubMetadata("repo1");
         expect(updated1.github?.owner).toBe("owner");
 
         // Test HTTPS URL without .git
         await manager.registerRepository(
-          "repo2",
           "/test-repo2",
           "https://github.com/owner2/repo2",
+          "repo2",
         );
         const updated2 = await manager.refreshGitHubMetadata("repo2");
         expect(updated2.github?.owner).toBe("owner");
 
         // Test SSH URL
         await manager.registerRepository(
-          "repo3",
           "/test-repo3",
           "git@github.com:owner3/repo3.git",
+          "repo3",
         );
         const updated3 = await manager.refreshGitHubMetadata("repo3");
         expect(updated3.github?.owner).toBe("owner");
@@ -543,7 +543,7 @@ describe("AlexandriaOutpostManager", () => {
 
   describe("refreshViews", () => {
     it("should refresh view data from MemoryPalace", async () => {
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
 
       // Initially no views
       let updated = await manager.refreshViews("test-repo");
@@ -582,7 +582,7 @@ describe("AlexandriaOutpostManager", () => {
         throw new Error("MemoryPalace error");
       };
 
-      await manager.registerRepository("test-repo", testRepoPath);
+      await manager.registerRepository(testRepoPath, undefined, "test-repo");
 
       const updated = await manager.refreshViews("test-repo");
 
@@ -607,15 +607,15 @@ describe("AlexandriaOutpostManager", () => {
     beforeEach(async () => {
       // Register multiple repositories
       await manager.registerRepository(
-        "repo1",
         "/repo1",
         "https://github.com/owner/repo1.git",
+        "repo1",
       );
-      await manager.registerRepository("repo2", "/repo2");
+      await manager.registerRepository("/repo2", undefined, "repo2");
       await manager.registerRepository(
-        "repo3",
         "/repo3",
         "https://github.com/owner/repo3.git",
+        "repo3",
       );
 
       // Set up file systems for new repos

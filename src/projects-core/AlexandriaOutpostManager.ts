@@ -10,6 +10,7 @@ import type { CodebaseViewSummary } from "../pure-core/types/summary.js";
 import { extractCodebaseViewSummary } from "../pure-core/types/summary.js";
 import type { ValidatedRepositoryPath } from "../pure-core/types/index.js";
 import { ConfigLoader } from "../config/loader.js";
+import type { Purl } from "../pure-core/utils/purl.js";
 
 import { FileSystemAdapter } from "../pure-core/abstractions/filesystem.js";
 import { GlobAdapter } from "../pure-core/abstractions/glob.js";
@@ -63,23 +64,40 @@ export class AlexandriaOutpostManager {
     return this.transformToRepository(entry);
   }
 
+  /**
+   * Find all local clones of a GitHub repository
+   * @param githubId - GitHub ID in format "owner/repo"
+   * @returns Array of AlexandriaRepository instances (all local clones)
+   */
+  async findClonesByGitHubId(
+    githubId: string,
+  ): Promise<AlexandriaRepository[]> {
+    const entries = this.projectRegistry.findClonesByGitHubId(githubId);
+    return Promise.all(entries.map((e) => this.transformToRepository(e)));
+  }
+
+  /**
+   * Find all local clones/worktrees of a repository by PURL
+   * @param purl - Package URL identifier
+   * @returns Array of AlexandriaRepository instances (all local clones/worktrees)
+   */
+  async findClonesByPurl(purl: Purl): Promise<AlexandriaRepository[]> {
+    const entries = this.projectRegistry.findClonesByPurl(purl);
+    return Promise.all(entries.map((e) => this.transformToRepository(e)));
+  }
+
   async registerRepository(
-    name: string,
     path: string,
     remoteUrl?: string,
+    customName?: string,
   ): Promise<AlexandriaRepository> {
-    // Use existing registry's register method
-    this.projectRegistry.registerProject(
-      name,
+    // Use smart registration that auto-detects GitHub owner/name format
+    const entry = this.projectRegistry.registerWithGitHubName(
       path as ValidatedRepositoryPath,
       remoteUrl,
+      customName,
     );
 
-    // Return the transformed repository
-    const entry = this.projectRegistry.getProject(name);
-    if (!entry) {
-      throw new Error(`Failed to register repository ${name}`);
-    }
     return this.transformToRepository(entry);
   }
 

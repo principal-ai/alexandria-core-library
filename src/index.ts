@@ -31,6 +31,18 @@ export type {
   GithubRepository,
 } from "./pure-core/types/repository";
 
+// PURL types and utilities
+export type { Purl, PurlType, ParsedPurl } from "./pure-core/utils/purl";
+export {
+  createPurl,
+  parsePurl,
+  isValidPurl,
+  githubIdToPurl,
+  purlToGithubId,
+  extractPurlFromRemoteUrl,
+  PurlBuilders,
+} from "./pure-core/utils/purl";
+
 // CodebaseView summary types
 export type { CodebaseViewSummary } from "./pure-core/types/summary";
 export {

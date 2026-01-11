@@ -5,6 +5,7 @@
 
 import type { CodebaseViewSummary } from "./summary";
 import type { ValidatedRepositoryPath } from "./index";
+import type { Purl } from "../utils/purl.js";
 
 /**
  * A validated Alexandria data directory path (.alexandria)
@@ -17,8 +18,14 @@ export type ValidatedAlexandriaPath = string & { __alexandriaPath: true };
  * Standard fields from GitHub API
  */
 export interface GithubRepository {
-  /** Repository identifier in owner/name format */
+  /**
+   * @deprecated Use purl instead. Repository identifier in owner/name format.
+   * Kept for backwards compatibility.
+   */
   id: string;
+
+  /** Canonical PURL identifier (pkg:github/owner/name) */
+  purl?: Purl;
 
   /** Repository owner (username or organization) */
   owner: string;
@@ -61,6 +68,9 @@ export interface GithubRepository {
 export interface AlexandriaRepository {
   /** Project/repository name */
   name: string;
+
+  /** Canonical PURL identifier (optional, auto-generated from remoteUrl) */
+  purl?: Purl;
 
   /** Git remote URL */
   remoteUrl?: string;
