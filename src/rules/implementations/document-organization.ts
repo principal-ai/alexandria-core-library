@@ -7,9 +7,7 @@ import { DocumentOrganizationOptions } from "../../config/types";
 import { matchesPatterns } from "../utils/patterns";
 import {
   getRootExceptions,
-  getOrganizationExemptions,
   isLocationBound,
-  getLocationBoundExplanation,
 } from "../utils/location-bound-files";
 
 // Default documentation folder names

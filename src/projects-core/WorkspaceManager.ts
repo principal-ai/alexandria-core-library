@@ -12,11 +12,7 @@
 import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
 import { AlexandriaEntry } from "../pure-core/types/repository";
 import { idGenerator } from "../pure-core/utils/idGenerator";
-import {
-  githubIdToPurl,
-  createLocalRepoPurl,
-  type Purl,
-} from "../pure-core/utils/purl";
+import { createLocalRepoPurl } from "../pure-core/utils/purl";
 import { ProjectRegistryStore } from "./ProjectRegistryStore";
 import {
   Workspace,

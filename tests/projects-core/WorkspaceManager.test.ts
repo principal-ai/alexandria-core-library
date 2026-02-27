@@ -4,6 +4,7 @@ import { ProjectRegistryStore } from "../../src/projects-core/ProjectRegistrySto
 import { InMemoryFileSystemAdapter } from "../../src";
 import { ValidatedRepositoryPath } from "../../src/pure-core/types";
 import type { AlexandriaEntry } from "../../src/pure-core/types/repository";
+import type { Purl } from "../../src/pure-core/utils/purl";
 
 describe("WorkspaceManager", () => {
   let fs: InMemoryFileSystemAdapter;
@@ -222,10 +223,10 @@ describe("WorkspaceManager", () => {
           name: "local-name",
           path: "/home/user/repos/test" as ValidatedRepositoryPath,
           registeredAt: new Date().toISOString(),
-          purl: "pkg:github/owner/repo" as any,
+          purl: "pkg:github/owner/repo" as Purl,
           github: {
             id: "owner/repo",
-            purl: "pkg:github/owner/repo" as any,
+            purl: "pkg:github/owner/repo" as Purl,
             owner: "owner",
             name: "repo",
             stars: 100,
@@ -402,10 +403,10 @@ describe("WorkspaceManager", () => {
       it("should return all entries for repositories in workspace", async () => {
         // Update projects with github metadata and PURL
         projectRegistry.updateProject("repo1", {
-          purl: "pkg:github/owner/repo1" as any,
+          purl: "pkg:github/owner/repo1" as Purl,
           github: {
             id: "owner/repo1",
-            purl: "pkg:github/owner/repo1" as any,
+            purl: "pkg:github/owner/repo1" as Purl,
             owner: "owner",
             name: "repo1",
             stars: 100,
@@ -414,10 +415,10 @@ describe("WorkspaceManager", () => {
         });
 
         projectRegistry.updateProject("repo2", {
-          purl: "pkg:github/owner/repo2" as any,
+          purl: "pkg:github/owner/repo2" as Purl,
           github: {
             id: "owner/repo2",
-            purl: "pkg:github/owner/repo2" as any,
+            purl: "pkg:github/owner/repo2" as Purl,
             owner: "owner",
             name: "repo2",
             stars: 100,

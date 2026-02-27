@@ -110,6 +110,15 @@ export { DrawingStore } from "./pure-core/stores/DrawingStore";
 export type { DrawingMetadata } from "./pure-core/stores/DrawingStore";
 export type { ExcalidrawData } from "./pure-core/types/drawing";
 
+// Tag system exports
+export { TagStore } from "./pure-core/stores/TagStore";
+export type {
+  DocumentTags,
+  TagDefinition,
+  TagAssignmentResult,
+  TagValidationResult,
+} from "./pure-core/types/tags";
+
 // Utilities and rules
 export { LibraryRulesEngine } from "./rules/index";
 export { OverviewPathAutoFix } from "./pure-core/autofixes/OverviewPathAutoFix";

@@ -278,7 +278,7 @@ export function validateLocationBoundFile(
         suggestion: `Move to repository root: ${info.pattern}`,
       };
 
-    case "root-or-package":
+    case "root-or-package": {
       if (dirname === "") {
         return { valid: true };
       }
@@ -294,6 +294,7 @@ export function validateLocationBoundFile(
         reason: info.reason,
         suggestion: `Move to repository root or next to a package.json`,
       };
+    }
 
     case "same-directory":
       // README.md can be anywhere - it describes its current location

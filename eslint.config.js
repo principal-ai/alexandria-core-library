@@ -24,6 +24,9 @@ export default [
         require: "readonly",
         module: "readonly",
         fetch: "readonly",
+        // Browser globals for base64 encoding/decoding (used in browser adapters)
+        atob: "readonly",
+        btoa: "readonly",
       },
     },
     plugins: {
@@ -59,7 +62,7 @@ export default [
     },
   },
   {
-    files: ["tests/**/*.ts", "examples/**/*.ts"],
+    files: ["tests/**/*.ts", "examples/**/*.ts", "scripts/**/*.ts"],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {

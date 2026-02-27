@@ -9,7 +9,14 @@ import { FileSystemAdapter } from "./pure-core/abstractions/filesystem";
 import { GlobAdapter } from "./pure-core/abstractions/glob";
 import { CodebaseViewsStore } from "./pure-core/stores/CodebaseViewsStore";
 import { DrawingStore, DrawingMetadata } from "./pure-core/stores/DrawingStore";
+import { TagStore } from "./pure-core/stores/TagStore";
 import { ExcalidrawData } from "./pure-core/types/drawing";
+import {
+  DocumentTags,
+  TagDefinition,
+  TagAssignmentResult,
+  TagValidationResult,
+} from "./pure-core/types/tags";
 import {
   CodebaseViewValidator,
   ValidationResult,
@@ -58,6 +65,7 @@ export interface GetDocumentsOverviewOptions {
 export class MemoryPalace {
   private viewsStore: CodebaseViewsStore;
   private drawingStore: DrawingStore;
+  private tagStore: TagStore;
   private validator: CodebaseViewValidator;
   private repositoryRoot: ValidatedRepositoryPath;
   private fs: FileSystemAdapter;
@@ -76,6 +84,7 @@ export class MemoryPalace {
     // Initialize stores with the validated Alexandria path
     this.viewsStore = new CodebaseViewsStore(fileSystem, alexandriaPath);
     this.drawingStore = new DrawingStore(fileSystem, alexandriaPath);
+    this.tagStore = new TagStore(fileSystem, alexandriaPath);
     this.validator = new CodebaseViewValidator(fileSystem);
   }
 
@@ -560,5 +569,156 @@ export class MemoryPalace {
    */
   listDrawingsWithExtractedNames(): DrawingMetadata[] {
     return this.drawingStore.listDrawingsWithExtractedNames();
+  }
+
+  // ============================================================================
+  // Tag Management
+  // ============================================================================
+
+  /**
+   * Get all tags data (definitions and assignments)
+   */
+  getTags(): DocumentTags {
+    return this.tagStore.getTags();
+  }
+
+  /**
+   * Async version of getTags for environments with async file access
+   */
+  async getTagsAsync(): Promise<DocumentTags> {
+    return this.tagStore.getTagsAsync();
+  }
+
+  /**
+   * Get all tag definitions
+   */
+  getTagDefinitions(): Record<string, TagDefinition> {
+    return this.tagStore.getDefinitions();
+  }
+
+  /**
+   * Get a specific tag definition
+   */
+  getTagDefinition(tagName: string): TagDefinition | null {
+    return this.tagStore.getDefinition(tagName);
+  }
+
+  /**
+   * Check if a tag is defined
+   */
+  isTagDefined(tagName: string): boolean {
+    return this.tagStore.isTagDefined(tagName);
+  }
+
+  /**
+   * Define a new tag or update an existing one
+   */
+  defineTag(name: string, definition: TagDefinition): void {
+    return this.tagStore.defineTag(name, definition);
+  }
+
+  /**
+   * Define multiple tags at once
+   */
+  defineTags(definitions: Record<string, TagDefinition>): void {
+    return this.tagStore.defineTags(definitions);
+  }
+
+  /**
+   * Remove a tag definition and all its assignments
+   */
+  removeTagDefinition(tagName: string): boolean {
+    return this.tagStore.removeTagDefinition(tagName);
+  }
+
+  /**
+   * Rename a tag, updating all assignments
+   */
+  renameTag(oldName: string, newName: string): boolean {
+    return this.tagStore.renameTag(oldName, newName);
+  }
+
+  /**
+   * Assign tags to a document (validates that tags exist)
+   */
+  assignTags(filePath: string, tagNames: string[]): TagAssignmentResult {
+    return this.tagStore.assignTags(filePath, tagNames);
+  }
+
+  /**
+   * Set tags for a document, replacing any existing tags
+   */
+  setDocumentTags(filePath: string, tagNames: string[]): TagAssignmentResult {
+    return this.tagStore.setTags(filePath, tagNames);
+  }
+
+  /**
+   * Remove specific tags from a document
+   */
+  removeDocumentTags(filePath: string, tagNames: string[]): void {
+    return this.tagStore.removeTags(filePath, tagNames);
+  }
+
+  /**
+   * Remove all tags from a document
+   */
+  clearDocumentTags(filePath: string): void {
+    return this.tagStore.clearTags(filePath);
+  }
+
+  /**
+   * Get all tags assigned to a document
+   */
+  getDocumentTags(filePath: string): string[] {
+    return this.tagStore.getTagsForDocument(filePath);
+  }
+
+  /**
+   * Get all documents that have a specific tag
+   */
+  getDocumentsByTag(tagName: string): string[] {
+    return this.tagStore.getDocumentsByTag(tagName);
+  }
+
+  /**
+   * Get all documents that have all of the specified tags
+   */
+  getDocumentsByTags(tagNames: string[]): string[] {
+    return this.tagStore.getDocumentsByTags(tagNames);
+  }
+
+  /**
+   * Get all documents that have any of the specified tags
+   */
+  getDocumentsByAnyTag(tagNames: string[]): string[] {
+    return this.tagStore.getDocumentsByAnyTag(tagNames);
+  }
+
+  /**
+   * Get all tagged documents with their tags
+   */
+  getAllTagAssignments(): Record<string, string[]> {
+    return this.tagStore.getAllAssignments();
+  }
+
+  /**
+   * Get tag usage counts
+   */
+  getTagCounts(): Record<string, number> {
+    return this.tagStore.getTagCounts();
+  }
+
+  /**
+   * Validate the tags file structure and references
+   */
+  validateTags(): TagValidationResult {
+    return this.tagStore.validate();
+  }
+
+  /**
+   * Clean up orphaned tag assignments (assignments for undefined tags)
+   */
+  cleanupOrphanedTagAssignments(): number {
+    return this.tagStore.cleanupOrphanedAssignments();
   }
 }
