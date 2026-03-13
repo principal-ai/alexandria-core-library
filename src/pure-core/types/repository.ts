@@ -57,6 +57,9 @@ export interface GithubRepository {
   /** Whether repository is public */
   isPublic?: boolean;
 
+  /** ISO timestamp when the repository was created on GitHub */
+  createdAt?: string;
+
   /** ISO timestamp when GitHub metadata was last updated */
   lastUpdated: string;
 }

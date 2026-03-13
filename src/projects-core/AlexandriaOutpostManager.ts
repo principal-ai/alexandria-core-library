@@ -385,6 +385,7 @@ export class AlexandriaOutpostManager {
         license: githubData.license?.spdx_id || undefined,
         defaultBranch: githubData.default_branch || "main",
         isPublic: !githubData.private,
+        createdAt: githubData.created_at || undefined,
         lastCommit: githubData.pushed_at || githubData.updated_at,
         lastUpdated: new Date().toISOString(),
       };
