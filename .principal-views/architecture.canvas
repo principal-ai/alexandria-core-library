@@ -13,7 +13,7 @@
         "nodeType": "api",
         "shape": "rectangle",
         "icon": "Box",
-        "sources": [
+        "references": [
           "src/MemoryPalace.ts"
         ]
       }
@@ -31,7 +31,7 @@
         "nodeType": "api",
         "shape": "rectangle",
         "icon": "Box",
-        "sources": [
+        "references": [
           "src/projects-core/ProjectRegistryStore.ts"
         ]
       }
@@ -49,7 +49,7 @@
         "nodeType": "api",
         "shape": "rectangle",
         "icon": "Box",
-        "sources": [
+        "references": [
           "src/projects-core/AlexandriaOutpostManager.ts"
         ]
       }
@@ -67,7 +67,7 @@
         "nodeType": "store",
         "shape": "cylinder",
         "icon": "Database",
-        "sources": [
+        "references": [
           "src/pure-core/stores/CodebaseViewsStore.ts"
         ]
       }
@@ -85,7 +85,7 @@
         "nodeType": "store",
         "shape": "cylinder",
         "icon": "Database",
-        "sources": [
+        "references": [
           "src/pure-core/stores/DrawingStore.ts"
         ]
       }
@@ -103,7 +103,7 @@
         "nodeType": "rule-engine",
         "shape": "hexagon",
         "icon": "Cog",
-        "sources": [
+        "references": [
           "src/rules/LibraryRulesEngine.ts"
         ]
       }
@@ -121,7 +121,7 @@
         "nodeType": "validator",
         "shape": "diamond",
         "icon": "Shield",
-        "sources": [
+        "references": [
           "src/pure-core/validation/CodebaseViewValidator.ts"
         ]
       }
@@ -139,8 +139,8 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
-          "src/pure-core/abstractions/FileSystemAdapter.ts"
+        "references": [
+          "src/pure-core/abstractions/filesystem.ts"
         ]
       }
     },
@@ -157,8 +157,8 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
-          "src/pure-core/abstractions/GlobAdapter.ts"
+        "references": [
+          "src/pure-core/abstractions/glob.ts"
         ]
       }
     },
@@ -175,7 +175,7 @@
         "nodeType": "storage-manager",
         "shape": "rectangle",
         "icon": "Archive",
-        "sources": [
+        "references": [
           "src/storage/ReadingRecordManager.ts"
         ]
       }
@@ -193,8 +193,8 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
-          "src/pure-core/types/CodebaseView.ts"
+        "references": [
+          "src/pure-core/types/index.ts"
         ]
       }
     },
@@ -211,7 +211,7 @@
         "nodeType": "branded-type",
         "shape": "rectangle",
         "icon": "Lock",
-        "sources": [
+        "references": [
           "src/pure-core/types/ValidatedPaths.ts"
         ]
       }
@@ -229,7 +229,7 @@
         "nodeType": "config",
         "shape": "rectangle",
         "icon": "Settings",
-        "sources": [
+        "references": [
           "src/config/AlexandriaConfig.ts"
         ]
       }
@@ -247,7 +247,7 @@
         "nodeType": "storage-adapter",
         "shape": "cylinder",
         "icon": "HardDrive",
-        "sources": [
+        "references": [
           "src/storage/adapters/*.ts"
         ]
       }
@@ -260,9 +260,7 @@
       "fromSide": "bottom",
       "toNode": "views-store",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "palace-to-drawings",
@@ -270,9 +268,7 @@
       "fromSide": "bottom",
       "toNode": "drawing-store",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "palace-to-validator",
@@ -280,9 +276,7 @@
       "fromSide": "bottom",
       "toNode": "validator",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "views-to-fs",
@@ -290,9 +284,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "drawings-to-fs",
@@ -300,9 +292,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "rules-to-glob",
@@ -310,9 +300,7 @@
       "fromSide": "bottom",
       "toNode": "glob-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "rules-to-config",
@@ -320,9 +308,7 @@
       "fromSide": "bottom",
       "toNode": "config",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "validator-to-view",
@@ -330,9 +316,7 @@
       "fromSide": "bottom",
       "toNode": "codebase-view",
       "toSide": "top",
-      "pv": {
-        "edgeType": "validates"
-      }
+      "edgeType": "validates"
     },
     {
       "id": "views-to-view",
@@ -340,9 +324,7 @@
       "fromSide": "bottom",
       "toNode": "codebase-view",
       "toSide": "top",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     },
     {
       "id": "reading-to-storage",
@@ -350,9 +332,7 @@
       "fromSide": "bottom",
       "toNode": "storage-adapters",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "outpost-to-registry",
@@ -360,14 +340,10 @@
       "fromSide": "bottom",
       "toNode": "project-registry",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     }
   ],
-  "pv": {
-    "name": "Alexandria Core Library Architecture",
-    "version": "1.0.0",
-    "description": "High-level architecture showing the main components of the Alexandria Core Library and their relationships"
-  }
+  "name": "Alexandria Core Library Architecture",
+  "markdown": ".principal-views/architecture.md",
+  "description": "High-level architecture showing the main components of the Alexandria Core Library and their relationships"
 }

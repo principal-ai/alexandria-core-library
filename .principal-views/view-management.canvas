@@ -27,7 +27,7 @@
         "nodeType": "api",
         "shape": "rectangle",
         "icon": "Box",
-        "sources": [
+        "references": [
           "src/MemoryPalace.ts"
         ]
       }
@@ -45,7 +45,7 @@
         "nodeType": "validator",
         "shape": "diamond",
         "icon": "Shield",
-        "sources": [
+        "references": [
           "src/pure-core/validation/CodebaseViewValidator.ts"
         ]
       }
@@ -63,7 +63,7 @@
         "nodeType": "store",
         "shape": "cylinder",
         "icon": "Database",
-        "sources": [
+        "references": [
           "src/pure-core/stores/CodebaseViewsStore.ts"
         ]
       }
@@ -81,8 +81,8 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
-          "src/pure-core/abstractions/FileSystemAdapter.ts"
+        "references": [
+          "src/pure-core/abstractions/filesystem.ts"
         ]
       }
     },
@@ -99,8 +99,8 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
-          "src/pure-core/types/CodebaseView.ts"
+        "references": [
+          "src/pure-core/types/index.ts"
         ]
       }
     },
@@ -127,9 +127,7 @@
       "toNode": "memory-palace",
       "toSide": "top",
       "label": "saveView()",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "palace-to-validator",
@@ -138,9 +136,7 @@
       "toNode": "codebase-view-validator",
       "toSide": "top",
       "label": "validate()",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "palace-to-store",
@@ -149,9 +145,7 @@
       "toNode": "codebase-views-store",
       "toSide": "top",
       "label": "saveView()",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "store-to-fs",
@@ -160,9 +154,7 @@
       "toNode": "fs-adapter",
       "toSide": "top",
       "label": "writeFile()",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "validator-to-type",
@@ -170,9 +162,7 @@
       "fromSide": "bottom",
       "toNode": "codebase-view-type",
       "toSide": "top",
-      "pv": {
-        "edgeType": "validates"
-      }
+      "edgeType": "validates"
     },
     {
       "id": "store-to-type",
@@ -180,9 +170,7 @@
       "fromSide": "bottom",
       "toNode": "codebase-view-type",
       "toSide": "top",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     },
     {
       "id": "fs-to-dir",
@@ -191,14 +179,10 @@
       "toNode": "alexandria-dir",
       "toSide": "top",
       "label": "JSON files",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     }
   ],
-  "pv": {
-    "name": "View Management Flow",
-    "version": "1.0.0",
-    "description": "Shows how CodebaseViews are validated and persisted through the MemoryPalace API"
-  }
+  "name": "View Management Flow",
+  "markdown": ".principal-views/view-management.md",
+  "description": "Shows how CodebaseViews are validated and persisted through the MemoryPalace API"
 }

@@ -13,7 +13,7 @@
         "nodeType": "store",
         "shape": "cylinder",
         "icon": "Database",
-        "sources": [
+        "references": [
           "src/projects-core/ProjectRegistryStore.ts"
         ]
       }
@@ -31,7 +31,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/projects-core/types.ts"
         ]
       }
@@ -49,7 +49,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/pure-core/types/repository.ts"
         ]
       }
@@ -67,7 +67,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/pure-core/types/repository.ts"
         ]
       }
@@ -85,7 +85,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/pure-core/types/repository.ts"
         ]
       }
@@ -103,7 +103,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/pure-core/types/summary.ts"
         ]
       }
@@ -121,7 +121,7 @@
         "nodeType": "branded-type",
         "shape": "rectangle",
         "icon": "Lock",
-        "sources": [
+        "references": [
           "src/pure-core/types/ValidatedPaths.ts"
         ]
       }
@@ -153,8 +153,8 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
-          "src/pure-core/abstractions/FileSystemAdapter.ts"
+        "references": [
+          "src/pure-core/abstractions/filesystem.ts"
         ]
       }
     }
@@ -167,9 +167,7 @@
       "toNode": "project-registry-data",
       "toSide": "top",
       "label": "serializes",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "data-to-entry",
@@ -178,9 +176,7 @@
       "toNode": "alexandria-entry",
       "toSide": "left",
       "label": "contains",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     },
     {
       "id": "store-to-entry",
@@ -189,9 +185,7 @@
       "toNode": "alexandria-entry",
       "toSide": "left",
       "label": "manages",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "entry-extends-repo",
@@ -200,9 +194,7 @@
       "toNode": "alexandria-repository",
       "toSide": "top",
       "label": "extends",
-      "pv": {
-        "edgeType": "extends"
-      }
+      "edgeType": "extends"
     },
     {
       "id": "repo-to-github",
@@ -211,9 +203,7 @@
       "toNode": "github-repository",
       "toSide": "left",
       "label": "github?",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     },
     {
       "id": "repo-to-views",
@@ -222,9 +212,7 @@
       "toNode": "codebase-view-summary",
       "toSide": "left",
       "label": "views[]",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     },
     {
       "id": "entry-to-path",
@@ -233,9 +221,7 @@
       "toNode": "validated-path",
       "toSide": "top",
       "label": "path",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     },
     {
       "id": "data-to-json",
@@ -244,9 +230,7 @@
       "toNode": "projects-json",
       "toSide": "top",
       "label": "persisted as",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "store-to-fs",
@@ -255,14 +239,10 @@
       "toNode": "fs-adapter",
       "toSide": "top",
       "label": "uses",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     }
   ],
-  "pv": {
-    "name": "Registry Types",
-    "version": "1.0.0",
-    "description": "Shows the ProjectRegistryStore and AlexandriaEntry type hierarchy, including related types like GithubRepository and CodebaseViewSummary"
-  }
+  "name": "Registry Types",
+  "markdown": ".principal-views/registry-types.md",
+  "description": "Shows the ProjectRegistryStore and AlexandriaEntry type hierarchy, including related types like GithubRepository and CodebaseViewSummary"
 }

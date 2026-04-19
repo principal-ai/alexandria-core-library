@@ -13,7 +13,7 @@
         "nodeType": "rule-engine",
         "shape": "hexagon",
         "icon": "Cog",
-        "sources": [
+        "references": [
           "src/rules/LibraryRulesEngine.ts"
         ]
       }
@@ -31,7 +31,7 @@
         "nodeType": "rule",
         "shape": "rectangle",
         "icon": "CheckSquare",
-        "sources": [
+        "references": [
           "src/rules/implementations/requireReferences.ts"
         ]
       }
@@ -49,7 +49,7 @@
         "nodeType": "rule",
         "shape": "rectangle",
         "icon": "CheckSquare",
-        "sources": [
+        "references": [
           "src/rules/implementations/orphanedReferences.ts"
         ]
       }
@@ -67,7 +67,7 @@
         "nodeType": "rule",
         "shape": "rectangle",
         "icon": "CheckSquare",
-        "sources": [
+        "references": [
           "src/rules/implementations/staleReferences.ts"
         ]
       }
@@ -85,7 +85,7 @@
         "nodeType": "rule",
         "shape": "rectangle",
         "icon": "CheckSquare",
-        "sources": [
+        "references": [
           "src/rules/implementations/codebaseCoverage.ts"
         ]
       }
@@ -103,7 +103,7 @@
         "nodeType": "rule",
         "shape": "rectangle",
         "icon": "CheckSquare",
-        "sources": [
+        "references": [
           "src/rules/implementations/minimumReferences.ts"
         ]
       }
@@ -121,8 +121,8 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
-          "src/pure-core/abstractions/GlobAdapter.ts"
+        "references": [
+          "src/pure-core/abstractions/glob.ts"
         ]
       }
     },
@@ -139,7 +139,7 @@
         "nodeType": "config",
         "shape": "rectangle",
         "icon": "Settings",
-        "sources": [
+        "references": [
           "src/config/AlexandriaConfig.ts"
         ]
       }
@@ -157,7 +157,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/rules/types.ts"
         ]
       }
@@ -175,7 +175,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/rules/types.ts"
         ]
       }
@@ -189,9 +189,7 @@
       "toNode": "rules-engine",
       "toSide": "top",
       "label": "rule options",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "engine-to-require",
@@ -200,9 +198,7 @@
       "toNode": "require-refs-rule",
       "toSide": "top",
       "label": "check()",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "engine-to-orphaned",
@@ -211,9 +207,7 @@
       "toNode": "orphaned-rule",
       "toSide": "top",
       "label": "check()",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "engine-to-stale",
@@ -222,9 +216,7 @@
       "toNode": "stale-rule",
       "toSide": "top",
       "label": "check()",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "engine-to-coverage",
@@ -233,9 +225,7 @@
       "toNode": "coverage-rule",
       "toSide": "top",
       "label": "check()",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "engine-to-minrefs",
@@ -244,9 +234,7 @@
       "toNode": "min-refs-rule",
       "toSide": "top",
       "label": "check()",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "engine-to-glob",
@@ -255,9 +243,7 @@
       "toNode": "glob-adapter",
       "toSide": "top",
       "label": "scanFiles()",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "rules-to-result",
@@ -266,9 +252,7 @@
       "toNode": "lint-result",
       "toSide": "top",
       "label": "produces",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "result-to-violation",
@@ -277,14 +261,10 @@
       "toNode": "violation",
       "toSide": "top",
       "label": "contains",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     }
   ],
-  "pv": {
-    "name": "Validation Rules Flow",
-    "version": "1.0.0",
-    "description": "Shows how the LibraryRulesEngine orchestrates validation rules and produces lint results"
-  }
+  "name": "Validation Rules Flow",
+  "markdown": ".principal-views/validation-flow.md",
+  "description": "Shows how the LibraryRulesEngine orchestrates validation rules and produces lint results"
 }

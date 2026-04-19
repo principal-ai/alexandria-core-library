@@ -13,7 +13,7 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
+        "references": [
           "src/pure-core/abstractions/filesystem.ts"
         ]
       }
@@ -31,7 +31,7 @@
         "nodeType": "store",
         "shape": "cylinder",
         "icon": "Database",
-        "sources": [
+        "references": [
           "src/projects-core/WorkspaceManager.ts"
         ]
       }
@@ -49,7 +49,7 @@
         "nodeType": "node-adapter",
         "shape": "rectangle",
         "icon": "Server",
-        "sources": [
+        "references": [
           "src/node-adapters/NodeFileSystemAdapter.ts"
         ]
       }
@@ -67,7 +67,7 @@
         "nodeType": "browser-adapter",
         "shape": "rectangle",
         "icon": "Globe",
-        "sources": [
+        "references": [
           "src/browser-adapters/LocalStorageFileSystemAdapter.ts"
         ]
       }
@@ -143,7 +143,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/projects-core/types.ts"
         ]
       }
@@ -161,7 +161,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/projects-core/types.ts"
         ]
       }
@@ -204,9 +204,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "localstorage-fs-impl",
@@ -214,9 +212,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "workspace-uses-fs",
@@ -225,9 +221,7 @@
       "toNode": "fs-adapter-interface",
       "toSide": "top",
       "label": "uses",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "electron-to-registry",
@@ -236,9 +230,7 @@
       "toNode": "registry-service",
       "toSide": "top",
       "label": "uses",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "registry-to-workspace",
@@ -247,9 +239,7 @@
       "toNode": "workspace-manager",
       "toSide": "top",
       "label": "wraps",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "registry-to-node-adapter",
@@ -258,9 +248,7 @@
       "toNode": "node-fs-adapter",
       "toSide": "top",
       "label": "injects",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "webade-to-webstore",
@@ -269,9 +257,7 @@
       "toNode": "web-workspace-store",
       "toSide": "top",
       "label": "uses",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "webstore-to-workspace",
@@ -280,9 +266,7 @@
       "toNode": "workspace-manager",
       "toSide": "top",
       "label": "wraps",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "webstore-to-localstorage-adapter",
@@ -291,9 +275,7 @@
       "toNode": "localstorage-fs-adapter",
       "toSide": "top",
       "label": "injects",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "node-adapter-to-filesystem",
@@ -302,9 +284,7 @@
       "toNode": "filesystem-storage",
       "toSide": "top",
       "label": "persists to",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "localstorage-adapter-to-localstorage",
@@ -313,9 +293,7 @@
       "toNode": "localstorage-storage",
       "toSide": "top",
       "label": "persists to",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "workspace-stores-ws",
@@ -323,9 +301,7 @@
       "fromSide": "bottom",
       "toNode": "workspace-type",
       "toSide": "top",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     },
     {
       "id": "workspace-stores-membership",
@@ -333,14 +309,10 @@
       "fromSide": "bottom",
       "toNode": "membership-type",
       "toSide": "top",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     }
   ],
-  "pv": {
-    "name": "Browser Workspace Architecture",
-    "version": "1.0.0",
-    "description": "Shows how WorkspaceManager can be used in both Node.js (electron-app) and browser (web-ade) environments through the FileSystemAdapter abstraction, with localStorage as a stepping stone to database storage"
-  }
+  "name": "Browser Workspace Architecture",
+  "markdown": ".principal-views/browser-workspace-architecture.md",
+  "description": "Shows how WorkspaceManager can be used in both Node.js (electron-app) and browser (web-ade) environments through the FileSystemAdapter abstraction, with localStorage as a stepping stone to database storage"
 }

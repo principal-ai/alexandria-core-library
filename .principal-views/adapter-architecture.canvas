@@ -13,8 +13,8 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
-          "src/pure-core/abstractions/FileSystemAdapter.ts"
+        "references": [
+          "src/pure-core/abstractions/filesystem.ts"
         ]
       }
     },
@@ -31,8 +31,8 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
-          "src/pure-core/abstractions/GlobAdapter.ts"
+        "references": [
+          "src/pure-core/abstractions/glob.ts"
         ]
       }
     },
@@ -49,7 +49,7 @@
         "nodeType": "node-adapter",
         "shape": "rectangle",
         "icon": "Server",
-        "sources": [
+        "references": [
           "src/node-adapters/NodeFileSystemAdapter.ts"
         ]
       }
@@ -67,7 +67,7 @@
         "nodeType": "test-adapter",
         "shape": "rectangle",
         "icon": "TestTube",
-        "sources": [
+        "references": [
           "src/test-adapters/InMemoryFileSystemAdapter.ts"
         ]
       }
@@ -85,7 +85,7 @@
         "nodeType": "browser-adapter",
         "shape": "rectangle",
         "icon": "Globe",
-        "sources": [
+        "references": [
           "src/filetree-adapters/FileTreeFileSystemAdapter.ts"
         ]
       }
@@ -103,7 +103,7 @@
         "nodeType": "node-adapter",
         "shape": "rectangle",
         "icon": "Server",
-        "sources": [
+        "references": [
           "src/node-adapters/NodeGlobAdapter.ts"
         ]
       }
@@ -121,7 +121,7 @@
         "nodeType": "test-adapter",
         "shape": "rectangle",
         "icon": "TestTube",
-        "sources": [
+        "references": [
           "src/test-adapters/InMemoryGlobAdapter.ts"
         ]
       }
@@ -139,7 +139,7 @@
         "nodeType": "browser-adapter",
         "shape": "rectangle",
         "icon": "Globe",
-        "sources": [
+        "references": [
           "src/filetree-adapters/FileTreeGlobAdapter.ts"
         ]
       }
@@ -194,9 +194,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "inmemory-fs-impl",
@@ -204,9 +202,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "filetree-fs-impl",
@@ -214,9 +210,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "node-glob-impl",
@@ -224,9 +218,7 @@
       "fromSide": "bottom",
       "toNode": "glob-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "inmemory-glob-impl",
@@ -234,9 +226,7 @@
       "fromSide": "bottom",
       "toNode": "glob-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "filetree-glob-impl",
@@ -244,9 +234,7 @@
       "fromSide": "bottom",
       "toNode": "glob-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "node-env-fs",
@@ -254,9 +242,7 @@
       "fromSide": "bottom",
       "toNode": "node-fs-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "node-env-glob",
@@ -264,9 +250,7 @@
       "fromSide": "bottom",
       "toNode": "node-glob-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "test-env-fs",
@@ -274,9 +258,7 @@
       "fromSide": "bottom",
       "toNode": "inmemory-fs-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "test-env-glob",
@@ -284,9 +266,7 @@
       "fromSide": "bottom",
       "toNode": "inmemory-glob-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "browser-env-fs",
@@ -294,9 +274,7 @@
       "fromSide": "bottom",
       "toNode": "filetree-fs-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "browser-env-glob",
@@ -304,14 +282,10 @@
       "fromSide": "bottom",
       "toNode": "filetree-glob-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     }
   ],
-  "pv": {
-    "name": "Adapter Architecture",
-    "version": "1.0.0",
-    "description": "Shows the ports-and-adapters pattern with platform-specific implementations for FileSystem and Glob operations"
-  }
+  "name": "Adapter Architecture",
+  "markdown": ".principal-views/adapter-architecture.md",
+  "description": "Shows the ports-and-adapters pattern with platform-specific implementations for FileSystem and Glob operations"
 }

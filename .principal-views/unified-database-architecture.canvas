@@ -13,7 +13,7 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
+        "references": [
           "src/pure-core/abstractions/filesystem.ts"
         ]
       }
@@ -31,7 +31,7 @@
         "nodeType": "store",
         "shape": "cylinder",
         "icon": "Database",
-        "sources": [
+        "references": [
           "src/projects-core/WorkspaceManager.ts"
         ]
       }
@@ -49,7 +49,7 @@
         "nodeType": "node-adapter",
         "shape": "rectangle",
         "icon": "Server",
-        "sources": [
+        "references": [
           "src/node-adapters/NodeFileSystemAdapter.ts"
         ]
       }
@@ -82,7 +82,7 @@
         "nodeType": "browser-adapter",
         "shape": "rectangle",
         "icon": "Globe",
-        "sources": [
+        "references": [
           "src/browser-adapters/LocalStorageFileSystemAdapter.ts"
         ]
       }
@@ -213,9 +213,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "db-adapter-impl",
@@ -223,9 +221,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "localstorage-fs-impl",
@@ -233,9 +229,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter-interface",
       "toSide": "top",
-      "pv": {
-        "edgeType": "implements"
-      }
+      "edgeType": "implements"
     },
     {
       "id": "workspace-uses-fs",
@@ -244,9 +238,7 @@
       "toNode": "fs-adapter-interface",
       "toSide": "top",
       "label": "uses",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "electron-to-registry",
@@ -254,9 +246,7 @@
       "fromSide": "bottom",
       "toNode": "registry-service",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "registry-to-workspace",
@@ -265,9 +255,7 @@
       "toNode": "workspace-manager",
       "toSide": "top",
       "label": "wraps",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "webade-to-webstore",
@@ -275,9 +263,7 @@
       "fromSide": "bottom",
       "toNode": "web-workspace-store",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "webstore-to-workspace",
@@ -286,9 +272,7 @@
       "toNode": "workspace-manager",
       "toSide": "top",
       "label": "wraps",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "node-adapter-to-filesystem",
@@ -297,9 +281,7 @@
       "toNode": "filesystem-storage",
       "toSide": "top",
       "label": "local cache",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "db-adapter-to-db",
@@ -308,9 +290,7 @@
       "toNode": "database",
       "toSide": "top",
       "label": "sync",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "localstorage-adapter-to-cache",
@@ -319,9 +299,7 @@
       "toNode": "localstorage-cache",
       "toSide": "top",
       "label": "offline cache",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "registry-to-db-adapter",
@@ -330,9 +308,7 @@
       "toNode": "db-storage-adapter",
       "toSide": "top",
       "label": "injects",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "webstore-to-db-adapter",
@@ -341,9 +317,7 @@
       "toNode": "db-storage-adapter",
       "toSide": "top",
       "label": "injects",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "registry-to-node-adapter",
@@ -352,9 +326,7 @@
       "toNode": "node-fs-adapter",
       "toSide": "top",
       "label": "offline fallback",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "webstore-to-localstorage",
@@ -363,9 +335,7 @@
       "toNode": "localstorage-fs-adapter",
       "toSide": "top",
       "label": "offline fallback",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "user-to-db",
@@ -374,9 +344,7 @@
       "toNode": "database",
       "toSide": "top",
       "label": "owns data",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "electron-to-user",
@@ -385,9 +353,7 @@
       "toNode": "user-account",
       "toSide": "top",
       "label": "authenticates",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "webade-to-user",
@@ -396,14 +362,10 @@
       "toNode": "user-account",
       "toSide": "top",
       "label": "authenticates",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     }
   ],
-  "pv": {
-    "name": "Unified Database Architecture (Future)",
-    "version": "1.0.0",
-    "description": "Shows the future state where both electron-app and web-ade can sync workspaces through a shared DatabaseStorageAdapter, with local storage as offline fallback. User authentication enables cross-device sync."
-  }
+  "name": "Unified Database Architecture (Future)",
+  "markdown": ".principal-views/unified-database-architecture.md",
+  "description": "Shows the future state where both electron-app and web-ade can sync workspaces through a shared DatabaseStorageAdapter, with local storage as offline fallback. User authentication enables cross-device sync."
 }

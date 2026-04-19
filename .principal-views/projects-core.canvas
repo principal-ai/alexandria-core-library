@@ -13,7 +13,7 @@
         "nodeType": "api",
         "shape": "rectangle",
         "icon": "Box",
-        "sources": [
+        "references": [
           "src/projects-core/AlexandriaOutpostManager.ts"
         ]
       }
@@ -31,7 +31,7 @@
         "nodeType": "store",
         "shape": "cylinder",
         "icon": "Database",
-        "sources": [
+        "references": [
           "src/projects-core/ProjectRegistryStore.ts"
         ]
       }
@@ -49,7 +49,7 @@
         "nodeType": "store",
         "shape": "cylinder",
         "icon": "Database",
-        "sources": [
+        "references": [
           "src/projects-core/WorkspaceManager.ts"
         ]
       }
@@ -67,7 +67,7 @@
         "nodeType": "api",
         "shape": "rectangle",
         "icon": "Box",
-        "sources": [
+        "references": [
           "src/MemoryPalace.ts"
         ]
       }
@@ -85,7 +85,7 @@
         "nodeType": "config",
         "shape": "rectangle",
         "icon": "Settings",
-        "sources": [
+        "references": [
           "src/config/loader.ts"
         ]
       }
@@ -103,8 +103,8 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
-          "src/pure-core/abstractions/FileSystemAdapter.ts"
+        "references": [
+          "src/pure-core/abstractions/filesystem.ts"
         ]
       }
     },
@@ -121,8 +121,8 @@
         "nodeType": "adapter-interface",
         "shape": "hexagon",
         "icon": "Plug",
-        "sources": [
-          "src/pure-core/abstractions/GlobAdapter.ts"
+        "references": [
+          "src/pure-core/abstractions/glob.ts"
         ]
       }
     },
@@ -139,7 +139,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/pure-core/types/repository.ts"
         ]
       }
@@ -157,7 +157,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/projects-core/types.ts"
         ]
       }
@@ -175,7 +175,7 @@
         "nodeType": "type",
         "shape": "rectangle",
         "icon": "FileType",
-        "sources": [
+        "references": [
           "src/projects-core/types.ts"
         ]
       }
@@ -231,9 +231,7 @@
       "toNode": "project-registry",
       "toSide": "top",
       "label": "manages",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "outpost-to-workspace",
@@ -242,9 +240,7 @@
       "toNode": "workspace-manager",
       "toSide": "top",
       "label": "exposes",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "outpost-to-palace",
@@ -253,9 +249,7 @@
       "toNode": "memory-palace",
       "toSide": "top",
       "label": "creates",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "outpost-to-config",
@@ -264,9 +258,7 @@
       "toNode": "config-loader",
       "toSide": "top",
       "label": "loads config",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "outpost-to-fs",
@@ -274,9 +266,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "outpost-to-glob",
@@ -285,9 +275,7 @@
       "toNode": "glob-adapter",
       "toSide": "top",
       "label": "scan docs",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "registry-to-fs",
@@ -295,9 +283,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "workspace-to-fs",
@@ -305,9 +291,7 @@
       "fromSide": "bottom",
       "toNode": "fs-adapter",
       "toSide": "top",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "workspace-to-registry",
@@ -316,9 +300,7 @@
       "toNode": "project-registry",
       "toSide": "top",
       "label": "queries",
-      "pv": {
-        "edgeType": "uses"
-      }
+      "edgeType": "uses"
     },
     {
       "id": "registry-stores-entry",
@@ -326,9 +308,7 @@
       "fromSide": "bottom",
       "toNode": "alexandria-entry",
       "toSide": "top",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     },
     {
       "id": "workspace-stores-ws",
@@ -336,9 +316,7 @@
       "fromSide": "bottom",
       "toNode": "workspace-type",
       "toSide": "top",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     },
     {
       "id": "workspace-stores-membership",
@@ -346,9 +324,7 @@
       "fromSide": "bottom",
       "toNode": "membership-type",
       "toSide": "top",
-      "pv": {
-        "edgeType": "stores"
-      }
+      "edgeType": "stores"
     },
     {
       "id": "fs-to-projects",
@@ -357,9 +333,7 @@
       "toNode": "projects-json",
       "toSide": "top",
       "label": "persists",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "fs-to-workspaces",
@@ -368,9 +342,7 @@
       "toNode": "workspaces-json",
       "toSide": "top",
       "label": "persists",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     },
     {
       "id": "fs-to-memberships",
@@ -379,14 +351,10 @@
       "toNode": "memberships-json",
       "toSide": "top",
       "label": "persists",
-      "pv": {
-        "edgeType": "data-flow"
-      }
+      "edgeType": "data-flow"
     }
   ],
-  "pv": {
-    "name": "Projects Core Architecture",
-    "version": "1.0.0",
-    "description": "Shows the AlexandriaOutpostManager and ProjectRegistryStore components for managing registered repositories and workspaces"
-  }
+  "name": "Projects Core Architecture",
+  "markdown": ".principal-views/projects-core.md",
+  "description": "Shows the AlexandriaOutpostManager and ProjectRegistryStore components for managing registered repositories and workspaces"
 }
