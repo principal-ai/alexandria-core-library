@@ -23,6 +23,28 @@ export class NodeGlobAdapter implements GlobAdapter {
       ...(options?.onlyFiles !== undefined && { onlyFiles: options.onlyFiles }),
     };
 
+    // Enhanced gitignore handling - add common exclusions when gitignore is enabled
+    // This ensures we exclude build/dependency directories even when no .gitignore exists
+    if (options?.gitignore) {
+      const defaultIgnore = [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/.git/**",
+        "**/coverage/**",
+      ];
+
+      // Combine with existing ignore patterns
+      globbyOptions.ignore = globbyOptions.ignore
+        ? [
+            ...(Array.isArray(globbyOptions.ignore)
+              ? globbyOptions.ignore
+              : [globbyOptions.ignore]),
+            ...defaultIgnore,
+          ]
+        : defaultIgnore;
+    }
+
     // Ensure we get strings, not Entry objects
     return globby(patterns, globbyOptions) as Promise<string[]>;
   }
@@ -35,6 +57,28 @@ export class NodeGlobAdapter implements GlobAdapter {
       ...(options?.dot !== undefined && { dot: options.dot }),
       ...(options?.onlyFiles !== undefined && { onlyFiles: options.onlyFiles }),
     };
+
+    // Enhanced gitignore handling - add common exclusions when gitignore is enabled
+    // This ensures we exclude build/dependency directories even when no .gitignore exists
+    if (options?.gitignore) {
+      const defaultIgnore = [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/.git/**",
+        "**/coverage/**",
+      ];
+
+      // Combine with existing ignore patterns
+      globbyOptions.ignore = globbyOptions.ignore
+        ? [
+            ...(Array.isArray(globbyOptions.ignore)
+              ? globbyOptions.ignore
+              : [globbyOptions.ignore]),
+            ...defaultIgnore,
+          ]
+        : defaultIgnore;
+    }
 
     // Ensure we get strings, not Entry objects
     return globbySync(patterns, globbyOptions) as string[];

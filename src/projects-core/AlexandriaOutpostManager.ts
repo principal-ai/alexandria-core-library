@@ -129,9 +129,50 @@ export class AlexandriaOutpostManager {
   }
 
   /**
+   * Remove a repository from the registry
+   * @param name - Repository name to remove
+   * @returns true if repository was removed, false if not found
+   */
+  removeRepository(name: string): boolean {
+    return this.projectRegistry.removeProject(name);
+  }
+
+  /**
+   * Clear all Alexandria data (repositories and workspaces) for clean uninstall
+   * WARNING: This will permanently delete all registered repositories and workspaces
+   * This does NOT delete local repository files, only the registry data
+   * @returns Object with counts of removed items
+   */
+  async clearAllData(): Promise<{
+    repositoriesRemoved: number;
+    workspacesRemoved: number;
+  }> {
+    // Get counts before clearing
+    const repositories = this.projectRegistry.listProjects();
+    const workspaces = await this.workspaces.getWorkspaces();
+
+    // Remove all repositories
+    const repositoriesRemoved = repositories.length;
+    for (const repo of repositories) {
+      this.projectRegistry.removeProject(repo.name);
+    }
+
+    // Delete all workspaces
+    const workspacesRemoved = workspaces.length;
+    for (const workspace of workspaces) {
+      await this.workspaces.deleteWorkspace(workspace.id);
+    }
+
+    return {
+      repositoriesRemoved,
+      workspacesRemoved,
+    };
+  }
+
+  /**
    * Get all overview file paths for views in a given repository entry
    * @param entry - The AlexandriaEntry for the local repository
-   * @returns Array of overview file paths relative to repository root
+   * @returns Array of overview file paths relative to repository root (deduplicated)
    */
   async getAlexandriaEntryDocs(entry: AlexandriaEntry): Promise<string[]> {
     try {
@@ -140,9 +181,12 @@ export class AlexandriaOutpostManager {
 
       // Get all views and extract their overview paths
       const views = memoryPalace.listViews();
-      return views
+      const paths = views
         .map((v) => v.overviewPath)
         .filter((path) => path && path.length > 0);
+
+      // Deduplicate paths (same overview can be used by multiple views)
+      return Array.from(new Set(paths));
     } catch (error) {
       console.debug(`Could not load views for ${entry.name}:`, error);
       return [];
