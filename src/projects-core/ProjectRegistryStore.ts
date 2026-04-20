@@ -77,18 +77,15 @@ export class ProjectRegistryStore {
 
   /**
    * Register a new project
+   * Auto-appends "clone #N" to the name if it already exists
+   * @returns The registered AlexandriaEntry with the final (possibly modified) name
    */
   public registerProject(
     name: string,
     projectPath: ValidatedRepositoryPath,
     remoteUrl?: string,
-  ): void {
+  ): AlexandriaEntry {
     const registry = this.loadRegistry();
-
-    // Check if name already exists
-    if (registry.projects.some((p) => p.name === name)) {
-      throw new Error(`Project with name '${name}' already exists`);
-    }
 
     // Check if path already registered
     const existingProject = registry.projects.find(
@@ -98,8 +95,20 @@ export class ProjectRegistryStore {
       throw new Error(`Path already registered as '${existingProject.name}'`);
     }
 
+    // If name already exists, auto-append clone number
+    let finalName = name;
+    if (registry.projects.some((p) => p.name === name)) {
+      let cloneNum = 2;
+      while (
+        registry.projects.some((p) => p.name === `${name} clone #${cloneNum}`)
+      ) {
+        cloneNum++;
+      }
+      finalName = `${name} clone #${cloneNum}`;
+    }
+
     const entry: AlexandriaEntry = {
-      name,
+      name: finalName,
       path: projectPath,
       remoteUrl,
       registeredAt: new Date().toISOString(),
@@ -112,6 +121,8 @@ export class ProjectRegistryStore {
     registry.projects.push(entry);
 
     this.saveRegistry(registry);
+
+    return entry;
   }
 
   /**
@@ -154,17 +165,20 @@ export class ProjectRegistryStore {
       name = projectPath.split("/").pop() || "unknown";
     }
 
-    this.registerProject(name, projectPath, remoteUrl);
+    const entry = this.registerProject(name, projectPath, remoteUrl);
 
     // Update with PURL if we generated one
     if (purl) {
-      this.updateProject(name, { purl });
+      this.updateProject(entry.name, { purl });
+
+      // Re-fetch to get the updated entry with PURL
+      const updatedEntry = this.getProject(entry.name);
+      if (!updatedEntry) {
+        throw new Error(`Failed to register project at ${projectPath}`);
+      }
+      return updatedEntry;
     }
 
-    const entry = this.getProject(name);
-    if (!entry) {
-      throw new Error(`Failed to register project at ${projectPath}`);
-    }
     return entry;
   }
 

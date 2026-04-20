@@ -47,18 +47,31 @@ describe("ProjectRegistryStore", () => {
       expect(projects[0].registeredAt).toBeDefined();
     });
 
-    it("should throw error for duplicate project name", () => {
+    it("should auto-append clone number for duplicate project name", () => {
       const projectPath1 =
         "/home/user/projects/repo1" as ValidatedRepositoryPath;
       const projectPath2 =
         "/home/user/projects/repo2" as ValidatedRepositoryPath;
+      const projectPath3 =
+        "/home/user/projects/repo3" as ValidatedRepositoryPath;
       const projectName = "my-project";
 
-      store.registerProject(projectName, projectPath1);
+      const entry1 = store.registerProject(projectName, projectPath1);
+      expect(entry1.name).toBe("my-project");
 
-      expect(() => {
-        store.registerProject(projectName, projectPath2);
-      }).toThrow(`Project with name '${projectName}' already exists`);
+      const entry2 = store.registerProject(projectName, projectPath2);
+      expect(entry2.name).toBe("my-project clone #2");
+
+      const entry3 = store.registerProject(projectName, projectPath3);
+      expect(entry3.name).toBe("my-project clone #3");
+
+      const allProjects = store.listProjects();
+      expect(allProjects).toHaveLength(3);
+      expect(allProjects.map((p) => p.name)).toEqual([
+        "my-project",
+        "my-project clone #2",
+        "my-project clone #3",
+      ]);
     });
 
     it("should throw error for duplicate project path", () => {
