@@ -62,27 +62,6 @@ export type {
 export type { DrawingMetadata } from "./pure-core/stores/DrawingStore.js";
 export type { ExcalidrawData } from "./pure-core/types/drawing.js";
 
-// Storage types
-export type {
-  ReadingRecordAdapter,
-  StorageCapabilities,
-  StorageConfig,
-  StorageStats,
-  StorageResult,
-  StorageEvents,
-  VisitQuery,
-  BookmarkQuery,
-} from "./storage/types.js";
-
-// Alexandria bookmark and state types
-export type {
-  AlexandriaVisit,
-  AlexandriaBookmark,
-  AlexandriaLibraryCard,
-  AlexandriaDocumentVersion,
-  AlexandriaBookmarkedDocument,
-} from "./types/alexandria-state.js";
-
 // Rule types
 export type {
   LibraryRule,

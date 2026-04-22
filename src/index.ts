@@ -110,15 +110,6 @@ export { DrawingStore } from "./pure-core/stores/DrawingStore";
 export type { DrawingMetadata } from "./pure-core/stores/DrawingStore";
 export type { ExcalidrawData } from "./pure-core/types/drawing";
 
-// Tag system exports
-export { TagStore } from "./pure-core/stores/TagStore";
-export type {
-  DocumentTags,
-  TagDefinition,
-  TagAssignmentResult,
-  TagValidationResult,
-} from "./pure-core/types/tags";
-
 // Utilities and rules
 export { LibraryRulesEngine } from "./rules/index";
 export { OverviewPathAutoFix } from "./pure-core/autofixes/OverviewPathAutoFix";
@@ -191,33 +182,4 @@ export { CONFIG_FILENAME } from "./config/schema";
 // Project utilities
 export { hasAlexandriaWorkflow } from "./projects-core/workflow-utils";
 
-// ============================================================================
-// Storage and Bookmarking System
-// ============================================================================
-
-// Storage manager and adapters
-export { ReadingRecordManager } from "./storage/ReadingRecordManager";
-export { MemoryReadingRecordAdapter } from "./storage/adapters/memory";
-export { LocalStorageReadingRecordAdapter } from "./storage/adapters/localStorage";
-
-// Storage types
-export type {
-  ReadingRecordAdapter,
-  StorageCapabilities,
-  StorageConfig,
-  StorageStats,
-  StorageResult,
-  StorageEvents,
-  VisitQuery,
-  BookmarkQuery,
-} from "./storage/types";
-
-// Alexandria bookmark and state types
-export type {
-  AlexandriaVisit,
-  AlexandriaBookmark,
-  AlexandriaLibraryCard,
-  AlexandriaDocumentVersion,
-  AlexandriaBookmarkedDocument,
-} from "./types/alexandria-state";
 

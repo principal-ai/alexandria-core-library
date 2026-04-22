@@ -1,0 +1,40 @@
+{
+  "id": "unused-api-audit",
+  "version": "1.0.0",
+  "name": "Unused API Audit",
+  "description": "Tracks exported API surface that is not used by the electron-app consumer, with removal candidates and follow-up notes",
+  "rows": 1,
+  "cols": 2,
+  "referenceGroups": {
+    "0,0": {
+      "label": "Already Removed",
+      "coordinates": [0, 0],
+      "files": []
+    },
+    "0,1": {
+      "label": "Candidates for Removal",
+      "coordinates": [0, 1],
+      "files": [
+        "src/projects-core/ProjectRegistryStore.ts",
+        "src/projects-core/WorkspaceManager.ts",
+        "src/pure-core/autofixes/OverviewPathAutoFix.ts",
+        "src/rules/",
+        "src/config/"
+      ]
+    }
+  },
+  "overviewPath": "docs/unused-api-audit.md",
+  "category": "planning",
+  "displayOrder": 0,
+  "timestamp": "2026-04-22T00:00:00.000Z",
+  "metadata": {
+    "generationType": "user",
+    "ui": {
+      "enabled": true,
+      "rows": 1,
+      "cols": 2,
+      "showCellLabels": true,
+      "cellLabelPosition": "top"
+    }
+  }
+}
