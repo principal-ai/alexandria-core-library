@@ -183,10 +183,10 @@
     {
       "id": "projects-json",
       "type": "text",
-      "x": 502,
-      "y": 864,
-      "width": 141,
-      "height": 60,
+      "x": 498,
+      "y": 860,
+      "width": 190,
+      "height": 85,
       "text": "~/.alexandria/projects.json",
       "pv": {
         "nodeType": "external",
@@ -199,8 +199,8 @@
       "type": "text",
       "x": 331,
       "y": 867,
-      "width": 137,
-      "height": 60,
+      "width": 148,
+      "height": 81,
       "text": "~/.alexandria/workspaces.json",
       "pv": {
         "nodeType": "external",
@@ -211,10 +211,10 @@
     {
       "id": "memberships-json",
       "type": "text",
-      "x": 146,
-      "y": 866,
-      "width": 143,
-      "height": 60,
+      "x": 88,
+      "y": 863,
+      "width": 187,
+      "height": 85,
       "text": "~/.alexandria/workspace-memberships.json",
       "pv": {
         "nodeType": "external",
