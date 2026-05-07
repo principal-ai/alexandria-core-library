@@ -3,6 +3,7 @@
  */
 
 import { AlexandriaEntry } from "../pure-core/types/repository";
+import type { Purl } from "../pure-core/utils/purl";
 
 export interface ProjectRegistryData {
   version: string;
@@ -44,17 +45,15 @@ export interface Workspace {
  * Maps repositories to workspaces (many-to-many)
  * Stored in Alexandria registry as separate mapping table
  *
- * IMPORTANT: Uses repository identity (PURL or github.id) not entry names,
- * so all local clones of a repository belong to the same workspaces
+ * Uses PURL as canonical repository identity, so all local clones of a
+ * repository belong to the same workspaces.
  */
 export interface WorkspaceMembership {
   /**
-   * Repository identity (canonical identifier)
-   * - Preferred: PURL format (pkg:github/owner/repo)
-   * - Legacy: github.id format (owner/repo) - auto-converted to PURL
-   * - Fallback: entry.name for local repos without remote
+   * Repository identity — PURL format only (e.g. `pkg:github/owner/repo`,
+   * or `pkg:generic/local/...` for local-only repos).
    */
-  repositoryId: string;
+  repositoryId: Purl;
   /** Workspace identifier */
   workspaceId: string;
   /** Unix timestamp when added */

@@ -12,7 +12,7 @@
 import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
 import { AlexandriaEntry } from "../pure-core/types/repository";
 import { idGenerator } from "../pure-core/utils/idGenerator";
-import { createLocalRepoPurl } from "../pure-core/utils/purl";
+import { createLocalRepoPurl, type Purl } from "../pure-core/utils/purl";
 import { ProjectRegistryStore } from "./ProjectRegistryStore";
 import {
   Workspace,
@@ -116,30 +116,24 @@ export class WorkspaceManager {
   // ===== Repository ID Resolution =====
 
   /**
-   * Extract repository ID from an entry or string
-   * Uses PURL as canonical identifier
+   * Extract the PURL identity for a repository.
    *
    * @internal
    */
-  private getRepositoryId(repository: AlexandriaEntry | string): string {
+  private getRepositoryId(repository: AlexandriaEntry | Purl): Purl {
     if (typeof repository === "string") {
-      // Direct string ID (should be PURL format)
       return repository;
     }
 
-    // Use PURL if available
     if (repository.purl) {
-      return repository.purl as string;
+      return repository.purl;
     }
 
-    // For repositories without PURL, generate one
-    // This ensures all workspace memberships use PURL format
     if (repository.github?.purl) {
-      return repository.github.purl as string;
+      return repository.github.purl;
     }
 
-    // Generate path-based PURL for local-only repos to ensure uniqueness
-    return createLocalRepoPurl(repository.path) as string;
+    return createLocalRepoPurl(repository.path);
   }
 
   // ===== Workspace CRUD =====
@@ -246,15 +240,14 @@ export class WorkspaceManager {
   // ===== Membership Management =====
 
   /**
-   * Add a repository to a workspace
-   * Accepts either an entry or a repository ID
+   * Add a repository to a workspace.
    *
-   * @param repository - AlexandriaEntry or repository ID string ("owner/name")
+   * @param repository - AlexandriaEntry or PURL identity
    * @param workspaceId - Workspace identifier
    * @param metadata - Optional workspace-specific metadata
    */
   async addRepositoryToWorkspace(
-    repository: AlexandriaEntry | string,
+    repository: AlexandriaEntry | Purl,
     workspaceId: string,
     metadata?: Record<string, unknown>,
   ): Promise<void> {
@@ -295,11 +288,11 @@ export class WorkspaceManager {
   /**
    * Remove a repository from a workspace
    *
-   * @param repository - AlexandriaEntry or repository ID string
+   * @param repository - AlexandriaEntry or PURL identity
    * @param workspaceId - Workspace identifier
    */
   async removeRepositoryFromWorkspace(
-    repository: AlexandriaEntry | string,
+    repository: AlexandriaEntry | Purl,
     workspaceId: string,
   ): Promise<void> {
     const repositoryId = this.getRepositoryId(repository);
@@ -326,10 +319,10 @@ export class WorkspaceManager {
   /**
    * Get all workspaces that contain a repository
    *
-   * @param repository - AlexandriaEntry or repository ID string
+   * @param repository - AlexandriaEntry or PURL identity
    */
   async getRepositoryWorkspaces(
-    repository: AlexandriaEntry | string,
+    repository: AlexandriaEntry | Purl,
   ): Promise<Workspace[]> {
     const repositoryId = this.getRepositoryId(repository);
     const membershipsData = this.loadMemberships();
@@ -372,11 +365,11 @@ export class WorkspaceManager {
   /**
    * Check if a repository is in a workspace
    *
-   * @param repository - AlexandriaEntry or repository ID string
+   * @param repository - AlexandriaEntry or PURL identity
    * @param workspaceId - Workspace identifier
    */
   async isRepositoryInWorkspace(
-    repository: AlexandriaEntry | string,
+    repository: AlexandriaEntry | Purl,
     workspaceId: string,
   ): Promise<boolean> {
     const repositoryId = this.getRepositoryId(repository);
@@ -417,7 +410,7 @@ export class WorkspaceManager {
    * Add multiple repositories to a workspace
    */
   async addRepositoriesToWorkspace(
-    repositories: (AlexandriaEntry | string)[],
+    repositories: (AlexandriaEntry | Purl)[],
     workspaceId: string,
   ): Promise<void> {
     for (const repository of repositories) {
@@ -429,7 +422,7 @@ export class WorkspaceManager {
    * Remove multiple repositories from a workspace
    */
   async removeRepositoriesFromWorkspace(
-    repositories: (AlexandriaEntry | string)[],
+    repositories: (AlexandriaEntry | Purl)[],
     workspaceId: string,
   ): Promise<void> {
     const repositoryIds = repositories.map((r) => this.getRepositoryId(r));
@@ -489,7 +482,7 @@ export class WorkspaceManager {
    * @param repositoryId - Repository ID to clean up
    * @internal
    */
-  async cleanupRepositoryMemberships(repositoryId: string): Promise<void> {
+  async cleanupRepositoryMemberships(repositoryId: Purl): Promise<void> {
     const data = this.loadMemberships();
     const originalLength = data.memberships.length;
 

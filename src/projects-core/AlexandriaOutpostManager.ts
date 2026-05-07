@@ -10,7 +10,7 @@ import type { CodebaseViewSummary } from "../pure-core/types/summary.js";
 import { extractCodebaseViewSummary } from "../pure-core/types/summary.js";
 import type { ValidatedRepositoryPath } from "../pure-core/types/index.js";
 import { ConfigLoader } from "../config/loader.js";
-import type { Purl } from "../pure-core/utils/purl.js";
+import { extractPurlFromRemoteUrl, type Purl } from "../pure-core/utils/purl.js";
 
 import { FileSystemAdapter } from "../pure-core/abstractions/filesystem.js";
 import { GlobAdapter } from "../pure-core/abstractions/glob.js";
@@ -57,13 +57,6 @@ export class AlexandriaOutpostManager {
     ) as AlexandriaRepository[];
   }
 
-  async getRepository(name: string): Promise<AlexandriaRepository | null> {
-    const entry = this.projectRegistry.getProject(name);
-    if (!entry) return null;
-
-    return this.transformToRepository(entry);
-  }
-
   /**
    * Find all local clones of a GitHub repository
    * @param githubId - GitHub ID in format "owner/repo"
@@ -78,24 +71,28 @@ export class AlexandriaOutpostManager {
 
   /**
    * Find all local clones/worktrees of a repository by PURL
-   * @param purl - Package URL identifier
-   * @returns Array of AlexandriaRepository instances (all local clones/worktrees)
    */
   async findClonesByPurl(purl: Purl): Promise<AlexandriaRepository[]> {
     const entries = this.projectRegistry.findClonesByPurl(purl);
     return Promise.all(entries.map((e) => this.transformToRepository(e)));
   }
 
+  /**
+   * Find all local clones by remote URL — parses to PURL and delegates to findClonesByPurl.
+   */
+  async findByRemoteUrl(remoteUrl: string): Promise<AlexandriaRepository[]> {
+    const purl = extractPurlFromRemoteUrl(remoteUrl);
+    if (!purl) return [];
+    return this.findClonesByPurl(purl);
+  }
+
   async registerRepository(
     path: string,
     remoteUrl?: string,
-    customName?: string,
   ): Promise<AlexandriaRepository> {
-    // Use smart registration that auto-detects GitHub owner/name format
-    const entry = this.projectRegistry.registerWithGitHubName(
+    const entry = this.projectRegistry.registerProject(
       path as ValidatedRepositoryPath,
       remoteUrl,
-      customName,
     );
 
     return this.transformToRepository(entry);
@@ -104,10 +101,9 @@ export class AlexandriaOutpostManager {
   async getRepositoryByPath(
     path: string,
   ): Promise<AlexandriaRepository | null> {
-    // Find repository by path
-    const entries = this.projectRegistry.listProjects();
-    const entry = entries.find((e) => e.path === path);
-
+    const entry = this.projectRegistry.getByPath(
+      path as ValidatedRepositoryPath,
+    );
     if (!entry) return null;
     return this.transformToRepository(entry);
   }
@@ -129,12 +125,11 @@ export class AlexandriaOutpostManager {
   }
 
   /**
-   * Remove a repository from the registry
-   * @param name - Repository name to remove
-   * @returns true if repository was removed, false if not found
+   * Remove a repository from the registry by its path.
+   * @returns true if a repository was removed, false if no repository at that path
    */
-  removeRepository(name: string): boolean {
-    return this.projectRegistry.removeProject(name);
+  removeRepository(path: string): boolean {
+    return this.projectRegistry.removeByPath(path as ValidatedRepositoryPath);
   }
 
   /**
@@ -154,7 +149,7 @@ export class AlexandriaOutpostManager {
     // Remove all repositories
     const repositoriesRemoved = repositories.length;
     for (const repo of repositories) {
-      this.projectRegistry.removeProject(repo.name);
+      this.projectRegistry.removeByPath(repo.path);
     }
 
     // Delete all workspaces
@@ -305,84 +300,83 @@ export class AlexandriaOutpostManager {
   }
 
   /**
-   * Update an existing repository entry's metadata
-   * @param name - The repository name
-   * @param updates - Partial updates to apply to the repository entry
-   * @returns The updated AlexandriaEntry
-   * @throws Error if repository not found
+   * Update an existing repository entry's metadata, keyed on path.
    */
   async updateRepository(
-    name: string,
-    updates: Partial<Omit<AlexandriaEntry, "name" | "registeredAt">>,
+    path: string,
+    updates: Partial<Omit<AlexandriaEntry, "path" | "registeredAt">>,
   ): Promise<AlexandriaEntry> {
-    const entry = this.projectRegistry.getProject(name);
+    const entry = this.projectRegistry.getByPath(
+      path as ValidatedRepositoryPath,
+    );
     if (!entry) {
-      throw new Error(`Repository '${name}' not found`);
+      throw new Error(`No repository registered at path '${path}'`);
     }
 
-    // Update the project in registry
-    this.projectRegistry.updateProject(name, updates);
+    this.projectRegistry.updateByPath(
+      path as ValidatedRepositoryPath,
+      updates,
+    );
 
-    // Return the updated entry
-    const updatedEntry = this.projectRegistry.getProject(name);
+    const updatedEntry = this.projectRegistry.getByPath(
+      path as ValidatedRepositoryPath,
+    );
     if (!updatedEntry) {
-      throw new Error(`Failed to retrieve updated repository '${name}'`);
+      throw new Error(
+        `Failed to retrieve updated repository at path '${path}'`,
+      );
     }
 
     return updatedEntry;
   }
 
   /**
-   * Update GitHub metadata for a repository
-   * @param name - The repository name
-   * @param github - GitHub metadata to update
-   * @returns The updated AlexandriaEntry with GitHub metadata
-   * @throws Error if repository not found
+   * Update GitHub metadata for the repository at `path`.
    */
   async updateGitHubMetadata(
-    name: string,
+    path: string,
     github: Partial<GithubRepository>,
   ): Promise<AlexandriaEntry> {
-    const entry = this.projectRegistry.getProject(name);
+    const entry = this.projectRegistry.getByPath(
+      path as ValidatedRepositoryPath,
+    );
     if (!entry) {
-      throw new Error(`Repository '${name}' not found`);
+      throw new Error(`No repository registered at path '${path}'`);
     }
 
-    // Merge with existing GitHub data if present
     const updatedGithub: GithubRepository = {
       ...(entry.github || {
-        id: `${github.owner || "unknown"}/${github.name || name}`,
+        id: `${github.owner || "unknown"}/${github.name || entry.name}`,
         owner: github.owner || "unknown",
-        name: github.name || name,
+        name: github.name || entry.name,
         stars: 0,
         lastUpdated: new Date().toISOString(),
       }),
       ...github,
-      // Always update the lastUpdated timestamp
       lastUpdated: new Date().toISOString(),
     };
 
-    // Update the repository with new GitHub data and lastChecked timestamp
-    return this.updateRepository(name, {
+    return this.updateRepository(path, {
       github: updatedGithub,
       lastChecked: new Date().toISOString(),
     });
   }
 
   /**
-   * Refresh GitHub metadata by fetching from GitHub API
-   * @param name - The repository name
-   * @returns The updated AlexandriaEntry with fresh GitHub metadata
-   * @throws Error if repository not found or has no remote URL
+   * Refresh GitHub metadata by fetching from GitHub API, keyed on path.
    */
-  async refreshGitHubMetadata(name: string): Promise<AlexandriaEntry> {
-    const entry = this.projectRegistry.getProject(name);
+  async refreshGitHubMetadata(path: string): Promise<AlexandriaEntry> {
+    const entry = this.projectRegistry.getByPath(
+      path as ValidatedRepositoryPath,
+    );
     if (!entry) {
-      throw new Error(`Repository '${name}' not found`);
+      throw new Error(`No repository registered at path '${path}'`);
     }
 
     if (!entry.remoteUrl) {
-      throw new Error(`Repository '${name}' has no remote URL configured`);
+      throw new Error(
+        `Repository at '${path}' has no remote URL configured`,
+      );
     }
 
     // Extract owner and repo name from remote URL
@@ -435,7 +429,7 @@ export class AlexandriaOutpostManager {
       };
 
       // Update the repository with fresh GitHub data
-      return this.updateGitHubMetadata(name, githubMetadata);
+      return this.updateGitHubMetadata(path, githubMetadata);
     } catch {
       // If GitHub API fails, at least update with basic info from remote URL
       const basicGithub: Partial<GithubRepository> = {
@@ -444,42 +438,37 @@ export class AlexandriaOutpostManager {
         name: repoName,
       };
 
-      return this.updateGitHubMetadata(name, basicGithub);
+      return this.updateGitHubMetadata(path, basicGithub);
     }
   }
 
   /**
-   * Refresh view information by rescanning the .alexandria/views directory
-   * @param name - The repository name
-   * @returns The updated AlexandriaEntry with fresh view data
-   * @throws Error if repository not found
+   * Refresh view information by rescanning the .alexandria/views directory, keyed on path.
    */
-  async refreshViews(name: string): Promise<AlexandriaEntry> {
-    const entry = this.projectRegistry.getProject(name);
+  async refreshViews(path: string): Promise<AlexandriaEntry> {
+    const entry = this.projectRegistry.getByPath(
+      path as ValidatedRepositoryPath,
+    );
     if (!entry) {
-      throw new Error(`Repository '${name}' not found`);
+      throw new Error(`No repository registered at path '${path}'`);
     }
 
     try {
-      // Create MemoryPalace instance to scan views
       const memoryPalace = this.createMemoryPalace(entry.path);
 
-      // Get fresh view data
       const views = memoryPalace.listViews();
       const viewSummaries = views.map((v) => extractCodebaseViewSummary(v));
 
-      // Update the repository with fresh view data
-      return this.updateRepository(name, {
+      return this.updateRepository(path, {
         hasViews: viewSummaries.length > 0,
         viewCount: viewSummaries.length,
         views: viewSummaries,
         lastChecked: new Date().toISOString(),
       });
     } catch (error) {
-      console.debug(`Failed to refresh views for ${name}:`, error);
+      console.debug(`Failed to refresh views for ${path}:`, error);
 
-      // Even if view scanning fails, update the lastChecked timestamp
-      return this.updateRepository(name, {
+      return this.updateRepository(path, {
         hasViews: false,
         viewCount: 0,
         views: [],
@@ -506,29 +495,25 @@ export class AlexandriaOutpostManager {
       try {
         let updatedEntry = entry;
 
-        // Refresh views if requested
         if (views) {
-          updatedEntry = await this.refreshViews(entry.name);
+          updatedEntry = await this.refreshViews(entry.path);
         }
 
-        // Refresh GitHub metadata if requested and remote URL exists
         if (github && entry.remoteUrl) {
           try {
-            updatedEntry = await this.refreshGitHubMetadata(entry.name);
+            updatedEntry = await this.refreshGitHubMetadata(entry.path);
           } catch (error) {
             console.debug(
-              `Failed to refresh GitHub metadata for ${entry.name}:`,
+              `Failed to refresh GitHub metadata for ${entry.path}:`,
               error,
             );
           }
         }
 
-        // Transform to AlexandriaRepository format
         const repository = await this.transformToRepository(updatedEntry);
         results.push(repository);
       } catch (error) {
-        console.error(`Failed to refresh repository ${entry.name}:`, error);
-        // Include the original entry even if refresh failed
+        console.error(`Failed to refresh repository ${entry.path}:`, error);
         const repository = await this.transformToRepository(entry);
         results.push(repository);
       }

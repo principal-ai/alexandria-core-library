@@ -1,7 +1,9 @@
 /**
  * Pure ProjectRegistryStore - Platform-agnostic project registry management
  *
- * Manages a registry of local project paths with their git remotes
+ * Identity model: `purl` is identity, `path` is a unique storage key,
+ * `name` is a display label. Two clones of the same repo at different paths
+ * are stored as sibling rows sharing a `purl` — name is never load-bearing.
  */
 
 import { FileSystemAdapter } from "../pure-core/abstractions/filesystem";
@@ -23,9 +25,6 @@ export class ProjectRegistryStore {
     this.registryPath = this.fs.join(homeDir, ".alexandria", "projects.json");
   }
 
-  /**
-   * Ensure the registry directory exists
-   */
   private ensureRegistryDir(): void {
     const registryDir = this.fs.dirname(this.registryPath);
     if (!this.fs.exists(registryDir)) {
@@ -33,9 +32,6 @@ export class ProjectRegistryStore {
     }
   }
 
-  /**
-   * Load the project registry
-   */
   private loadRegistry(): ProjectRegistryData {
     this.ensureRegistryDir();
 
@@ -57,136 +53,74 @@ export class ProjectRegistryStore {
     }
   }
 
-  /**
-   * Save the project registry
-   */
   private saveRegistry(registry: ProjectRegistryData): void {
     this.ensureRegistryDir();
     this.fs.writeFile(this.registryPath, JSON.stringify(registry, null, 2));
   }
 
-  /**
-   * Extract owner/name from GitHub URL
-   * @returns GitHub ID in format "owner/repo" or null if not a GitHub URL
-   */
   private extractGitHubId(remoteUrl: string): string | null {
     const match = remoteUrl.match(/github\.com[:/]([^/]+)\/([^/.]+)(\.git)?$/);
     if (!match) return null;
     return `${match[1]}/${match[2]}`;
   }
 
+  private deriveDisplayName(
+    projectPath: ValidatedRepositoryPath,
+    remoteUrl?: string,
+  ): string {
+    if (remoteUrl) {
+      const githubId = this.extractGitHubId(remoteUrl);
+      if (githubId) return githubId;
+    }
+    return projectPath.split("/").pop() || "unknown";
+  }
+
+  private derivePurl(
+    projectPath: ValidatedRepositoryPath,
+    remoteUrl?: string,
+  ): Purl {
+    if (remoteUrl) {
+      const fromRemote = extractPurlFromRemoteUrl(remoteUrl);
+      if (fromRemote) return fromRemote;
+    }
+    return createLocalRepoPurl(projectPath);
+  }
+
   /**
-   * Register a new project
-   * Auto-appends "clone #N" to the name if it already exists
-   * @returns The registered AlexandriaEntry with the final (possibly modified) name
+   * Register a project. Identity is `purl`; `name` is a display label only.
+   *
+   * - Same `path` already registered → returns the existing entry idempotently.
+   * - Same `purl` at a different `path` → stored as a sibling row (no rename, no error).
    */
   public registerProject(
-    name: string,
     projectPath: ValidatedRepositoryPath,
     remoteUrl?: string,
   ): AlexandriaEntry {
     const registry = this.loadRegistry();
 
-    // Check if path already registered
-    const existingProject = registry.projects.find(
-      (p) => p.path === projectPath,
-    );
-    if (existingProject) {
-      throw new Error(`Path already registered as '${existingProject.name}'`);
-    }
-
-    // If name already exists, auto-append clone number
-    let finalName = name;
-    if (registry.projects.some((p) => p.name === name)) {
-      let cloneNum = 2;
-      while (
-        registry.projects.some((p) => p.name === `${name} clone #${cloneNum}`)
-      ) {
-        cloneNum++;
-      }
-      finalName = `${name} clone #${cloneNum}`;
-    }
+    const existing = registry.projects.find((p) => p.path === projectPath);
+    if (existing) return existing;
 
     const entry: AlexandriaEntry = {
-      name: finalName,
+      name: this.deriveDisplayName(projectPath, remoteUrl),
       path: projectPath,
       remoteUrl,
+      purl: this.derivePurl(projectPath, remoteUrl),
       registeredAt: new Date().toISOString(),
-      github: undefined, // Will be populated when fetching from GitHub
-      hasViews: false, // Will be updated when scanning for views
+      github: undefined,
+      hasViews: false,
       viewCount: 0,
       views: [],
     };
 
     registry.projects.push(entry);
-
     this.saveRegistry(registry);
 
     return entry;
   }
 
   /**
-   * Register a project with auto-detected name from GitHub URL
-   * Uses owner/name format for GitHub repos to avoid name collisions
-   * Also generates PURL for canonical identification
-   * @param projectPath - Local path to the repository
-   * @param remoteUrl - Git remote URL (optional)
-   * @param customName - Override auto-detected name (optional)
-   * @returns The registered AlexandriaEntry
-   */
-  public registerWithGitHubName(
-    projectPath: ValidatedRepositoryPath,
-    remoteUrl?: string,
-    customName?: string,
-  ): AlexandriaEntry {
-    let name: string;
-    let purl: Purl | undefined;
-
-    // Extract PURL from remote URL if available
-    if (remoteUrl) {
-      purl = extractPurlFromRemoteUrl(remoteUrl) || undefined;
-    } else {
-      // Generate path-based PURL for local repos without remote
-      purl = createLocalRepoPurl(projectPath);
-    }
-
-    if (customName) {
-      name = customName;
-    } else if (remoteUrl) {
-      const githubId = this.extractGitHubId(remoteUrl);
-      if (githubId) {
-        name = githubId; // Use "owner/repo" format
-      } else {
-        // Fallback to last component of path
-        name = projectPath.split("/").pop() || "unknown";
-      }
-    } else {
-      // No remote URL, use last component of path
-      name = projectPath.split("/").pop() || "unknown";
-    }
-
-    const entry = this.registerProject(name, projectPath, remoteUrl);
-
-    // Update with PURL if we generated one
-    if (purl) {
-      this.updateProject(entry.name, { purl });
-
-      // Re-fetch to get the updated entry with PURL
-      const updatedEntry = this.getProject(entry.name);
-      if (!updatedEntry) {
-        throw new Error(`Failed to register project at ${projectPath}`);
-      }
-      return updatedEntry;
-    }
-
-    return entry;
-  }
-
-  /**
-   * Find all projects that share the same GitHub repository
-   * (multiple local clones of the same repo)
-   * @param githubId - GitHub ID in format "owner/repo"
-   * @returns Array of AlexandriaEntry instances
+   * Find all projects sharing the same GitHub repository.
    */
   public findClonesByGitHubId(githubId: string): AlexandriaEntry[] {
     const registry = this.loadRegistry();
@@ -194,39 +128,36 @@ export class ProjectRegistryStore {
   }
 
   /**
-   * Find all projects that share the same PURL
-   * (multiple local clones or worktrees of the same repo)
-   * @param purl - Package URL identifier
-   * @returns Array of AlexandriaEntry instances
+   * Find all projects sharing the same PURL identity.
    */
   public findClonesByPurl(purl: Purl): AlexandriaEntry[] {
     const registry = this.loadRegistry();
     return registry.projects.filter((p) => p.purl === purl);
   }
 
-  /**
-   * List all registered projects
-   */
   public listProjects(): AlexandriaEntry[] {
     const registry = this.loadRegistry();
     return registry.projects;
   }
 
   /**
-   * Get a project by name
+   * Look up a project by its unique path.
    */
-  public getProject(name: string): AlexandriaEntry | undefined {
+  public getByPath(
+    path: ValidatedRepositoryPath,
+  ): AlexandriaEntry | undefined {
     const registry = this.loadRegistry();
-    return registry.projects.find((p) => p.name === name);
+    return registry.projects.find((p) => p.path === path);
   }
 
   /**
-   * Remove a project from the registry
+   * Remove the project at `path`.
+   * @returns true if a row was removed, false if no row existed at that path.
    */
-  public removeProject(name: string): boolean {
+  public removeByPath(path: ValidatedRepositoryPath): boolean {
     const registry = this.loadRegistry();
     const initialLength = registry.projects.length;
-    registry.projects = registry.projects.filter((p) => p.name !== name);
+    registry.projects = registry.projects.filter((p) => p.path !== path);
 
     if (registry.projects.length < initialLength) {
       this.saveRegistry(registry);
@@ -237,40 +168,42 @@ export class ProjectRegistryStore {
   }
 
   /**
-   * Update a project's metadata
+   * Remove every clone matching `purl`.
+   * @returns the count of rows removed.
    */
-  public updateProject(
-    name: string,
-    updates: Partial<Omit<AlexandriaEntry, "name" | "registeredAt">>,
+  public removeAllByPurl(purl: Purl): number {
+    const registry = this.loadRegistry();
+    const initialLength = registry.projects.length;
+    registry.projects = registry.projects.filter((p) => p.purl !== purl);
+
+    const removed = initialLength - registry.projects.length;
+    if (removed > 0) {
+      this.saveRegistry(registry);
+    }
+    return removed;
+  }
+
+  /**
+   * Update a project's mutable metadata. `path` and `registeredAt` are immutable;
+   * `name` is a display label and may be changed.
+   */
+  public updateByPath(
+    path: ValidatedRepositoryPath,
+    updates: Partial<Omit<AlexandriaEntry, "path" | "registeredAt">>,
   ): void {
     const registry = this.loadRegistry();
-    const projectIndex = registry.projects.findIndex((p) => p.name === name);
+    const projectIndex = registry.projects.findIndex((p) => p.path === path);
 
     if (projectIndex === -1) {
-      throw new Error(`Project '${name}' not found`);
+      throw new Error(`No project registered at path '${path}'`);
     }
 
     const project = registry.projects[projectIndex];
 
-    // Special handling for path changes
-    if (updates.path && updates.path !== project.path) {
-      // Check if new path is already registered
-      const existingWithPath = registry.projects.find(
-        (p) => p.path === updates.path && p.name !== name,
-      );
-      if (existingWithPath) {
-        throw new Error(
-          `Path already registered as '${existingWithPath.name}'`,
-        );
-      }
-    }
-
-    // Apply all updates
     registry.projects[projectIndex] = {
       ...project,
       ...updates,
-      // Preserve immutable fields
-      name: project.name,
+      path: project.path,
       registeredAt: project.registeredAt,
     };
 
@@ -278,42 +211,37 @@ export class ProjectRegistryStore {
   }
 
   /**
-   * Migrate all projects to use PURLs
-   * Generates PURLs from remoteUrl or github.id for projects that don't have them
+   * Backfill PURLs onto pre-existing rows that lack them.
    */
   public migrateToPurl(): number {
     const registry = this.loadRegistry();
     let migratedCount = 0;
 
     for (const project of registry.projects) {
-      if (project.purl) {
-        // Already has PURL, skip
-        continue;
-      }
+      if (project.purl) continue;
 
       let purl: Purl | undefined;
 
-      // Try to extract PURL from remote URL
       if (project.remoteUrl) {
         purl = extractPurlFromRemoteUrl(project.remoteUrl) || undefined;
       }
 
-      // Fallback: Convert github.id to PURL
       if (!purl && project.github?.id) {
         try {
           purl = extractPurlFromRemoteUrl(
             `https://github.com/${project.github.id}.git`,
           ) || undefined;
         } catch {
-          // Ignore errors
+          // ignore
         }
       }
 
-      // Update if we generated a PURL
-      if (purl) {
-        project.purl = purl;
-        migratedCount++;
+      if (!purl) {
+        purl = createLocalRepoPurl(project.path);
       }
+
+      project.purl = purl;
+      migratedCount++;
     }
 
     if (migratedCount > 0) {
