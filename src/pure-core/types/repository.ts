@@ -116,11 +116,12 @@ export interface AlexandriaEntry extends AlexandriaRepository {
 }
 
 /**
- * Registry data structure for collections of Alexandria repositories
+ * Registry data structure for collections of Alexandria repositories.
+ * Path is the registry's primary key, so every stored row is an Entry.
  */
 export interface AlexandriaRepositoryRegistry {
-  /** List of repositories */
-  repositories: AlexandriaRepository[];
+  /** List of registered local entries */
+  repositories: AlexandriaEntry[];
 
   /** Total number of repositories */
   total: number;

@@ -2,7 +2,6 @@ import { ProjectRegistryStore } from "./ProjectRegistryStore.js";
 import { WorkspaceManager } from "./WorkspaceManager.js";
 import { MemoryPalace } from "../MemoryPalace.js";
 import type {
-  AlexandriaRepository,
   AlexandriaEntry,
   GithubRepository,
 } from "../pure-core/types/repository.js";
@@ -43,44 +42,33 @@ export class AlexandriaOutpostManager {
     this.workspaces = new WorkspaceManager(alexandriaPath, fsAdapter);
   }
 
-  async getAllRepositories(): Promise<AlexandriaRepository[]> {
-    // Get all registered projects from existing registry
+  async getAllRepositories(): Promise<AlexandriaEntry[]> {
     const entries = this.projectRegistry.listProjects();
-
-    // Transform each to API format
-    const repositories = await Promise.all(
-      entries.map((entry) => this.transformToRepository(entry)),
-    );
-
-    return repositories.filter(
-      (repo) => repo !== null,
-    ) as AlexandriaRepository[];
+    return Promise.all(entries.map((entry) => this.enrichEntry(entry)));
   }
 
   /**
    * Find all local clones of a GitHub repository
    * @param githubId - GitHub ID in format "owner/repo"
-   * @returns Array of AlexandriaRepository instances (all local clones)
+   * @returns Array of registered local clones
    */
-  async findClonesByGitHubId(
-    githubId: string,
-  ): Promise<AlexandriaRepository[]> {
+  async findClonesByGitHubId(githubId: string): Promise<AlexandriaEntry[]> {
     const entries = this.projectRegistry.findClonesByGitHubId(githubId);
-    return Promise.all(entries.map((e) => this.transformToRepository(e)));
+    return Promise.all(entries.map((e) => this.enrichEntry(e)));
   }
 
   /**
    * Find all local clones/worktrees of a repository by PURL
    */
-  async findClonesByPurl(purl: Purl): Promise<AlexandriaRepository[]> {
+  async findClonesByPurl(purl: Purl): Promise<AlexandriaEntry[]> {
     const entries = this.projectRegistry.findClonesByPurl(purl);
-    return Promise.all(entries.map((e) => this.transformToRepository(e)));
+    return Promise.all(entries.map((e) => this.enrichEntry(e)));
   }
 
   /**
    * Find all local clones by remote URL — parses to PURL and delegates to findClonesByPurl.
    */
-  async findByRemoteUrl(remoteUrl: string): Promise<AlexandriaRepository[]> {
+  async findByRemoteUrl(remoteUrl: string): Promise<AlexandriaEntry[]> {
     const purl = extractPurlFromRemoteUrl(remoteUrl);
     if (!purl) return [];
     return this.findClonesByPurl(purl);
@@ -89,23 +77,22 @@ export class AlexandriaOutpostManager {
   async registerRepository(
     path: string,
     remoteUrl?: string,
-  ): Promise<AlexandriaRepository> {
+  ): Promise<AlexandriaEntry> {
     const entry = this.projectRegistry.registerProject(
       path as ValidatedRepositoryPath,
       remoteUrl,
     );
-
-    return this.transformToRepository(entry);
+    return this.enrichEntry(entry);
   }
 
   async getRepositoryByPath(
     path: string,
-  ): Promise<AlexandriaRepository | null> {
+  ): Promise<AlexandriaEntry | null> {
     const entry = this.projectRegistry.getByPath(
       path as ValidatedRepositoryPath,
     );
     if (!entry) return null;
-    return this.transformToRepository(entry);
+    return this.enrichEntry(entry);
   }
 
   getRepositoryCount(): number {
@@ -480,16 +467,16 @@ export class AlexandriaOutpostManager {
   /**
    * Refresh all repository metadata (GitHub and views) for all registered repositories
    * @param options - Control what to refresh
-   * @returns Array of updated AlexandriaRepository entries
+   * @returns Array of updated entries
    */
   async refreshAllRepositories(options?: {
     github?: boolean;
     views?: boolean;
-  }): Promise<AlexandriaRepository[]> {
+  }): Promise<AlexandriaEntry[]> {
     const { github = true, views = true } = options || {};
 
     const entries = this.projectRegistry.listProjects();
-    const results: AlexandriaRepository[] = [];
+    const results: AlexandriaEntry[] = [];
 
     for (const entry of entries) {
       try {
@@ -510,72 +497,46 @@ export class AlexandriaOutpostManager {
           }
         }
 
-        const repository = await this.transformToRepository(updatedEntry);
-        results.push(repository);
+        results.push(await this.enrichEntry(updatedEntry));
       } catch (error) {
         console.error(`Failed to refresh repository ${entry.path}:`, error);
-        const repository = await this.transformToRepository(entry);
-        results.push(repository);
+        results.push(await this.enrichEntry(entry));
       }
     }
 
     return results;
   }
 
-  private async transformToRepository(
+  /**
+   * Lazily fill in `views` from the on-disk MemoryPalace if not already cached
+   * on the entry. Returns the entry with all stored fields preserved (path,
+   * purl, lastOpenedAt, etc.) — never strips fields and never fabricates a
+   * GitHub object. `entry.github` is set if and only if real metadata was
+   * fetched via {@link updateGitHubMetadata}; callers that need to derive an
+   * identity from `remoteUrl` should use {@link extractPurlFromRemoteUrl}.
+   */
+  private async enrichEntry(
     entry: AlexandriaEntry,
-  ): Promise<AlexandriaRepository> {
-    // Load views if not already loaded
-    let views: CodebaseViewSummary[] = entry.views || [];
-
-    if (views.length === 0) {
-      try {
-        // Use protected method to create MemoryPalace
-        const memoryPalace = this.createMemoryPalace(entry.path);
-
-        // Get views from the memory palace
-        views = memoryPalace
-          .listViews()
-          .map((v) => extractCodebaseViewSummary(v));
-      } catch (error) {
-        // If we can't load views, continue with empty array
-        console.debug(`Could not load views for ${entry.name}:`, error);
-        views = [];
-      }
+  ): Promise<AlexandriaEntry> {
+    if (entry.views && entry.views.length > 0) {
+      return entry;
     }
 
-    // Extract owner from remote URL if available
-    const owner = this.extractOwner(entry.remoteUrl);
+    let views: CodebaseViewSummary[] = [];
+    try {
+      const memoryPalace = this.createMemoryPalace(entry.path);
+      views = memoryPalace
+        .listViews()
+        .map((v) => extractCodebaseViewSummary(v));
+    } catch (error) {
+      console.debug(`Could not load views for ${entry.name}:`, error);
+    }
 
-    // Build the repository data according to AlexandriaRepository type
-    const repo: AlexandriaRepository = {
-      name: entry.name,
-      remoteUrl: entry.remoteUrl,
-      registeredAt: entry.registeredAt,
+    return {
+      ...entry,
       hasViews: views.length > 0,
       viewCount: views.length,
       views,
-      // Only include github if we have github data or can construct it
-      github:
-        entry.github ||
-        (owner
-          ? {
-              id: `${owner}/${entry.name}`,
-              owner: owner,
-              name: entry.name,
-              stars: 0,
-              lastUpdated: new Date().toISOString(),
-            }
-          : undefined),
     };
-
-    return repo;
-  }
-
-  private extractOwner(remoteUrl?: string): string | null {
-    if (!remoteUrl) return null;
-    // Extract owner from git URL
-    const match = remoteUrl.match(/github\.com[:/]([^/]+)/);
-    return match ? match[1] : null;
   }
 }
