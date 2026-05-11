@@ -14,14 +14,14 @@ describe("ProjectRegistryStore", () => {
   });
 
   describe("registerProject", () => {
-    it("registers a new project, deriving GitHub owner/name from remote", () => {
+    it("registers a new project, deriving GitHub repo name from remote", () => {
       const projectPath =
         "/home/user/projects/test-repo" as ValidatedRepositoryPath;
       const remoteUrl = "https://github.com/anthropic/my-app.git";
 
       const entry = store.registerProject(projectPath, remoteUrl);
 
-      expect(entry.name).toBe("anthropic/my-app");
+      expect(entry.name).toBe("my-app");
       expect(entry.path).toBe(projectPath);
       expect(entry.remoteUrl).toBe(remoteUrl);
       expect(entry.purl).toBe("pkg:github/anthropic/my-app");
@@ -50,7 +50,7 @@ describe("ProjectRegistryStore", () => {
 
       const entry = store.registerProject(projectPath, remoteUrl);
 
-      expect(entry.name).toBe("griever/my-app");
+      expect(entry.name).toBe("my-app");
       expect(entry.purl).toBe("pkg:github/griever/my-app");
     });
 
@@ -73,8 +73,8 @@ describe("ProjectRegistryStore", () => {
       const entry2 = store.registerProject(path2, remoteUrl);
 
       // Both rows keep the same un-mutated name and the same purl.
-      expect(entry1.name).toBe("anthropic/my-app");
-      expect(entry2.name).toBe("anthropic/my-app");
+      expect(entry1.name).toBe("my-app");
+      expect(entry2.name).toBe("my-app");
       expect(entry1.purl).toBe(entry2.purl);
 
       const projects = store.listProjects();
@@ -107,8 +107,8 @@ describe("ProjectRegistryStore", () => {
         "https://github.com/griever/my-app.git",
       );
 
-      expect(entry1.name).toBe("anthropic/my-app");
-      expect(entry2.name).toBe("griever/my-app");
+      expect(entry1.name).toBe("my-app");
+      expect(entry2.name).toBe("my-app");
       expect(entry1.purl).not.toBe(entry2.purl);
       expect(store.listProjects()).toHaveLength(2);
     });

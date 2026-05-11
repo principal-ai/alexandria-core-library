@@ -69,8 +69,10 @@ export class ProjectRegistryStore {
     remoteUrl?: string,
   ): string {
     if (remoteUrl) {
-      const githubId = this.extractGitHubId(remoteUrl);
-      if (githubId) return githubId;
+      const match = remoteUrl.match(
+        /github\.com[:/][^/]+\/([^/.]+)(\.git)?$/,
+      );
+      if (match) return match[1];
     }
     return projectPath.split("/").pop() || "unknown";
   }
