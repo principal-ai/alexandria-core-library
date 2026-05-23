@@ -1,4 +1,5 @@
 import { ProjectRegistryStore } from "./ProjectRegistryStore.js";
+import { TopicManager } from "./TopicManager.js";
 import { WorkspaceManager } from "./WorkspaceManager.js";
 import { MemoryPalace } from "../MemoryPalace.js";
 import type {
@@ -23,6 +24,13 @@ export class AlexandriaOutpostManager {
   public readonly workspaces: WorkspaceManager;
 
   /**
+   * Topic management — curated bundles of trails. Workspaces reference
+   * topics via {@link Workspace.topicIds}; repository membership is derived
+   * from the trails inside those topics rather than stored explicitly.
+   */
+  public readonly topics: TopicManager;
+
+  /**
    * Creates an AlexandriaOutpostManager instance.
    *
    * @param fsAdapter - File system adapter for platform-agnostic file operations
@@ -40,6 +48,9 @@ export class AlexandriaOutpostManager {
 
     // Initialize workspace manager with same registry path
     this.workspaces = new WorkspaceManager(alexandriaPath, fsAdapter);
+
+    // Topics share the same registry directory as workspaces
+    this.topics = new TopicManager(alexandriaPath, fsAdapter);
   }
 
   async getAllRepositories(): Promise<AlexandriaEntry[]> {
@@ -120,18 +131,22 @@ export class AlexandriaOutpostManager {
   }
 
   /**
-   * Clear all Alexandria data (repositories and workspaces) for clean uninstall
-   * WARNING: This will permanently delete all registered repositories and workspaces
-   * This does NOT delete local repository files, only the registry data
+   * Clear all Alexandria data (repositories, workspaces, and topics) for
+   * clean uninstall.
+   * WARNING: This will permanently delete all registered repositories,
+   * workspaces, and topics. This does NOT delete local repository files,
+   * only the registry data.
    * @returns Object with counts of removed items
    */
   async clearAllData(): Promise<{
     repositoriesRemoved: number;
     workspacesRemoved: number;
+    topicsRemoved: number;
   }> {
     // Get counts before clearing
     const repositories = this.projectRegistry.listProjects();
     const workspaces = await this.workspaces.getWorkspaces();
+    const topics = await this.topics.getTopics();
 
     // Remove all repositories
     const repositoriesRemoved = repositories.length;
@@ -145,9 +160,16 @@ export class AlexandriaOutpostManager {
       await this.workspaces.deleteWorkspace(workspace.id);
     }
 
+    // Delete all topics
+    const topicsRemoved = topics.length;
+    for (const topic of topics) {
+      await this.topics.deleteTopic(topic.id);
+    }
+
     return {
       repositoriesRemoved,
       workspacesRemoved,
+      topicsRemoved,
     };
   }
 

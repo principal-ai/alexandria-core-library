@@ -101,6 +101,10 @@ export type {
   WorkspaceMembershipsData,
 } from "./projects-core/types";
 
+// Topic management
+export { TopicManager } from "./projects-core/TopicManager";
+export type { Topic, TopicsData } from "./projects-core/types";
+
 // Store exports for direct access if needed
 export {
   CodebaseViewsStore,

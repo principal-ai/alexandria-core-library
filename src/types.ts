@@ -58,6 +58,9 @@ export type {
   WorkspaceMembershipsData,
 } from "./projects-core/types.js";
 
+// Topic management types
+export type { Topic, TopicsData } from "./projects-core/types.js";
+
 // Drawing types
 export type { DrawingMetadata } from "./pure-core/stores/DrawingStore.js";
 export type { ExcalidrawData } from "./pure-core/types/drawing.js";

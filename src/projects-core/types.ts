@@ -37,6 +37,14 @@ export interface Workspace {
   updatedAt: number;
   /** Optional path hint for clone suggestions */
   suggestedClonePath?: string;
+  /**
+   * Topics this workspace contains, in display order.
+   *
+   * v1 single-topic flow stores `[topic.id]` at create time; multi-topic
+   * support extends this list. Missing/empty on legacy workspaces that
+   * predate topics — readers should treat absence as `[]`.
+   */
+  topicIds?: string[];
   /** Extensible metadata */
   metadata?: Record<string, unknown>;
 }
@@ -80,4 +88,51 @@ export interface WorkspacesData {
 export interface WorkspaceMembershipsData {
   version: string;
   memberships: WorkspaceMembership[];
+}
+
+/**
+ * Topic types
+ */
+
+/**
+ * A curated bundle of trails on a single subject.
+ *
+ * Topics are the source-of-truth for "what trails belong together" — a
+ * workspace references one or more topics via {@link Workspace.topicIds},
+ * and the repository set involved in a workspace is derived by walking each
+ * topic's trails. Designed to mirror the over-the-wire shape used by the
+ * sharing API (`web-ade`), so a published topic and a locally stored one
+ * are interchangeable on read.
+ *
+ * Timestamps are ISO 8601 strings — different from {@link Workspace}, which
+ * uses Unix ms — because this shape crosses the desktop/web boundary and
+ * ISO 8601 is the canonical wire format.
+ */
+export interface Topic {
+  /** Unique identifier. Locally generated; the server assigns its own id on publish. */
+  id: string;
+  /** Display title (1–200 chars on the server). */
+  title: string;
+  /** Optional markdown body. */
+  description?: string;
+  /** Ordered list of trail ids — foreign keys into the local/server trail store. */
+  trailIds: string[];
+  /** ISO 8601. */
+  createdAt: string;
+  /** ISO 8601. */
+  updatedAt: string;
+  /**
+   * GitHub identity of the creator. Populated when a signed-in user creates
+   * a topic; left undefined for local-only topics created before sign-in.
+   * The server requires this field on publish.
+   */
+  createdBy?: { githubId: number; githubLogin: string };
+}
+
+/**
+ * Storage structure for topics.json
+ */
+export interface TopicsData {
+  version: string;
+  topics: Topic[];
 }
