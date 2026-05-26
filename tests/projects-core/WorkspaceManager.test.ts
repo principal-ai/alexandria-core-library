@@ -479,6 +479,93 @@ describe("WorkspaceManager", () => {
       });
     });
 
+    describe("clonePath scoping (multiple clones, same purl)", () => {
+      const cloneAPath = "/home/user/repos/dup-a" as ValidatedRepositoryPath;
+      const cloneBPath = "/home/user/repos/dup-b" as ValidatedRepositoryPath;
+
+      beforeEach(() => {
+        // Two clones of the same GitHub repo at different filesystem paths.
+        projectRegistry.registerProject(
+          cloneAPath,
+          "https://github.com/owner/shared.git",
+        );
+        projectRegistry.registerProject(
+          cloneBPath,
+          "https://github.com/owner/shared.git",
+        );
+      });
+
+      it("scopes a membership to one clone when added by entry", async () => {
+        const cloneAEntry = projectRegistry
+          .listProjects()
+          .find((p) => p.path === cloneAPath)!;
+
+        await manager.addRepositoryToWorkspace(cloneAEntry, workspaceId);
+
+        const repos = await manager.getRepositoriesInWorkspace(
+          workspaceId,
+          projectRegistry,
+        );
+
+        expect(repos).toHaveLength(1);
+        expect(repos[0].path).toBe(cloneAPath);
+      });
+
+      it("fans out across all clones when added by purl alone", async () => {
+        const cloneAEntry = projectRegistry
+          .listProjects()
+          .find((p) => p.path === cloneAPath)!;
+
+        await manager.addRepositoryToWorkspace(
+          cloneAEntry.purl as Purl,
+          workspaceId,
+        );
+
+        const repos = await manager.getRepositoriesInWorkspace(
+          workspaceId,
+          projectRegistry,
+        );
+
+        expect(repos.map((r) => r.path).sort()).toEqual(
+          [cloneAPath, cloneBPath].sort(),
+        );
+      });
+
+      it("isRepositoryInWorkspace returns true only for the scoped clone", async () => {
+        const entries = projectRegistry.listProjects();
+        const cloneAEntry = entries.find((p) => p.path === cloneAPath)!;
+        const cloneBEntry = entries.find((p) => p.path === cloneBPath)!;
+
+        await manager.addRepositoryToWorkspace(cloneAEntry, workspaceId);
+
+        expect(
+          await manager.isRepositoryInWorkspace(cloneAEntry, workspaceId),
+        ).toBe(true);
+        expect(
+          await manager.isRepositoryInWorkspace(cloneBEntry, workspaceId),
+        ).toBe(false);
+      });
+
+      it("removing by entry scopes to one clone, leaving siblings", async () => {
+        const entries = projectRegistry.listProjects();
+        const cloneAEntry = entries.find((p) => p.path === cloneAPath)!;
+        const cloneBEntry = entries.find((p) => p.path === cloneBPath)!;
+
+        await manager.addRepositoryToWorkspace(cloneAEntry, workspaceId);
+        await manager.addRepositoryToWorkspace(cloneBEntry, workspaceId);
+
+        await manager.removeRepositoryFromWorkspace(cloneAEntry, workspaceId);
+
+        const repos = await manager.getRepositoriesInWorkspace(
+          workspaceId,
+          projectRegistry,
+        );
+
+        expect(repos).toHaveLength(1);
+        expect(repos[0].path).toBe(cloneBPath);
+      });
+    });
+
     describe("isRepositoryInWorkspace", () => {
       it("returns true if repository is in workspace", async () => {
         await manager.addRepositoryToWorkspace(

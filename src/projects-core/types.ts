@@ -53,8 +53,10 @@ export interface Workspace {
  * Maps repositories to workspaces (many-to-many)
  * Stored in Alexandria registry as separate mapping table
  *
- * Uses PURL as canonical repository identity, so all local clones of a
- * repository belong to the same workspaces.
+ * Uses PURL as canonical repository identity. When `clonePath` is set, the
+ * membership is scoped to that specific local checkout; when absent (legacy
+ * data, or memberships added by PURL-only), the membership matches every
+ * local clone with the same `repositoryId`.
  */
 export interface WorkspaceMembership {
   /**
@@ -66,6 +68,13 @@ export interface WorkspaceMembership {
   workspaceId: string;
   /** Unix timestamp when added */
   addedAt: number;
+  /**
+   * Absolute local clone path. When set, scopes this membership to one
+   * specific checkout (so two clones of the same repo can belong to
+   * different workspaces). Omitted for memberships added by PURL alone or
+   * persisted before this field existed — those keep fan-out behavior.
+   */
+  clonePath?: string;
   /** Workspace-specific metadata for this repository */
   metadata?: {
     /** Pin to top of workspace */

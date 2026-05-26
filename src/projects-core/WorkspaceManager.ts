@@ -136,6 +136,25 @@ export class WorkspaceManager {
     return createLocalRepoPurl(repository.path);
   }
 
+  /**
+   * Extract the local clone path for a repository, if one is available.
+   *
+   * Returns the entry's `path` when called with an `AlexandriaEntry`, and
+   * `undefined` when called with a bare PURL. Used to scope memberships to a
+   * specific checkout instead of fanning out across every clone with the
+   * matching `repositoryId`.
+   *
+   * @internal
+   */
+  private getClonePath(
+    repository: AlexandriaEntry | Purl,
+  ): string | undefined {
+    if (typeof repository === "string") {
+      return undefined;
+    }
+    return repository.path as unknown as string | undefined;
+  }
+
   // ===== Workspace CRUD =====
 
   /**
@@ -252,24 +271,22 @@ export class WorkspaceManager {
     metadata?: Record<string, unknown>,
   ): Promise<void> {
     const repositoryId = this.getRepositoryId(repository);
+    const clonePath = this.getClonePath(repository);
     const data = this.loadMemberships();
 
-    // Check if already exists
-    const exists = data.memberships.some(
-      (m) => m.repositoryId === repositoryId && m.workspaceId === workspaceId,
-    );
+    // Dup-check keys on (workspace, repositoryId, clonePath) so two clones of
+    // the same repo can each have their own membership row.
+    const matchesIdentity = (m: WorkspaceMembership) =>
+      m.workspaceId === workspaceId &&
+      m.repositoryId === repositoryId &&
+      m.clonePath === clonePath;
 
-    if (exists) {
-      // Update metadata if provided
+    const existing = data.memberships.find(matchesIdentity);
+
+    if (existing) {
       if (metadata !== undefined) {
-        const membership = data.memberships.find(
-          (m) =>
-            m.repositoryId === repositoryId && m.workspaceId === workspaceId,
-        );
-        if (membership) {
-          membership.metadata = metadata;
-          this.saveMemberships(data);
-        }
+        existing.metadata = metadata;
+        this.saveMemberships(data);
       }
       return;
     }
@@ -280,6 +297,9 @@ export class WorkspaceManager {
       addedAt: Date.now(),
       metadata,
     };
+    if (clonePath !== undefined) {
+      membership.clonePath = clonePath;
+    }
 
     data.memberships.push(membership);
     this.saveMemberships(data);
@@ -296,12 +316,21 @@ export class WorkspaceManager {
     workspaceId: string,
   ): Promise<void> {
     const repositoryId = this.getRepositoryId(repository);
+    const clonePath = this.getClonePath(repository);
     const data = this.loadMemberships();
 
-    data.memberships = data.memberships.filter(
-      (m) =>
-        !(m.repositoryId === repositoryId && m.workspaceId === workspaceId),
-    );
+    data.memberships = data.memberships.filter((m) => {
+      if (m.workspaceId !== workspaceId) return true;
+      if (m.repositoryId !== repositoryId) return true;
+      // When both sides carry a clonePath, only the matching clone is removed.
+      // Otherwise (purl-only caller, or legacy fan-out row) remove the row —
+      // preserves "remove by identity" semantics for purl callers and lets
+      // entry callers clean up legacy fan-out memberships gracefully.
+      if (clonePath !== undefined && m.clonePath !== undefined) {
+        return m.clonePath !== clonePath;
+      }
+      return false;
+    });
 
     this.saveMemberships(data);
   }
@@ -325,9 +354,16 @@ export class WorkspaceManager {
     repository: AlexandriaEntry | Purl,
   ): Promise<Workspace[]> {
     const repositoryId = this.getRepositoryId(repository);
+    const clonePath = this.getClonePath(repository);
     const membershipsData = this.loadMemberships();
     const workspaceIds = membershipsData.memberships
-      .filter((m) => m.repositoryId === repositoryId)
+      .filter((m) => {
+        if (m.repositoryId !== repositoryId) return false;
+        if (clonePath !== undefined && m.clonePath !== undefined) {
+          return m.clonePath === clonePath;
+        }
+        return true;
+      })
       .map((m) => m.workspaceId);
 
     const workspacesData = this.loadWorkspaces();
@@ -339,8 +375,12 @@ export class WorkspaceManager {
   // ===== Query Methods =====
 
   /**
-   * Get all entries (local clones) for repositories in a workspace
-   * This includes ALL local clones of matching repositories
+   * Get all entries (local clones) for repositories in a workspace.
+   *
+   * Each membership with a `clonePath` matches only the entry whose `path`
+   * equals it (one clone per row). Memberships without a `clonePath` —
+   * legacy data, or rows added by PURL alone — still fan out across every
+   * registered clone with the matching `repositoryId`.
    *
    * @param workspaceId - Workspace identifier
    * @param projectRegistry - ProjectRegistryStore instance for querying entries
@@ -350,15 +390,17 @@ export class WorkspaceManager {
     workspaceId: string,
     projectRegistry: ProjectRegistryStore,
   ): Promise<AlexandriaEntry[]> {
-    // Get repository IDs in this workspace
     const memberships = await this.getWorkspaceMemberships(workspaceId);
-    const repoIds = memberships.map((m) => m.repositoryId);
-
-    // Find ALL entries matching these repository IDs
     const allEntries = projectRegistry.listProjects();
+
     return allEntries.filter((entry) => {
       const repoId = this.getRepositoryId(entry);
-      return repoIds.includes(repoId);
+      const entryPath = entry.path as unknown as string;
+      return memberships.some((m) => {
+        if (m.repositoryId !== repoId) return false;
+        if (m.clonePath === undefined) return true; // legacy fan-out
+        return m.clonePath === entryPath;
+      });
     });
   }
 
@@ -373,10 +415,17 @@ export class WorkspaceManager {
     workspaceId: string,
   ): Promise<boolean> {
     const repositoryId = this.getRepositoryId(repository);
+    const clonePath = this.getClonePath(repository);
     const data = this.loadMemberships();
-    return data.memberships.some(
-      (m) => m.repositoryId === repositoryId && m.workspaceId === workspaceId,
-    );
+    return data.memberships.some((m) => {
+      if (m.workspaceId !== workspaceId) return false;
+      if (m.repositoryId !== repositoryId) return false;
+      if (clonePath !== undefined && m.clonePath !== undefined) {
+        return m.clonePath === clonePath;
+      }
+      // Legacy fan-out row, or caller didn't specify a clone — match by purl.
+      return true;
+    });
   }
 
   /**
