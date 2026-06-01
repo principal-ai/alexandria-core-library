@@ -104,6 +104,65 @@ export interface WorkspaceMembershipsData {
  */
 
 /**
+ * Status of a topic — a small structured axis plus optional human nuance.
+ *
+ * `state` is the machine-meaningful signal (drives badge color, sorting, and
+ * filtering on the home view). `label` is free-form text shown on the card in
+ * place of the default per-state label ("done for now", "revisit after
+ * launch", "nice-to-dos left"). `waitingOn` describes an external blocker and
+ * is meaningful when `state` is `waiting` — the topic is parked on something
+ * that is NOT the user, optionally carrying a date and/or a pointer to the
+ * thing being waited on.
+ *
+ * The structured shape is deliberate: it lets automations check and resolve a
+ * blocker without parsing prose — e.g. flip `waiting` → `needs-attention`
+ * once `until` passes, or once a referenced PR (`ref.kind === "pr"`) merges.
+ *
+ * Like the rest of {@link Topic}, this crosses the desktop/web boundary, so
+ * any timestamp here is an ISO 8601 string.
+ */
+export interface TopicStatus {
+  /**
+   * Structured lifecycle axis. A topic with no `status` is treated as
+   * `active` by readers, so legacy topics need no migration.
+   * - `active` — in progress / revisitable (the quiet default)
+   * - `needs-attention` — the ball is in the user's court
+   * - `waiting` — parked on something external; see {@link TopicStatus.waitingOn}
+   * - `done` — complete, or "done for now"
+   */
+  state: "active" | "needs-attention" | "waiting" | "done";
+  /**
+   * Optional free-form text shown on the card in place of the default label
+   * for the state. Lets a topic read "revisit after launch" while still
+   * sorting/filtering as `needs-attention`.
+   */
+  label?: string;
+  /**
+   * External blocker description. Meaningful when `state` is `waiting`; a
+   * holding pattern is distinct from `needs-attention` precisely because the
+   * user is NOT what's being waited on, so it must not surface in "needs me"
+   * views.
+   */
+  waitingOn?: {
+    /** Human description of the blocker, e.g. "design sign-off". */
+    note?: string;
+    /**
+     * ISO 8601 — when the hold is expected to lift. The hook for time-based
+     * unblock: a reader may treat a past `until` as no longer waiting.
+     */
+    until?: string;
+    /** Structured pointer to the thing being waited on, for automations to resolve. */
+    ref?: {
+      kind: "url" | "pr" | "issue" | "topic" | "trail";
+      /** The address/id of the referenced thing (URL, PR number, topic id, …). */
+      value: string;
+      /** Optional human label for display. */
+      title?: string;
+    };
+  };
+}
+
+/**
  * A curated bundle of trails on a single subject.
  *
  * Topics are the source-of-truth for "what trails belong together" — a
@@ -136,6 +195,12 @@ export interface Topic {
    * The server requires this field on publish.
    */
   createdBy?: { githubId: number; githubLogin: string };
+  /**
+   * Optional workflow status. Absent means `active` (a topic that has never
+   * been triaged). Travels with the topic when shared/published, so the same
+   * status is visible on web-ade. See {@link TopicStatus}.
+   */
+  status?: TopicStatus;
 }
 
 /**
