@@ -163,6 +163,30 @@ export interface TopicStatus {
 }
 
 /**
+ * An image attached to a topic — primarily a screenshot dragged into the
+ * description. Bytes live on the topic (referenced from the description via an
+ * `asset://<id>` markdown link), not inlined into the description string, so
+ * they survive the description's length cap and publish to web-ade with the
+ * topic. A render-time resolver swaps `asset://<id>` for `url` (preferred) or a
+ * data-URL built from `data`, keeping a local (data-only) and a published
+ * (url-bearing) topic interchangeable on read.
+ */
+export interface TopicAsset {
+  /** Content hash — free dedup and the stable `asset://` target. */
+  id: string;
+  /** MIME type, e.g. "image/png". */
+  mime: string;
+  /** Base64-encoded bytes. Present locally and on publish. */
+  data?: string;
+  /** Resolvable URL, when the bytes have been offloaded (e.g. to S3). */
+  url?: string;
+  /** Markdown alt text. */
+  alt?: string;
+  /** Origin metadata, for future re-capture / open-live affordances. */
+  source?: { storyId?: string; storybookUrl?: string };
+}
+
+/**
  * A curated bundle of trails on a single subject.
  *
  * Topics are the source-of-truth for "what trails belong together" — a
@@ -201,6 +225,12 @@ export interface Topic {
    * status is visible on web-ade. See {@link TopicStatus}.
    */
   status?: TopicStatus;
+  /**
+   * Images attached to the topic — typically screenshots dragged into the
+   * description, referenced from the markdown via `asset://<id>`. Optional, so
+   * existing topics.json files need no migration. See {@link TopicAsset}.
+   */
+  assets?: TopicAsset[];
 }
 
 /**

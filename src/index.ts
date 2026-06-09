@@ -103,7 +103,12 @@ export type {
 
 // Topic management
 export { TopicManager } from "./projects-core/TopicManager";
-export type { Topic, TopicStatus, TopicsData } from "./projects-core/types";
+export type {
+  Topic,
+  TopicAsset,
+  TopicStatus,
+  TopicsData,
+} from "./projects-core/types";
 
 // Store exports for direct access if needed
 export {
