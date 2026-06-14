@@ -115,7 +115,7 @@ export interface WorkspaceMembershipsData {
  * thing being waited on.
  *
  * The structured shape is deliberate: it lets automations check and resolve a
- * blocker without parsing prose — e.g. flip `waiting` → `needs-attention`
+ * blocker without parsing prose — e.g. flip `waiting` → `paused`
  * once `until` passes, or once a referenced PR (`ref.kind === "pr"`) merges.
  *
  * Like the rest of {@link Topic}, this crosses the desktop/web boundary, so
@@ -123,23 +123,34 @@ export interface WorkspaceMembershipsData {
  */
 export interface TopicStatus {
   /**
-   * Structured lifecycle axis. A topic with no `status` is treated as
-   * `active` by readers, so legacy topics need no migration.
-   * - `active` — in progress / revisitable (the quiet default)
-   * - `needs-attention` — the ball is in the user's court
+   * Structured lifecycle axis, ordered by a feature's "aliveness" from nascent
+   * to retired. Readers treat an absent OR unrecognized `state` as
+   * `new-thought`, so legacy topics and renamed values need no migration.
+   * - `new-thought` — a captured idea, not yet committed to (nascent; the default)
+   * - `working` — actively in progress
+   * - `paused` — set down for now; the ball is in the user's court
    * - `waiting` — parked on something external; see {@link TopicStatus.waitingOn}
-   * - `done` — complete, or "done for now"
+   * - `done-for-now` — complete / live / shipped, not actively worked
+   * - `deprecated` — was live, now retired / end-of-life
+   * - `abandoned` — created but discarded; never shipped
    */
-  state: "active" | "needs-attention" | "waiting" | "done";
+  state:
+    | "new-thought"
+    | "working"
+    | "paused"
+    | "waiting"
+    | "done-for-now"
+    | "deprecated"
+    | "abandoned";
   /**
    * Optional free-form text shown on the card in place of the default label
    * for the state. Lets a topic read "revisit after launch" while still
-   * sorting/filtering as `needs-attention`.
+   * sorting/filtering as `paused`.
    */
   label?: string;
   /**
    * External blocker description. Meaningful when `state` is `waiting`; a
-   * holding pattern is distinct from `needs-attention` precisely because the
+   * holding pattern is distinct from `paused` precisely because the
    * user is NOT what's being waited on, so it must not surface in "needs me"
    * views.
    */
