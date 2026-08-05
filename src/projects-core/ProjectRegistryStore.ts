@@ -93,6 +93,11 @@ export class ProjectRegistryStore {
    *
    * - Same `path` already registered → returns the existing entry idempotently.
    * - Same `purl` at a different `path` → stored as a sibling row (no rename, no error).
+   *
+   * Path matching is case-insensitive: `path` is the unique storage key, but on
+   * case-insensitive filesystems (macOS APFS by default) `/repo` and `/Repo` are
+   * the same directory, and git-root discovery can surface either spelling, so a
+   * case-sensitive compare would register the same repo under two rows.
    */
   public registerProject(
     projectPath: ValidatedRepositoryPath,
@@ -100,7 +105,9 @@ export class ProjectRegistryStore {
   ): AlexandriaEntry {
     const registry = this.loadRegistry();
 
-    const existing = registry.projects.find((p) => p.path === projectPath);
+    const existing = registry.projects.find(
+      (p) => p.path.toLowerCase() === projectPath.toLowerCase(),
+    );
     if (existing) return existing;
 
     const entry: AlexandriaEntry = {

@@ -94,6 +94,26 @@ describe("ProjectRegistryStore", () => {
       expect(store.listProjects()).toHaveLength(1);
     });
 
+    it("dedupes case-variant paths of the same directory (case-insensitive fs)", () => {
+      const path1 = "/home/user/Projects/MyApp" as ValidatedRepositoryPath;
+      const path2 = "/home/user/projects/myapp" as ValidatedRepositoryPath;
+
+      const first = store.registerProject(
+        path1,
+        "https://github.com/owner/my-app.git",
+      );
+      const second = store.registerProject(
+        path2,
+        "https://github.com/owner/my-app.git",
+      );
+
+      // Same directory surfaced under a different spelling must not register a
+      // second row — it returns the existing entry idempotently.
+      expect(second).toEqual(first);
+      expect(store.listProjects()).toHaveLength(1);
+      expect(store.listProjects()[0].path).toBe(path1);
+    });
+
     it("allows two repos sharing a basename as long as paths differ", () => {
       const path1 = "/home/user/projects/anthropic-app" as ValidatedRepositoryPath;
       const path2 = "/home/user/projects/griever-app" as ValidatedRepositoryPath;
